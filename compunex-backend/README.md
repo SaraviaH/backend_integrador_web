@@ -63,17 +63,9 @@ Antes de abrir el proyecto, asegúrate de tener:
 4. Haz **clic derecho** sobre `CompunexBackendApplication.java` y selecciona **Run File** (o presiona `Shift + F6`).
 5. ¡Y ya está! El servidor iniciará y estará escuchando en **`http://localhost:8080`**.
 
----
 
-## 🌐 4. Probar los Endpoints en Swagger UI
 
-Con el servidor levantado, puedes ver y probar todos los endpoints documentados directamente desde tu navegador:
-
-👉 **[http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)**
-
----
-
-## 🧪 5. ¿Cómo Correr las Pruebas TDD para el Informe Word?
+## 🧪 4. ¿Cómo Correr las Pruebas TDD para el Informe Word?
 
 Para la rúbrica 20/20 del informe, cada endpoint debe tener sus evidencias de **TDD**:
 
@@ -93,7 +85,7 @@ Para la rúbrica 20/20 del informe, cada endpoint debe tener sus evidencias de *
 
 ---
 
-## 👥 6. Reparto Oficial de Endpoints (Trello)
+## 👥 5. Reparto Oficial de Endpoints (Trello)
 
 El tablero de Trello ya tiene asignadas las tarjetas y los JSONs de prueba para cada integrante:  
 🔗 **[Ver Tablero COMPUNEX B2B en Trello](https://trello.com/b/qpK2u3wg/compunex-b2b-m%C3%B3dulo-proveedor-cat%C3%A1logo)**
@@ -109,7 +101,7 @@ El tablero de Trello ya tiene asignadas las tarjetas y los JSONs de prueba para 
 
 ---
 
-## 🛠️ 7. Solución Rápida a Problemas Frecuentes
+## 🛠️ 6. Solución Rápida a Problemas Frecuentes
 
 1. **Error de versión de Java (`UnsupportedClassVersionError`):**  
    Asegúrate de que en NetBeans el proyecto esté configurado con **JDK 21** (`Project Properties` ➔ `Libraries` ➔ `Java Platform` = JDK 21).
