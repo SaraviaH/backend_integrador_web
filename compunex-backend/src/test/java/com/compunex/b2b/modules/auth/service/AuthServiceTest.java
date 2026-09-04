@@ -27,6 +27,12 @@ class AuthServiceTest {
     @Mock
     private JwtTokenProvider jwtTokenProvider;
 
+    @Mock
+    private com.compunex.b2b.modules.auth.repository.UsuarioRepository usuarioRepository;
+
+    @Mock
+    private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+
     @InjectMocks
     private AuthServiceImpl authService;
 
@@ -73,5 +79,78 @@ class AuthServiceTest {
         // Verificaciones de comportamiento
         verify(authenticationManager, times(1)).authenticate(any(UsernamePasswordAuthenticationToken.class));
         verify(jwtTokenProvider, times(1)).generarToken(authMock);
+    }
+
+    @Test
+    @DisplayName("[0.2] debeRetornarDatosSesionCuandoTokenEsValido")
+    void debeRetornarDatosSesionCuandoTokenEsValido() {
+        String correo = "ventas.mayoristas@technova.com";
+        var usuario = new com.compunex.b2b.modules.auth.entity.Usuario(
+                "TechNova Mayorista S.A.C.", correo, "hash",
+                com.compunex.b2b.modules.auth.entity.RolUsuario.PROVEEDOR,
+                com.compunex.b2b.modules.auth.entity.EstadoUsuario.ACTIVO);
+        when(usuarioRepository.findByCorreo(correo)).thenReturn(java.util.Optional.of(usuario));
+        var auth = new UsernamePasswordAuthenticationToken(correo, null, java.util.List.of());
+        org.springframework.security.core.context.SecurityContextHolder.getContext().setAuthentication(auth);
+        try {
+            var sesion = authService.obtenerSesion();
+            assertNotNull(sesion);
+            assertEquals(correo, sesion.correo());
+            assertEquals("TechNova Mayorista S.A.C.", sesion.nombre());
+            assertEquals("PROVEEDOR", sesion.rol());
+            assertTrue(sesion.valido());
+        } finally {
+            org.springframework.security.core.context.SecurityContextHolder.clearContext();
+        }
+    }
+
+    @Test
+    @DisplayName("[0.3] debeActualizarPasswordCuandoClaveActualEsCorrecta")
+    void debeActualizarPasswordCuandoClaveActualEsCorrecta() {
+        String correo = "ventas.mayoristas@technova.com";
+        var usuario = new com.compunex.b2b.modules.auth.entity.Usuario(
+                "TechNova Mayorista S.A.C.", correo, "hashActual",
+                com.compunex.b2b.modules.auth.entity.RolUsuario.PROVEEDOR,
+                com.compunex.b2b.modules.auth.entity.EstadoUsuario.ACTIVO);
+        when(usuarioRepository.findByCorreo(correo)).thenReturn(java.util.Optional.of(usuario));
+        when(passwordEncoder.matches("PasswordMayorista123!", "hashActual")).thenReturn(true);
+        when(passwordEncoder.encode("NuevaClaveCorporativa2026*")).thenReturn("hashNuevo");
+        var auth = new UsernamePasswordAuthenticationToken(correo, null, java.util.List.of());
+        org.springframework.security.core.context.SecurityContextHolder.getContext().setAuthentication(auth);
+        try {
+            var resp = authService.cambiarPassword(
+                    new com.compunex.b2b.modules.auth.dto.request.CambiarPasswordDTO(
+                            "PasswordMayorista123!", "NuevaClaveCorporativa2026*"));
+            assertNotNull(resp);
+            assertEquals("Contraseña actualizada exitosamente", resp.mensaje());
+            assertNotNull(resp.fechaActualizacion());
+            assertEquals("hashNuevo", usuario.getHashContrasena());
+            verify(usuarioRepository, times(1)).save(usuario);
+        } finally {
+            org.springframework.security.core.context.SecurityContextHolder.clearContext();
+        }
+    }
+
+    @Test
+    @DisplayName("[0.3] debeRechazarCuandoClaveActualEsIncorrecta")
+    void debeRechazarCuandoClaveActualEsIncorrecta() {
+        String correo = "ventas.mayoristas@technova.com";
+        var usuario = new com.compunex.b2b.modules.auth.entity.Usuario(
+                "TechNova Mayorista S.A.C.", correo, "hashActual",
+                com.compunex.b2b.modules.auth.entity.RolUsuario.PROVEEDOR,
+                com.compunex.b2b.modules.auth.entity.EstadoUsuario.ACTIVO);
+        when(usuarioRepository.findByCorreo(correo)).thenReturn(java.util.Optional.of(usuario));
+        when(passwordEncoder.matches("clave-mala", "hashActual")).thenReturn(false);
+        var auth = new UsernamePasswordAuthenticationToken(correo, null, java.util.List.of());
+        org.springframework.security.core.context.SecurityContextHolder.getContext().setAuthentication(auth);
+        try {
+            assertThrows(com.compunex.b2b.modules.auth.exception.ContrasenaActualIncorrectaException.class,
+                    () -> authService.cambiarPassword(
+                            new com.compunex.b2b.modules.auth.dto.request.CambiarPasswordDTO(
+                                    "clave-mala", "NuevaClaveCorporativa2026*")));
+            verify(usuarioRepository, never()).save(any());
+        } finally {
+            org.springframework.security.core.context.SecurityContextHolder.clearContext();
+        }
     }
 }

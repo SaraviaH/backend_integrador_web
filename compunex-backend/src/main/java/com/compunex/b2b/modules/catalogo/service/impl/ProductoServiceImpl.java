@@ -56,4 +56,22 @@ public class ProductoServiceImpl implements ProductoService {
                 paginaDto.isLast()
         );
     }
+
+    @Override
+    @Transactional
+    public void eliminarMiProducto(String correoAutenticado, Long productoId) {
+        var usuario = usuarioRepository.findByCorreo(correoAutenticado)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + correoAutenticado));
+
+        var perfil = perfilProveedorRepository.findByUsuarioId(usuario.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Perfil de proveedor no encontrado para el usuario: " + correoAutenticado));
+
+        var producto = productoRepository.findByIdAndProveedorId(productoId, perfil.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado: " + productoId));
+
+        producto.setEstado(EstadoProducto.ELIMINADO_LOGICO);
+        producto.setFechaEliminacion(java.time.Instant.now());
+        producto.setFechaActualizacion(java.time.Instant.now());
+        productoRepository.save(producto);
+    }
 }

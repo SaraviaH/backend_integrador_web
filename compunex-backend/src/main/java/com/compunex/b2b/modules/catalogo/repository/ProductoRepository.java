@@ -17,4 +17,6 @@ public interface ProductoRepository extends JpaRepository<Producto, Long> {
     Page<Producto> findAllByProveedorIdAndEstadoNot(Long proveedorId, EstadoProducto estado, Pageable pageable);
 
     Optional<Producto> findByUuid(UUID uuid);
+
+    Optional<Producto> findByIdAndProveedorId(Long id, Long proveedorId);
 }
