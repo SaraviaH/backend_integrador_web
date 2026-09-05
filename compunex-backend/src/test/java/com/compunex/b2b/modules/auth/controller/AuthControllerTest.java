@@ -21,6 +21,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -90,6 +92,62 @@ class AuthControllerTest {
         mockMvc.perform(post("/api/v1/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestInvalido)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("[0.2] Debe retornar HTTP 200 y UsuarioSesionDTO en GET /me")
+    void debeRetornarSesionEnGetMe() throws Exception {
+        var sesion = new com.compunex.b2b.modules.auth.dto.response.UsuarioSesionDTO(
+                "ventas.mayoristas@technova.com", "TechNova Mayorista S.A.C.", "PROVEEDOR", true);
+        when(authService.obtenerSesion()).thenReturn(sesion);
+
+        mockMvc.perform(get("/api/v1/auth/me"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.correo").value("ventas.mayoristas@technova.com"))
+                .andExpect(jsonPath("$.nombre").value("TechNova Mayorista S.A.C."))
+                .andExpect(jsonPath("$.rol").value("PROVEEDOR"))
+                .andExpect(jsonPath("$.valido").value(true));
+    }
+
+    @Test
+    @DisplayName("[0.3] Debe retornar HTTP 200 en PATCH /password")
+    void debeRetornarHttp200EnPatchPassword() throws Exception {
+        var request = new com.compunex.b2b.modules.auth.dto.request.CambiarPasswordDTO(
+                "PasswordMayorista123!", "NuevaClaveCorporativa2026*");
+        var response = new com.compunex.b2b.modules.auth.dto.response.CambioPasswordResponseDTO(
+                "Contraseña actualizada exitosamente", java.time.Instant.parse("2026-09-02T16:00:00Z"));
+        when(authService.cambiarPassword(any())).thenReturn(response);
+
+        mockMvc.perform(patch("/api/v1/auth/password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.mensaje").value("Contraseña actualizada exitosamente"));
+    }
+
+    @Test
+    @DisplayName("Debe retornar 404 cuando la sesión no encuentra al usuario")
+    void debeRetornar404CuandoSesionNoEncuentraUsuario() throws Exception {
+        when(authService.obtenerSesion())
+                .thenThrow(new jakarta.persistence.EntityNotFoundException("Usuario no encontrado"));
+
+        mockMvc.perform(get("/api/v1/auth/me"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("Debe retornar 400 cuando la contraseña actual es incorrecta")
+    void debeRetornar400CuandoClaveActualEsIncorrecta() throws Exception {
+        var request = new com.compunex.b2b.modules.auth.dto.request.CambiarPasswordDTO(
+                "clave-mala", "NuevaClaveCorporativa2026*");
+        when(authService.cambiarPassword(any()))
+                .thenThrow(new com.compunex.b2b.modules.auth.exception.ContrasenaActualIncorrectaException(
+                        "La contraseña actual es incorrecta"));
+
+        mockMvc.perform(patch("/api/v1/auth/password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
     }
 }

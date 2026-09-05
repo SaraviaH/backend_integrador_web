@@ -111,3 +111,106 @@ El tablero de Trello ya tiene asignadas las tarjetas y los JSONs de prueba para 
    Cambia la contraseña en `src/main/resources/application.properties` por la tuya.
 4. **Puerto 8080 ocupado (`Port 8080 was already in use`):**  
    Cierra cualquier otro proyecto que esté corriendo o cambia a `server.port=8081` en `application.properties`.
+
+## Agrega nuevo producto en SQL
+
+ROLLBACK;
+DO $$
+DECLARE
+    v_proveedor_id BIGINT;
+    v_producto_id BIGINT;
+BEGIN
+
+    -- Buscar proveedor por correo
+    SELECT pp.id
+    INTO v_proveedor_id
+    FROM perfiles_proveedor pp
+    INNER JOIN usuarios u ON pp.usuario_id = u.id
+    WHERE u.correo = 'ventas.mayoristas@technova.com';
+
+    IF v_proveedor_id IS NULL THEN
+        RAISE EXCEPTION 'No existe el proveedor ventas.mayoristas@technova.com';
+    END IF;
+
+
+    -- Insertar producto
+    INSERT INTO productos (
+        uuid,
+        proveedor_id,
+        categoria_id,
+        titulo,
+        descripcion,
+        modelo_comercial,
+        tipo_formato,
+        unidades_por_paquete,
+        pedido_minimo,
+        precio_unitario_ref,
+        precio_total_ref,
+        moneda,
+        terminos_comerciales,
+        estado,
+        es_recomendado,
+        es_promocionado,
+        tiene_oferta,
+        fecha_publicacion,
+        fecha_actualizacion
+    )
+    VALUES (
+        gen_random_uuid(),
+        v_proveedor_id,
+        'ram',
+        'Memoria RAM Corsair Vengeance RGB 32GB DDR5 6000MHz (2x16GB)',
+        'Kit dual channel DDR5 de alto rendimiento compuesto por dos módulos de 16 GB. Compatible con Intel XMP 3.0 y diseñado para equipos empresariales, estaciones de trabajo y sistemas de alto rendimiento.',
+        'DISTRIBUIDOR_OFICIAL',
+        'Kit Dual x2 Módulos',
+        '2 unidades',
+        '1 kit (2 unidades)',
+        48.00,
+        96.00,
+        'USD',
+        'Garantía de 3 años directa con fabricante. Entrega en almacén Lima o envío a provincia con flete por pagar.',
+        'ACTIVO',
+        FALSE,
+        TRUE,
+        TRUE,
+        NOW(),
+        NOW()
+    )
+    RETURNING id INTO v_producto_id;
+
+
+    -- Especificaciones
+    INSERT INTO producto_especificaciones (
+        producto_id,
+        clave,
+        valor
+    )
+    VALUES
+        (v_producto_id, 'Capacidad', '32 GB (2x16)'),
+        (v_producto_id, 'Frecuencia', '6000 MHz'),
+        (v_producto_id, 'Latencia CAS', 'CL36'),
+        (v_producto_id, 'Voltaje', '1.35V');
+
+
+    -- Imágenes
+    INSERT INTO imagenes_producto (
+        producto_id,
+        url_imagen,
+        orden
+    )
+    VALUES
+        (
+            v_producto_id,
+            'https://img.compunex.com/products/ram-corsair-32gb-front.jpg',
+            1
+        ),
+        (
+            v_producto_id,
+            'https://img.compunex.com/products/ram-corsair-32gb-angle.jpg',
+            2
+        );
+
+
+    RAISE NOTICE 'Producto creado correctamente. ID: %', v_producto_id;
+
+END $$;
