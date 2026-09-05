@@ -6,4 +6,6 @@ import org.springframework.data.domain.Pageable;
 public interface ProductoService {
 
     ProductoPaginadoResponseDTO listarMisProductos(String correoAutenticado, Pageable pageable);
+
+    void eliminarMiProducto(String correoAutenticado, Long productoId);
 }
