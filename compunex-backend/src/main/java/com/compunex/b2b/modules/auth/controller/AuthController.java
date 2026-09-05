@@ -1,7 +1,10 @@
 package com.compunex.b2b.modules.auth.controller;
 
+import com.compunex.b2b.modules.auth.dto.request.CambiarPasswordDTO;
 import com.compunex.b2b.modules.auth.dto.request.LoginRequestDTO;
 import com.compunex.b2b.modules.auth.dto.response.AuthResponseDTO;
+import com.compunex.b2b.modules.auth.dto.response.CambioPasswordResponseDTO;
+import com.compunex.b2b.modules.auth.dto.response.UsuarioSesionDTO;
 import com.compunex.b2b.modules.auth.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,5 +31,23 @@ public class AuthController {
     public ResponseEntity<AuthResponseDTO> login(@Valid @RequestBody LoginRequestDTO request) {
         AuthResponseDTO response = authService.login(request);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/me")
+    @Operation(
+        summary = "[0.2] Rehidratar sesión de usuario",
+        description = "Valida el token y retorna los datos de la sesión activa."
+    )
+    public ResponseEntity<UsuarioSesionDTO> me() {
+        return ResponseEntity.ok(authService.obtenerSesion());
+    }
+
+    @PatchMapping("/password")
+    @Operation(
+        summary = "[0.3] Cambio de contraseña corporativa",
+        description = "Valida la contraseña actual con BCrypt y guarda el nuevo hash."
+    )
+    public ResponseEntity<CambioPasswordResponseDTO> cambiarPassword(@Valid @RequestBody CambiarPasswordDTO request) {
+        return ResponseEntity.ok(authService.cambiarPassword(request));
     }
 }

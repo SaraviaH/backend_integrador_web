@@ -1,4 +1,8 @@
 package com.compunex.b2b.modules.auth.dto.request;
 
-public record CambiarPasswordDTO () {
+import jakarta.validation.constraints.NotBlank;
+
+public record CambiarPasswordDTO(
+        @NotBlank String contrasenaActual,
+        @NotBlank String nuevaContrasena) {
 }

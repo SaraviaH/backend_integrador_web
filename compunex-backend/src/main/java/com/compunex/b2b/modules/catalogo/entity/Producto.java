@@ -3,6 +3,8 @@ package com.compunex.b2b.modules.catalogo.entity;
 import com.compunex.b2b.modules.perfiles.entity.PerfilProveedor;
 import jakarta.persistence.*;
 
+import org.hibernate.annotations.BatchSize;
+
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -75,9 +77,11 @@ public class Producto {
     @Column(name = "tiene_oferta", nullable = false)
     private Boolean tieneOferta = false;
 
+    @BatchSize(size = 20)
     @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductoEspecificacion> especificaciones = new ArrayList<>();
 
+    @BatchSize(size = 20)
     @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ImagenProducto> imagenes = new ArrayList<>();
 
