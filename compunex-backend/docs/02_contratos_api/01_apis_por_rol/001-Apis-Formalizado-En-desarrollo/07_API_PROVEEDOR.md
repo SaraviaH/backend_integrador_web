@@ -532,13 +532,6 @@
     "precioTotalRef": 525.00,
     "moneda": "USD",
     "estado": "ACTIVO",
-    "especificaciones": [
-      { "clave": "Capacidad", "valor": "16 GB" },
-      { "clave": "Frecuencia", "valor": "5600 MHz" }
-    ],
-    "imagenes": [
-      { "urlImagen": "https://img.compunex.com/products/ram-kingston-16gb-front.jpg", "orden": 1 }
-    ],
     "fechaPublicacion": "2026-09-02T10:30:00Z"
   }
   ```
@@ -547,7 +540,7 @@
 * **Clases Involucradas y Paquetes:**
   * 🎮 **Controlador:** `com.compunex.b2b.modules.catalogo.controller.ProductoProveedorController`
   * 📥 **DTO de Entrada:** `com.compunex.b2b.modules.catalogo.dto.request.CrearProductoRequestDTO`
-  * 📤 **DTO de Salida:** `com.compunex.b2b.modules.catalogo.dto.response.ProductoDetalleResponseDTO`
+  * 📤 **DTO de Salida:** `com.compunex.b2b.modules.catalogo.dto.response.CrearProductoResponseDTO`
   * ⚙️ **Servicio (Interfaz):** `com.compunex.b2b.modules.catalogo.service.ProductoService`
   * 🔧 **Servicio (Implementación):** `com.compunex.b2b.modules.catalogo.service.impl.ProductoServiceImpl`
   * 🗄️ **Repositorios JPA:** 
@@ -626,7 +619,7 @@
 * **Clases Involucradas y Paquetes:**
   * 🎮 **Controlador:** `com.compunex.b2b.modules.catalogo.controller.ProductoProveedorController`
   * 📥 **DTO de Entrada:** `com.compunex.b2b.modules.catalogo.dto.request.ActualizarProductoRequestDTO`
-  * 📤 **DTO de Salida:** `com.compunex.b2b.modules.catalogo.dto.response.ProductoDetalleResponseDTO`
+  * 📤 **DTO de Salida:** `com.compunex.b2b.modules.catalogo.dto.response.ActualizarProductoResponseDTO`
   * ⚙️ **Servicio (Interfaz):** `com.compunex.b2b.modules.catalogo.service.ProductoService`
   * 🔧 **Servicio (Implementación):** `com.compunex.b2b.modules.catalogo.service.impl.ProductoServiceImpl`
   * 🗄️ **Repositorio JPA:** `com.compunex.b2b.modules.catalogo.repository.ProductoRepository`

@@ -1,7 +1,9 @@
 package com.compunex.b2b.modules.catalogo.controller;
 
 import com.compunex.b2b.config.SecurityConfig;
+import com.compunex.b2b.modules.catalogo.dto.response.ActualizarProductoResponseDTO;
 import com.compunex.b2b.modules.catalogo.dto.response.CambioEstadoResponseDTO;
+import com.compunex.b2b.modules.catalogo.dto.response.CrearProductoResponseDTO;
 import com.compunex.b2b.modules.catalogo.dto.response.ProductoDetalleResponseDTO;
 import com.compunex.b2b.modules.catalogo.service.ProductoService;
 import com.compunex.b2b.security.JwtAuthenticationFilter;
@@ -30,13 +32,15 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(
-    controllers = ProductoProveedorController.class,
-    excludeAutoConfiguration = {SecurityAutoConfiguration.class, SecurityFilterAutoConfiguration.class},
-    excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {SecurityConfig.class, JwtAuthenticationFilter.class})
+        controllers = ProductoProveedorController.class,
+        excludeAutoConfiguration = {SecurityAutoConfiguration.class, SecurityFilterAutoConfiguration.class},
+        excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {SecurityConfig.class, JwtAuthenticationFilter.class})
 )
 @AutoConfigureMockMvc(addFilters = false)
 class ProductoProveedorControllerTest {
@@ -130,9 +134,9 @@ class ProductoProveedorControllerTest {
         String body = "{\"estado\":\"DESHABILITADO_POR_PROVEEDOR\"}";
 
         mockMvc.perform(patch("/api/v1/providers/me/products/1/status")
-                        .principal(auth)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(body))
+                .principal(auth)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.nuevoEstado").value("DESHABILITADO_POR_PROVEEDOR"));
     }
@@ -149,9 +153,139 @@ class ProductoProveedorControllerTest {
         String body = "{\"estado\":\"ACTIVO\"}";
 
         mockMvc.perform(patch("/api/v1/providers/me/products/99/status")
-                        .principal(auth)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(body))
+                .principal(auth)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("[2.3] Debe retornar HTTP 201 y el contrato esperado al crear un producto")
+    void debeCrearProductoRetornando201YContratoEsperado() throws Exception {
+        var auth = new UsernamePasswordAuthenticationToken(
+                "ventas.mayoristas@technova.com", null, List.of());
+
+        UUID fixedUuid = UUID.fromString("7c9e6679-7425-40de-944b-e07fc1f90ae7");
+        Instant fixedDate = Instant.parse("2026-09-02T10:30:00Z");
+
+        var responseDto = new CrearProductoResponseDTO(
+                1L,
+                fixedUuid,
+                1L,
+                "ram",
+                "Memoria RAM Kingston Fury Beast 16GB DDR5 5600MHz",
+                new BigDecimal("52.50"),
+                new BigDecimal("525.00"),
+                "USD",
+                "ACTIVO",
+                fixedDate
+        );
+
+        when(productoService.crearProducto(eq("ventas.mayoristas@technova.com"), any()))
+                .thenReturn(responseDto);
+
+        String jsonEntrada = """
+                {
+                  "categoriaId": "ram",
+                  "titulo": "Memoria RAM Kingston Fury Beast 16GB DDR5 5600MHz",
+                  "descripcion": "Módulo de memoria DDR5 de alto rendimiento...",
+                  "modeloComercial": "DISTRIBUIDOR_OFICIAL",
+                  "tipoFormato": "Caja Master x10 Blísteres",
+                  "unidadesPorPaquete": "10 unidades",
+                  "pedidoMinimo": "1 caja (10 unidades)",
+                  "precioUnitarioRef": 52.50,
+                  "precioTotalRef": 525.00,
+                  "moneda": "USD",
+                  "terminosComerciales": "Garantía de 3 años directa con fabricante.",
+                  "especificaciones": [
+                    { "clave": "Capacidad", "valor": "16 GB" },
+                    { "clave": "Frecuencia", "valor": "5600 MHz" },
+                    { "clave": "Latencia CAS", "valor": "CL36" },
+                    { "clave": "Voltaje", "valor": "1.25V" }
+                  ],
+                  "imagenes": [
+                    { "urlImagen": "https://img.compunex.com/products/ram-kingston-16gb-front.jpg", "orden": 1 },
+                    { "urlImagen": "https://img.compunex.com/products/ram-kingston-16gb-angle.jpg", "orden": 2 }
+                  ]
+                }
+                """;
+
+        mockMvc.perform(post("/api/v1/providers/me/products")
+                .principal(auth)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonEntrada))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.uuid").value("7c9e6679-7425-40de-944b-e07fc1f90ae7"))
+                .andExpect(jsonPath("$.proveedorId").value(1))
+                .andExpect(jsonPath("$.categoriaId").value("ram"))
+                .andExpect(jsonPath("$.titulo").value("Memoria RAM Kingston Fury Beast 16GB DDR5 5600MHz"))
+                .andExpect(jsonPath("$.precioUnitarioRef").value(52.50))
+                .andExpect(jsonPath("$.precioTotalRef").value(525.00))
+                .andExpect(jsonPath("$.moneda").value("USD"))
+                .andExpect(jsonPath("$.estado").value("ACTIVO"))
+                .andExpect(jsonPath("$.fechaPublicacion").value("2026-09-02T10:30:00Z"))
+                .andExpect(jsonPath("$.descripcion").doesNotExist())
+                .andExpect(jsonPath("$.especificaciones").doesNotExist())
+                .andExpect(jsonPath("$.imagenes").doesNotExist());
+    }
+
+    @Test
+    @DisplayName("[2.4] Debe retornar HTTP 200 y el contrato esperado al actualizar un producto")
+    void debeActualizarProductoRetornando200YContratoEsperado() throws Exception {
+        var auth = new UsernamePasswordAuthenticationToken(
+                "ventas.mayoristas@technova.com", null, List.of());
+
+        UUID fixedUuid = UUID.fromString("7c9e6679-7425-40de-944b-e07fc1f90ae7");
+        Instant fixedDate = Instant.parse("2026-09-02T11:00:00Z");
+
+        var responseDto = new ActualizarProductoResponseDTO(
+                1L,
+                fixedUuid,
+                "Memoria RAM Kingston Fury Beast 16GB DDR5 5600MHz (Lote 2026)",
+                new BigDecimal("49.90"),
+                new BigDecimal("249.50"),
+                "ACTIVO",
+                fixedDate
+        );
+
+        when(productoService.actualizarProducto(eq("ventas.mayoristas@technova.com"), eq(1L), any()))
+                .thenReturn(responseDto);
+
+        String jsonEntrada = """
+                {
+                  "titulo": "Memoria RAM Kingston Fury Beast 16GB DDR5 5600MHz (Lote 2026)",
+                  "descripcion": "Descripción actualizada con nuevo stock certificado y empaque sellado.",
+                  "pedidoMinimo": "5 unidades",
+                  "precioUnitarioRef": 49.90,
+                  "precioTotalRef": 249.50,
+                  "terminosComerciales": "Precio rebajado por compra directa a partir de 5 piezas.",
+                  "especificaciones": [
+                    { "clave": "Capacidad", "valor": "16 GB" },
+                    { "clave": "Frecuencia", "valor": "5600 MHz" },
+                    { "clave": "Disipador", "valor": "Aluminio Negro Anodizado" }
+                  ],
+                  "imagenes": [
+                    { "urlImagen": "https://img.compunex.com/products/ram-kingston-16gb-new.jpg", "orden": 1 }
+                  ]
+                }
+                """;
+
+        mockMvc.perform(put("/api/v1/providers/me/products/1")
+                .principal(auth)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonEntrada))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.uuid").value("7c9e6679-7425-40de-944b-e07fc1f90ae7"))
+                .andExpect(jsonPath("$.titulo").value("Memoria RAM Kingston Fury Beast 16GB DDR5 5600MHz (Lote 2026)"))
+                .andExpect(jsonPath("$.precioUnitarioRef").value(49.90))
+                .andExpect(jsonPath("$.precioTotalRef").value(249.50))
+                .andExpect(jsonPath("$.estado").value("ACTIVO"))
+                .andExpect(jsonPath("$.fechaActualizacion").value("2026-09-02T11:00:00Z"))
+                .andExpect(jsonPath("$.descripcion").doesNotExist())
+                .andExpect(jsonPath("$.especificaciones").doesNotExist())
+                .andExpect(jsonPath("$.imagenes").doesNotExist())
+                .andExpect(jsonPath("$.pedidoMinimo").doesNotExist());
     }
 }
