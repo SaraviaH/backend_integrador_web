@@ -1,6 +1,7 @@
 package com.compunex.b2b.modules.catalogo.dto.request;
 
 import com.compunex.b2b.modules.catalogo.entity.ModeloComercial;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -9,18 +10,16 @@ import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 
 public record CrearProductoRequestDTO(
+    @NotBlank(message = "El ID de categoría es obligatorio")
+    String categoriaId,
+
     @NotBlank(message = "El título es obligatorio")
     @Size(max = 500, message = "El título no puede superar los 500 caracteres")
     String titulo,
 
-    @NotBlank(message = "El ID de categoría es obligatorio")
-    String categoriaId,
-
-    @NotEmpty(message = "Debe enviar al menos una URL de imagen")
-    List<String> urlsImagen,
+    String descripcion,
 
     @NotNull(message = "El modelo comercial es obligatorio")
     ModeloComercial modeloComercial,
@@ -42,9 +41,27 @@ public record CrearProductoRequestDTO(
 
     String moneda,
 
-    Map<String, String> especificaciones,
+    String terminosComerciales,
 
-    String descripcion,
+    @Valid
+    List<EspecificacionItemDTO> especificaciones,
 
-    String terminosComerciales
-) {}
+    @NotEmpty(message = "Debe enviar al menos una imagen")
+    @Valid
+    List<ImagenItemDTO> imagenes
+) {
+    public record EspecificacionItemDTO(
+        @NotBlank(message = "La clave de la especificación es obligatoria")
+        String clave,
+
+        @NotBlank(message = "El valor de la especificación es obligatorio")
+        String valor
+    ) {}
+
+    public record ImagenItemDTO(
+        @NotBlank(message = "La URL de la imagen es obligatoria")
+        String urlImagen,
+
+        Short orden
+    ) {}
+}

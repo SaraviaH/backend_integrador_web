@@ -1,10 +1,21 @@
 package com.compunex.b2b.modules.catalogo.service.impl;
 
+import java.time.Instant;
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.compunex.b2b.modules.auth.repository.UsuarioRepository;
 import com.compunex.b2b.modules.catalogo.dto.request.ActualizarProductoRequestDTO;
 import com.compunex.b2b.modules.catalogo.dto.request.CambiarEstadoProductoDTO;
 import com.compunex.b2b.modules.catalogo.dto.request.CrearProductoRequestDTO;
+import com.compunex.b2b.modules.catalogo.dto.response.ActualizarProductoResponseDTO;
 import com.compunex.b2b.modules.catalogo.dto.response.CambioEstadoResponseDTO;
+import com.compunex.b2b.modules.catalogo.dto.response.CrearProductoResponseDTO;
 import com.compunex.b2b.modules.catalogo.dto.response.ProductoDetalleResponseDTO;
 import com.compunex.b2b.modules.catalogo.dto.response.ProductoPaginadoResponseDTO;
 import com.compunex.b2b.modules.catalogo.dto.response.ProductoResumenResponseDTO;
@@ -16,15 +27,8 @@ import com.compunex.b2b.modules.catalogo.repository.CategoriaRepository;
 import com.compunex.b2b.modules.catalogo.repository.ProductoRepository;
 import com.compunex.b2b.modules.catalogo.service.ProductoService;
 import com.compunex.b2b.modules.perfiles.repository.PerfilProveedorRepository;
-import jakarta.persistence.EntityNotFoundException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
-import java.util.List;
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 @Transactional(readOnly = true)
@@ -36,9 +40,9 @@ public class ProductoServiceImpl implements ProductoService {
     private final CategoriaRepository categoriaRepository;
 
     public ProductoServiceImpl(UsuarioRepository usuarioRepository,
-                               PerfilProveedorRepository perfilProveedorRepository,
-                               ProductoRepository productoRepository,
-                               CategoriaRepository categoriaRepository) {
+            PerfilProveedorRepository perfilProveedorRepository,
+            ProductoRepository productoRepository,
+            CategoriaRepository categoriaRepository) {
         this.usuarioRepository = usuarioRepository;
         this.perfilProveedorRepository = perfilProveedorRepository;
         this.productoRepository = productoRepository;
@@ -87,7 +91,7 @@ public class ProductoServiceImpl implements ProductoService {
 
     @Override
     @Transactional
-    public ProductoDetalleResponseDTO crearProducto(String correoAutenticado, CrearProductoRequestDTO request) {
+    public CrearProductoResponseDTO crearProducto(String correoAutenticado, CrearProductoRequestDTO request) {
         var usuario = usuarioRepository.findByCorreo(correoAutenticado)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + correoAutenticado));
 
@@ -118,26 +122,30 @@ public class ProductoServiceImpl implements ProductoService {
         producto.setFechaActualizacion(Instant.now());
 
         if (request.especificaciones() != null && !request.especificaciones().isEmpty()) {
-            List<ProductoEspecificacion> specs = request.especificaciones().entrySet().stream()
-                    .map(entry -> new ProductoEspecificacion(producto, entry.getKey(), entry.getValue()))
+            List<ProductoEspecificacion> specs = request.especificaciones().stream()
+                    .map(dto -> new ProductoEspecificacion(producto, dto.clave(), dto.valor()))
                     .toList();
             producto.getEspecificaciones().addAll(specs);
         }
 
-        if (request.urlsImagen() != null && !request.urlsImagen().isEmpty()) {
-            short orden = 1;
-            for (String url : request.urlsImagen()) {
-                producto.getImagenes().add(new ImagenProducto(producto, url, orden++));
+        if (request.imagenes() != null && !request.imagenes().isEmpty()) {
+            short ordenFallback = 1;
+            for (CrearProductoRequestDTO.ImagenItemDTO imgDto : request.imagenes()) {
+                short orden = imgDto.orden() != null ? imgDto.orden() : ordenFallback++;
+                producto.getImagenes().add(new ImagenProducto(producto, imgDto.urlImagen(), orden));
             }
         }
 
+        categoria.setTotalProductos((categoria.getTotalProductos() != null ? categoria.getTotalProductos() : 0) + 1);
+        categoriaRepository.save(categoria);
+
         Producto productoGuardado = productoRepository.save(producto);
-        return ProductoDetalleResponseDTO.from(productoGuardado);
+        return CrearProductoResponseDTO.from(productoGuardado);
     }
 
     @Override
     @Transactional
-    public ProductoDetalleResponseDTO actualizarProducto(String correoAutenticado, Long productoId, ActualizarProductoRequestDTO request) {
+    public ActualizarProductoResponseDTO actualizarProducto(String correoAutenticado, Long productoId, ActualizarProductoRequestDTO request) {
         var usuario = usuarioRepository.findByCorreo(correoAutenticado)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + correoAutenticado));
 
@@ -186,29 +194,30 @@ public class ProductoServiceImpl implements ProductoService {
 
         if (request.especificaciones() != null) {
             producto.getEspecificaciones().clear();
-            List<ProductoEspecificacion> nuevasSpecs = request.especificaciones().entrySet().stream()
-                    .map(entry -> new ProductoEspecificacion(producto, entry.getKey(), entry.getValue()))
+            List<ProductoEspecificacion> nuevasSpecs = request.especificaciones().stream()
+                    .map(dto -> new ProductoEspecificacion(producto, dto.clave(), dto.valor()))
                     .toList();
             producto.getEspecificaciones().addAll(nuevasSpecs);
         }
 
-        if (request.urlsImagen() != null) {
+        if (request.imagenes() != null) {
             producto.getImagenes().clear();
-            short orden = 1;
-            for (String url : request.urlsImagen()) {
-                producto.getImagenes().add(new ImagenProducto(producto, url, orden++));
+            short ordenFallback = 1;
+            for (var imgDto : request.imagenes()) {
+                short orden = imgDto.orden() != null ? imgDto.orden() : ordenFallback++;
+                producto.getImagenes().add(new ImagenProducto(producto, imgDto.urlImagen(), orden));
             }
         }
 
         producto.setFechaActualizacion(Instant.now());
         Producto productoActualizado = productoRepository.save(producto);
-        return ProductoDetalleResponseDTO.from(productoActualizado);
+        return ActualizarProductoResponseDTO.from(productoActualizado);
     }
 
     @Override
     @Transactional
     public CambioEstadoResponseDTO cambiarEstadoPublicacion(String correoAutenticado, Long productoId,
-                                                             CambiarEstadoProductoDTO request) {
+            CambiarEstadoProductoDTO request) {
         var usuario = usuarioRepository.findByCorreo(correoAutenticado)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + correoAutenticado));
 
@@ -237,10 +246,14 @@ public class ProductoServiceImpl implements ProductoService {
 
     private String construirMensajeCambioEstado(EstadoProducto nuevoEstado) {
         return switch (nuevoEstado) {
-            case ACTIVO -> "El producto ha sido activado nuevamente en el catálogo mayorista";
-            case DESHABILITADO_POR_PROVEEDOR -> "El producto ha sido deshabilitado del catálogo mayorista temporalmente";
-            case OCULTO_POR_ADMIN -> "El producto ha sido ocultado por un administrador del sistema";
-            case ELIMINADO_LOGICO -> "El producto ha sido eliminado del catálogo";
+            case ACTIVO ->
+                "El producto ha sido activado nuevamente en el catálogo mayorista";
+            case DESHABILITADO_POR_PROVEEDOR ->
+                "El producto ha sido deshabilitado del catálogo mayorista temporalmente";
+            case OCULTO_POR_ADMIN ->
+                "El producto ha sido ocultado por un administrador del sistema";
+            case ELIMINADO_LOGICO ->
+                "El producto ha sido eliminado del catálogo";
         };
     }
 
