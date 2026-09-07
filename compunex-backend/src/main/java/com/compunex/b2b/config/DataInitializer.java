@@ -12,7 +12,7 @@ import com.compunex.b2b.modules.perfiles.repository.PerfilProveedorRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,27 +27,30 @@ public class DataInitializer implements CommandLineRunner {
     // =========================================================================
     // 🔑 CREDENCIALES Y DATOS DE PRUEBA (VISIBLES PARA POSTMAN Y FRONTEND)
     // =========================================================================
-    public static final String PROVEEDOR_EMAIL           = "ventas.mayoristas@technova.com";
-    public static final String PROVEEDOR_PASSWORD        = "PasswordMayorista123!";
-    public static final String PROVEEDOR_RAZON_SOCIAL    = "TechNova Mayorista S.A.C.";
-    public static final String PROVEEDOR_RUC             = "20608945612";
-    public static final String PROVEEDOR_TELEFONO        = "+51 987 654 321";
-    public static final String PROVEEDOR_CIUDAD          = "Lima";
+    public static final String PROVEEDOR_EMAIL = "ventas.mayoristas@technova.com";
+    public static final String PROVEEDOR_PASSWORD = "PasswordMayorista123!";
+    public static final String PROVEEDOR_RAZON_SOCIAL = "TechNova Mayorista S.A.C.";
+    public static final String PROVEEDOR_RUC = "20608945612";
+    public static final String PROVEEDOR_TELEFONO = "+51 987 654 321";
+    public static final String PROVEEDOR_CIUDAD = "Lima";
     // =========================================================================
 
     private final UsuarioRepository usuarioRepository;
     private final PerfilProveedorRepository perfilProveedorRepository;
     private final CategoriaRepository categoriaRepository;
     private final ProductoRepository productoRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public DataInitializer(UsuarioRepository usuarioRepository,
-                           PerfilProveedorRepository perfilProveedorRepository,
-                           CategoriaRepository categoriaRepository,
-                           ProductoRepository productoRepository) {
+            PerfilProveedorRepository perfilProveedorRepository,
+            CategoriaRepository categoriaRepository,
+            ProductoRepository productoRepository,
+            PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
         this.perfilProveedorRepository = perfilProveedorRepository;
         this.categoriaRepository = categoriaRepository;
         this.productoRepository = productoRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -59,13 +62,12 @@ public class DataInitializer implements CommandLineRunner {
         }
 
         log.info("[COMPUNEX-INIT] 🚀 Sembrando datos iniciales de prueba (Seed Data)...");
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
         // 1. Crear Usuario Proveedor (Para login según contrato oficial)
         Usuario usuarioProveedor = new Usuario(
                 PROVEEDOR_RAZON_SOCIAL,
                 PROVEEDOR_EMAIL,
-                encoder.encode(PROVEEDOR_PASSWORD),
+                passwordEncoder.encode(PROVEEDOR_PASSWORD),
                 RolUsuario.PROVEEDOR,
                 EstadoUsuario.ACTIVO
         );
@@ -91,19 +93,71 @@ public class DataInitializer implements CommandLineRunner {
         perfil = perfilProveedorRepository.save(perfil);
 
         // 3. Crear Categorías y Subcategorías
-        Categoria catRam = new Categoria("ram", "Memorias RAM", "memory", "Módulos de memoria DDR4 y DDR5 para PC y Servidores", EstadoCategoria.ACTIVA, 1);
-        Subcategoria subRam1 = new Subcategoria(catRam, "DDR5 Desktop");
-        Subcategoria subRam2 = new Subcategoria(catRam, "DDR4 Desktop");
-        Subcategoria subRam3 = new Subcategoria(catRam, "DDR5 SO-DIMM Laptop");
-        catRam.getSubcategorias().addAll(List.of(subRam1, subRam2, subRam3));
+        Categoria catRam = new Categoria("ram", "Memorias RAM", "memory", "Módulos de memoria DDR4 y DDR5 para PC y Servidores", EstadoCategoria.ACTIVA, 45);
+        catRam.getSubcategorias().addAll(List.of(
+                new Subcategoria(catRam, "DDR5 Desktop"),
+                new Subcategoria(catRam, "DDR4 Desktop"),
+                new Subcategoria(catRam, "DDR5 SO-DIMM Laptop")
+        ));
         categoriaRepository.save(catRam);
 
-        Categoria catSsd = new Categoria("ssd", "Almacenamiento SSD", "storage", "Unidades de estado sólido NVMe M.2 y SATA III", EstadoCategoria.ACTIVA, 0);
-        Subcategoria subSsd1 = new Subcategoria(catSsd, "NVMe M.2 PCIe 4.0");
-        Subcategoria subSsd2 = new Subcategoria(catSsd, "NVMe M.2 PCIe 3.0");
-        Subcategoria subSsd3 = new Subcategoria(catSsd, "SATA III 2.5\"");
-        catSsd.getSubcategorias().addAll(List.of(subSsd1, subSsd2, subSsd3));
+        Categoria catSsd = new Categoria("ssd", "Almacenamiento SSD", "storage", "Unidades de estado sólido NVMe M.2 y SATA III", EstadoCategoria.ACTIVA, 38);
+        catSsd.getSubcategorias().addAll(List.of(
+                new Subcategoria(catSsd, "NVMe M.2 PCIe 4.0"),
+                new Subcategoria(catSsd, "NVMe M.2 PCIe 3.0"),
+                new Subcategoria(catSsd, "SATA III 2.5\"")
+        ));
         categoriaRepository.save(catSsd);
+
+        Categoria catGpu = new Categoria("gpu", "Tarjetas Gráficas (GPU)", "Layers", "Tarjetas de video GeForce RTX y AMD Radeon", EstadoCategoria.ACTIVA, 24);
+        catGpu.getSubcategorias().addAll(List.of(
+                new Subcategoria(catGpu, "GeForce RTX 4000"),
+                new Subcategoria(catGpu, "Radeon RX 7000"),
+                new Subcategoria(catGpu, "Workstation Pro")
+        ));
+        categoriaRepository.save(catGpu);
+
+        Categoria catCpu = new Categoria("cpu", "Procesadores", "Zap", "Procesadores Intel Core 13ª/14ª Gen y AMD Ryzen 7000/8000", EstadoCategoria.ACTIVA, 30);
+        catCpu.getSubcategorias().addAll(List.of(
+                new Subcategoria(catCpu, "Intel Core 14ª Gen"),
+                new Subcategoria(catCpu, "Intel Core 13ª Gen"),
+                new Subcategoria(catCpu, "AMD Ryzen AM5"),
+                new Subcategoria(catCpu, "AMD Ryzen AM4")
+        ));
+        categoriaRepository.save(catCpu);
+
+        Categoria catMb = new Categoria("motherboard", "Placas Madre", "Grid", "Mainboards chipsets Z790, B760, X670, B650", EstadoCategoria.ACTIVA, 18);
+        catMb.getSubcategorias().addAll(List.of(
+                new Subcategoria(catMb, "Chipset Z790/B760"),
+                new Subcategoria(catMb, "Chipset X670/B650"),
+                new Subcategoria(catMb, "Micro-ATX"),
+                new Subcategoria(catMb, "Mini-ITX")
+        ));
+        categoriaRepository.save(catMb);
+
+        Categoria catHdd = new Categoria("hdd", "Discos Duros (HDD)", "Database", "Discos mecánicos para almacenamiento masivo y NAS", EstadoCategoria.ACTIVA, 15);
+        catHdd.getSubcategorias().addAll(List.of(
+                new Subcategoria(catHdd, "HDD Surveillance 24/7"),
+                new Subcategoria(catHdd, "HDD NAS Enterprise"),
+                new Subcategoria(catHdd, "HDD Desktop 3.5\"")
+        ));
+        categoriaRepository.save(catHdd);
+
+        Categoria catPsu = new Categoria("psu", "Fuentes de Poder", "BatteryCharging", "Fuentes 80 Plus Bronze, Gold y Platinum ATX 3.0", EstadoCategoria.ACTIVA, 20);
+        catPsu.getSubcategorias().addAll(List.of(
+                new Subcategoria(catPsu, "80+ Bronze"),
+                new Subcategoria(catPsu, "80+ Gold Modular"),
+                new Subcategoria(catPsu, "80+ Platinum ATX 3.0")
+        ));
+        categoriaRepository.save(catPsu);
+
+        Categoria catUsb = new Categoria("usb", "Memorias USB & Flash", "Usb", "Pen drives USB 3.2 y tarjetas MicroSD por paquete máster", EstadoCategoria.ACTIVA, 12);
+        catUsb.getSubcategorias().addAll(List.of(
+                new Subcategoria(catUsb, "USB 3.2 Gen 1"),
+                new Subcategoria(catUsb, "USB Tipo-C"),
+                new Subcategoria(catUsb, "Tarjetas MicroSD Clase 10")
+        ));
+        categoriaRepository.save(catUsb);
 
         // 4. Crear Producto de Muestra
         Producto prod = new Producto();
@@ -136,6 +190,6 @@ public class DataInitializer implements CommandLineRunner {
 
         productoRepository.save(prod);
 
-        log.info("[COMPUNEX-INIT] ✅ Base de datos sembrada con éxito: 1 Proveedor, 2 Categorías y 1 Producto con ficha técnica.");
+        log.info("[COMPUNEX-INIT] ✅ Base de datos sembrada con éxito: 1 Proveedor, 8 Categorías completas y 1 Producto con ficha técnica.");
     }
 }
