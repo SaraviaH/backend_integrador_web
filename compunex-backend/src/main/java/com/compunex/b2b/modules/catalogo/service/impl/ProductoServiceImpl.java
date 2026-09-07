@@ -1,13 +1,18 @@
 package com.compunex.b2b.modules.catalogo.service.impl;
 
 import com.compunex.b2b.modules.auth.repository.UsuarioRepository;
+import com.compunex.b2b.modules.catalogo.dto.request.ActualizarProductoRequestDTO;
 import com.compunex.b2b.modules.catalogo.dto.request.CambiarEstadoProductoDTO;
+import com.compunex.b2b.modules.catalogo.dto.request.CrearProductoRequestDTO;
 import com.compunex.b2b.modules.catalogo.dto.response.CambioEstadoResponseDTO;
 import com.compunex.b2b.modules.catalogo.dto.response.ProductoDetalleResponseDTO;
 import com.compunex.b2b.modules.catalogo.dto.response.ProductoPaginadoResponseDTO;
 import com.compunex.b2b.modules.catalogo.dto.response.ProductoResumenResponseDTO;
 import com.compunex.b2b.modules.catalogo.entity.EstadoProducto;
+import com.compunex.b2b.modules.catalogo.entity.ImagenProducto;
 import com.compunex.b2b.modules.catalogo.entity.Producto;
+import com.compunex.b2b.modules.catalogo.entity.ProductoEspecificacion;
+import com.compunex.b2b.modules.catalogo.repository.CategoriaRepository;
 import com.compunex.b2b.modules.catalogo.repository.ProductoRepository;
 import com.compunex.b2b.modules.catalogo.service.ProductoService;
 import com.compunex.b2b.modules.perfiles.repository.PerfilProveedorRepository;
@@ -19,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -27,13 +33,16 @@ public class ProductoServiceImpl implements ProductoService {
     private final UsuarioRepository usuarioRepository;
     private final PerfilProveedorRepository perfilProveedorRepository;
     private final ProductoRepository productoRepository;
+    private final CategoriaRepository categoriaRepository;
 
     public ProductoServiceImpl(UsuarioRepository usuarioRepository,
                                PerfilProveedorRepository perfilProveedorRepository,
-                               ProductoRepository productoRepository) {
+                               ProductoRepository productoRepository,
+                               CategoriaRepository categoriaRepository) {
         this.usuarioRepository = usuarioRepository;
         this.perfilProveedorRepository = perfilProveedorRepository;
         this.productoRepository = productoRepository;
+        this.categoriaRepository = categoriaRepository;
     }
 
     @Override
@@ -74,6 +83,126 @@ public class ProductoServiceImpl implements ProductoService {
                 .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado: " + productoId));
 
         return ProductoDetalleResponseDTO.from(producto);
+    }
+
+    @Override
+    @Transactional
+    public ProductoDetalleResponseDTO crearProducto(String correoAutenticado, CrearProductoRequestDTO request) {
+        var usuario = usuarioRepository.findByCorreo(correoAutenticado)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + correoAutenticado));
+
+        var perfil = perfilProveedorRepository.findByUsuarioId(usuario.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Perfil de proveedor no encontrado para el usuario: " + correoAutenticado));
+
+        var categoria = categoriaRepository.findById(request.categoriaId())
+                .orElseThrow(() -> new EntityNotFoundException("Categoría no encontrada: " + request.categoriaId()));
+
+        Producto producto = new Producto();
+        producto.setProveedor(perfil);
+        producto.setCategoria(categoria);
+        producto.setTitulo(request.titulo());
+        producto.setDescripcion(request.descripcion());
+        producto.setModeloComercial(request.modeloComercial());
+        producto.setTipoFormato(request.tipoFormato());
+        producto.setUnidadesPorPaquete(request.unidadesPorPaquete());
+        producto.setPedidoMinimo(request.pedidoMinimo());
+        producto.setPrecioUnitarioRef(request.precioUnitarioRef());
+        producto.setPrecioTotalRef(request.precioTotalRef() != null ? request.precioTotalRef() : request.precioUnitarioRef());
+        producto.setMoneda(request.moneda() != null && !request.moneda().isBlank() ? request.moneda() : "USD");
+        producto.setTerminosComerciales(request.terminosComerciales());
+        producto.setEstado(EstadoProducto.ACTIVO);
+        producto.setEsRecomendado(false);
+        producto.setEsPromocionado(false);
+        producto.setTieneOferta(false);
+        producto.setFechaPublicacion(Instant.now());
+        producto.setFechaActualizacion(Instant.now());
+
+        if (request.especificaciones() != null && !request.especificaciones().isEmpty()) {
+            List<ProductoEspecificacion> specs = request.especificaciones().entrySet().stream()
+                    .map(entry -> new ProductoEspecificacion(producto, entry.getKey(), entry.getValue()))
+                    .toList();
+            producto.getEspecificaciones().addAll(specs);
+        }
+
+        if (request.urlsImagen() != null && !request.urlsImagen().isEmpty()) {
+            short orden = 1;
+            for (String url : request.urlsImagen()) {
+                producto.getImagenes().add(new ImagenProducto(producto, url, orden++));
+            }
+        }
+
+        Producto productoGuardado = productoRepository.save(producto);
+        return ProductoDetalleResponseDTO.from(productoGuardado);
+    }
+
+    @Override
+    @Transactional
+    public ProductoDetalleResponseDTO actualizarProducto(String correoAutenticado, Long productoId, ActualizarProductoRequestDTO request) {
+        var usuario = usuarioRepository.findByCorreo(correoAutenticado)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + correoAutenticado));
+
+        var perfil = perfilProveedorRepository.findByUsuarioId(usuario.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Perfil de proveedor no encontrado para el usuario: " + correoAutenticado));
+
+        var producto = productoRepository.findByIdAndProveedorId(productoId, perfil.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado: " + productoId));
+
+        if (request.categoriaId() != null && !request.categoriaId().isBlank()) {
+            var nuevaCategoria = categoriaRepository.findById(request.categoriaId())
+                    .orElseThrow(() -> new EntityNotFoundException("Categoría no encontrada: " + request.categoriaId()));
+            producto.setCategoria(nuevaCategoria);
+        }
+
+        if (request.titulo() != null) {
+            producto.setTitulo(request.titulo());
+        }
+        if (request.descripcion() != null) {
+            producto.setDescripcion(request.descripcion());
+        }
+        if (request.modeloComercial() != null) {
+            producto.setModeloComercial(request.modeloComercial());
+        }
+        if (request.tipoFormato() != null) {
+            producto.setTipoFormato(request.tipoFormato());
+        }
+        if (request.unidadesPorPaquete() != null) {
+            producto.setUnidadesPorPaquete(request.unidadesPorPaquete());
+        }
+        if (request.pedidoMinimo() != null) {
+            producto.setPedidoMinimo(request.pedidoMinimo());
+        }
+        if (request.precioUnitarioRef() != null) {
+            producto.setPrecioUnitarioRef(request.precioUnitarioRef());
+        }
+        if (request.precioTotalRef() != null) {
+            producto.setPrecioTotalRef(request.precioTotalRef());
+        }
+        if (request.moneda() != null && !request.moneda().isBlank()) {
+            producto.setMoneda(request.moneda());
+        }
+        if (request.terminosComerciales() != null) {
+            producto.setTerminosComerciales(request.terminosComerciales());
+        }
+
+        if (request.especificaciones() != null) {
+            producto.getEspecificaciones().clear();
+            List<ProductoEspecificacion> nuevasSpecs = request.especificaciones().entrySet().stream()
+                    .map(entry -> new ProductoEspecificacion(producto, entry.getKey(), entry.getValue()))
+                    .toList();
+            producto.getEspecificaciones().addAll(nuevasSpecs);
+        }
+
+        if (request.urlsImagen() != null) {
+            producto.getImagenes().clear();
+            short orden = 1;
+            for (String url : request.urlsImagen()) {
+                producto.getImagenes().add(new ImagenProducto(producto, url, orden++));
+            }
+        }
+
+        producto.setFechaActualizacion(Instant.now());
+        Producto productoActualizado = productoRepository.save(producto);
+        return ProductoDetalleResponseDTO.from(productoActualizado);
     }
 
     @Override
