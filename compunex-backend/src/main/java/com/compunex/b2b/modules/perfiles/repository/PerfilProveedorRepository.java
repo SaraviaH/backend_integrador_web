@@ -7,4 +7,8 @@ import java.util.Optional;
 public interface PerfilProveedorRepository extends JpaRepository<PerfilProveedor, Long> {
 
     Optional<PerfilProveedor> findByUsuarioId(Long usuarioId);
+
+    Optional<PerfilProveedor> findByIdentificacionFiscal(String identificacionFiscal);
+
+    boolean existsByIdentificacionFiscal(String identificacionFiscal);
 }
