@@ -50,18 +50,28 @@ public class ProductoServiceImpl implements ProductoService {
     }
 
     @Override
-    public ProductoPaginadoResponseDTO listarMisProductos(String correoAutenticado, Pageable pageable) {
+    public ProductoPaginadoResponseDTO listarMisProductos(String correoAutenticado, String search, Pageable pageable) {
         var usuario = usuarioRepository.findByCorreo(correoAutenticado)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + correoAutenticado));
 
         var perfil = perfilProveedorRepository.findByUsuarioId(usuario.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Perfil de proveedor no encontrado para el usuario: " + correoAutenticado));
 
-        Page<Producto> pagina = productoRepository.findAllByProveedorIdAndEstadoNot(
-                perfil.getId(),
-                EstadoProducto.ELIMINADO_LOGICO,
-                pageable
-        );
+        Page<Producto> pagina;
+        if (search != null && !search.trim().isEmpty()) {
+            pagina = productoRepository.buscarPorProveedorYTitulo(
+                    perfil.getId(),
+                    EstadoProducto.ELIMINADO_LOGICO,
+                    search.trim(),
+                    pageable
+            );
+        } else {
+            pagina = productoRepository.findAllByProveedorIdAndEstadoNot(
+                    perfil.getId(),
+                    EstadoProducto.ELIMINADO_LOGICO,
+                    pageable
+            );
+        }
 
         Page<ProductoResumenResponseDTO> paginaDto = pagina.map(ProductoResumenResponseDTO::from);
 
@@ -273,5 +283,57 @@ public class ProductoServiceImpl implements ProductoService {
         producto.setFechaEliminacion(java.time.Instant.now());
         producto.setFechaActualizacion(java.time.Instant.now());
         productoRepository.save(producto);
+    }
+
+    @Override
+    public ProductoPaginadoResponseDTO listarProductosAdmin(String search, Pageable pageable) {
+        Page<Producto> pagina;
+        if (search != null && !search.trim().isEmpty()) {
+            pagina = productoRepository.buscarTodosPorTitulo(
+                    EstadoProducto.ELIMINADO_LOGICO,
+                    search.trim(),
+                    pageable
+            );
+        } else {
+            pagina = productoRepository.findAllByEstadoNot(
+                    EstadoProducto.ELIMINADO_LOGICO,
+                    pageable
+            );
+        }
+
+        Page<ProductoResumenResponseDTO> paginaDto = pagina.map(ProductoResumenResponseDTO::from);
+
+        return new ProductoPaginadoResponseDTO(
+                paginaDto.getContent(),
+                paginaDto.getNumber(),
+                paginaDto.getSize(),
+                paginaDto.getTotalElements(),
+                paginaDto.getTotalPages(),
+                paginaDto.isLast()
+        );
+    }
+
+    @Override
+    @Transactional
+    public CambioEstadoResponseDTO cambiarEstadoPublicacionAdmin(Long productoId,
+            CambiarEstadoProductoDTO request) {
+        var producto = productoRepository.findById(productoId)
+                .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado: " + productoId));
+
+        EstadoProducto estadoAnterior = producto.getEstado();
+        EstadoProducto nuevoEstado = request.estado();
+
+        producto.setEstado(nuevoEstado);
+        producto.setFechaActualizacion(Instant.now());
+        productoRepository.save(producto);
+
+        return new CambioEstadoResponseDTO(
+                producto.getId(),
+                producto.getUuid(),
+                estadoAnterior.name(),
+                nuevoEstado.name(),
+                construirMensajeCambioEstado(nuevoEstado),
+                producto.getFechaActualizacion()
+        );
     }
 }

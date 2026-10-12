@@ -19,6 +19,7 @@ public record CrearProductoRequestDTO(
     @Size(max = 500, message = "El título no puede superar los 500 caracteres")
     String titulo,
 
+    @NotBlank(message = "La descripción es obligatoria")
     String descripcion,
 
     @NotNull(message = "El modelo comercial es obligatorio")
@@ -37,6 +38,7 @@ public record CrearProductoRequestDTO(
     @Positive(message = "El precio unitario de referencia debe ser mayor a 0")
     BigDecimal precioUnitarioRef,
 
+    @Positive(message = "El precio total de referencia debe ser mayor a 0")
     BigDecimal precioTotalRef,
 
     String moneda,

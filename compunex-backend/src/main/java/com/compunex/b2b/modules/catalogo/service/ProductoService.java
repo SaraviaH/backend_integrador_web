@@ -13,7 +13,11 @@ import com.compunex.b2b.modules.catalogo.dto.response.ProductoPaginadoResponseDT
 
 public interface ProductoService {
 
-    ProductoPaginadoResponseDTO listarMisProductos(String correoAutenticado, Pageable pageable);
+    ProductoPaginadoResponseDTO listarMisProductos(String correoAutenticado, String search, Pageable pageable);
+
+    default ProductoPaginadoResponseDTO listarMisProductos(String correoAutenticado, Pageable pageable) {
+        return listarMisProductos(correoAutenticado, null, pageable);
+    }
 
     ProductoDetalleResponseDTO obtenerFichaTecnica(String correoAutenticado, Long productoId);
 
@@ -25,4 +29,9 @@ public interface ProductoService {
             CambiarEstadoProductoDTO request);
 
     void eliminarMiProducto(String correoAutenticado, Long productoId);
+
+    // Métodos para rol ADMIN
+    ProductoPaginadoResponseDTO listarProductosAdmin(String search, Pageable pageable);
+
+    CambioEstadoResponseDTO cambiarEstadoPublicacionAdmin(Long productoId, CambiarEstadoProductoDTO request);
 }

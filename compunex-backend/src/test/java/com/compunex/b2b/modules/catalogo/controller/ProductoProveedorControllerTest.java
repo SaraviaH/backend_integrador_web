@@ -14,11 +14,11 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
@@ -48,7 +48,7 @@ class ProductoProveedorControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     private ProductoService productoService;
 
     @Test
@@ -287,5 +287,53 @@ class ProductoProveedorControllerTest {
                 .andExpect(jsonPath("$.especificaciones").doesNotExist())
                 .andExpect(jsonPath("$.imagenes").doesNotExist())
                 .andExpect(jsonPath("$.pedidoMinimo").doesNotExist());
+    }
+
+    @Test
+    @DisplayName("[2.3] Debe retornar HTTP 400 Bad Request cuando el payload de creación tiene datos inválidos")
+    void debeRechazarCreacionConDatosInvalidos() throws Exception {
+        var auth = new UsernamePasswordAuthenticationToken(
+                "ventas.mayoristas@technova.com", null, List.of());
+
+        // Payload con título vacío, precio negativo y sin imágenes
+        String jsonInvalido = """
+                {
+                  "categoriaId": "ram",
+                  "titulo": "",
+                  "descripcion": "Sin titulo",
+                  "modeloComercial": "DISTRIBUIDOR_OFICIAL",
+                  "tipoFormato": "Caja",
+                  "unidadesPorPaquete": "10",
+                  "pedidoMinimo": "1",
+                  "precioUnitarioRef": -10.00,
+                  "imagenes": []
+                }
+                """;
+
+        mockMvc.perform(post("/api/v1/providers/me/products")
+                .principal(auth)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonInvalido))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("[2.1] Debe filtrar productos propios con parámetro search")
+    void debeFiltrarProductosConParametroSearch() throws Exception {
+        var auth = new UsernamePasswordAuthenticationToken(
+                "ventas.mayoristas@technova.com", null, List.of());
+
+        var paginado = new com.compunex.b2b.modules.catalogo.dto.response.ProductoPaginadoResponseDTO(
+                List.of(), 0, 10, 0, 0, true);
+
+        when(productoService.listarMisProductos(eq("ventas.mayoristas@technova.com"), eq("Kingston"), any()))
+                .thenReturn(paginado);
+
+        mockMvc.perform(get("/api/v1/providers/me/products?search=Kingston")
+                .principal(auth))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.pagina").value(0));
+
+        verify(productoService, times(1)).listarMisProductos(eq("ventas.mayoristas@technova.com"), eq("Kingston"), any());
     }
 }
