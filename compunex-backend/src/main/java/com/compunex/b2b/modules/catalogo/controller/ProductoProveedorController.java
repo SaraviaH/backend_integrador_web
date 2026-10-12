@@ -27,12 +27,14 @@ import com.compunex.b2b.modules.catalogo.dto.response.ProductoDetalleResponseDTO
 import com.compunex.b2b.modules.catalogo.dto.response.ProductoPaginadoResponseDTO;
 import com.compunex.b2b.modules.catalogo.service.ProductoService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping({"/api/v1/providers/me/products", "/api/v1/proveedores/yo/productos", "/api/proveedores/yo/productos"})
 @Tag(name = "09. API de Productos - Proveedor", description = "Endpoints de gestión de productos propios del proveedor (CRUD)")
+@SecurityRequirement(name = "bearerAuth")
 public class ProductoProveedorController {
 
     private final ProductoService productoService;
@@ -44,12 +46,13 @@ public class ProductoProveedorController {
     @GetMapping
     public ResponseEntity<ProductoPaginadoResponseDTO> listarMisProductos(
             Authentication authentication,
+            @RequestParam(required = false) String search,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
         String correoAutenticado = authentication.getName();
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "fechaPublicacion"));
-        ProductoPaginadoResponseDTO response = productoService.listarMisProductos(correoAutenticado, pageable);
+        ProductoPaginadoResponseDTO response = productoService.listarMisProductos(correoAutenticado, search, pageable);
         return ResponseEntity.ok(response);
     }
 

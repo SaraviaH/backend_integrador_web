@@ -27,6 +27,7 @@ public record ActualizarProductoRequestDTO(
     @Positive(message = "El precio unitario de referencia debe ser mayor a 0")
     BigDecimal precioUnitarioRef,
 
+    @Positive(message = "El precio total de referencia debe ser mayor a 0")
     BigDecimal precioTotalRef,
 
     String moneda,

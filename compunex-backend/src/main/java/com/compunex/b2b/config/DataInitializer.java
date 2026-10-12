@@ -33,6 +33,11 @@ public class DataInitializer implements CommandLineRunner {
     public static final String PROVEEDOR_RUC = "20608945612";
     public static final String PROVEEDOR_TELEFONO = "+51 987 654 321";
     public static final String PROVEEDOR_CIUDAD = "Lima";
+
+    // Credenciales de prueba para Rol Administrador
+    public static final String ADMIN_EMAIL = "admin@compunex.com";
+    public static final String ADMIN_PASSWORD = "AdminPassword2026!";
+    public static final String ADMIN_NOMBRE = "Administrador General COMPUNEX";
     // =========================================================================
 
     private final UsuarioRepository usuarioRepository;
@@ -56,8 +61,27 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) {
-        if (usuarioRepository.count() > 0) {
-            log.info("[COMPUNEX-INIT] La base de datos ya contiene registros. Omitiendo seed data.");
+        // Asegurar que el usuario Administrador de prueba exista para desarrollo
+        if (usuarioRepository.findByCorreo(ADMIN_EMAIL).isEmpty()) {
+            Usuario usuarioAdmin = new Usuario(
+                    ADMIN_NOMBRE,
+                    ADMIN_EMAIL,
+                    passwordEncoder.encode(ADMIN_PASSWORD),
+                    RolUsuario.ADMIN,
+                    EstadoUsuario.ACTIVO
+            );
+            usuarioRepository.save(usuarioAdmin);
+            log.info("[COMPUNEX-INIT] ✅ Usuario Administrador de desarrollo creado: {}", ADMIN_EMAIL);
+        }
+
+        if (usuarioRepository.findByCorreo(PROVEEDOR_EMAIL).isPresent()) {
+            Usuario uExistente = usuarioRepository.findByCorreo(PROVEEDOR_EMAIL).get();
+            if (!passwordEncoder.matches(PROVEEDOR_PASSWORD, uExistente.getHashContrasena())) {
+                uExistente.setHashContrasena(passwordEncoder.encode(PROVEEDOR_PASSWORD));
+                usuarioRepository.save(uExistente);
+                log.info("[COMPUNEX-INIT] 🔄 Contraseña del proveedor de desarrollo sincronizada.");
+            }
+            log.info("[COMPUNEX-INIT] La base de datos ya contiene registros del proveedor. Omitiendo seed data de catálogo.");
             return;
         }
 

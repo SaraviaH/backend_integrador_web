@@ -345,4 +345,98 @@ class ProductoServiceTest {
 
         verify(productoRepository, times(1)).save(producto);
     }
+
+    @Test
+    @DisplayName("Debe buscar productos del proveedor usando JPQL cuando search no es nulo")
+    void debeFiltrarProductosPorNombreConJPQL() {
+        String correo = "ventas.mayoristas@technova.com";
+        var usuario = new Usuario("TechNova", correo, "hash", RolUsuario.PROVEEDOR, EstadoUsuario.ACTIVO);
+        usuario.setId(1L);
+        var perfil = new PerfilProveedor();
+        perfil.setId(10L);
+
+        when(usuarioRepository.findByCorreo(correo)).thenReturn(Optional.of(usuario));
+        when(perfilProveedorRepository.findByUsuarioId(1L)).thenReturn(Optional.of(perfil));
+        when(productoRepository.buscarPorProveedorYTitulo(eq(10L), eq(EstadoProducto.ELIMINADO_LOGICO), eq("SSD"), any()))
+                .thenReturn(org.springframework.data.domain.Page.empty());
+
+        var pageable = org.springframework.data.domain.PageRequest.of(0, 10);
+        var resultado = productoService.listarMisProductos(correo, "SSD", pageable);
+
+        assertNotNull(resultado);
+        verify(productoRepository, times(1)).buscarPorProveedorYTitulo(10L, EstadoProducto.ELIMINADO_LOGICO, "SSD", pageable);
+        verify(productoRepository, never()).findAllByProveedorIdAndEstadoNot(any(), any(), any());
+    }
+
+    @Test
+    @DisplayName("Admin: Debe listar productos de todos los proveedores sin filtro")
+    void debeListarProductosParaAdminSinFiltro() {
+        when(productoRepository.findAllByEstadoNot(eq(EstadoProducto.ELIMINADO_LOGICO), any()))
+                .thenReturn(org.springframework.data.domain.Page.empty());
+
+        var pageable = org.springframework.data.domain.PageRequest.of(0, 10);
+        var resultado = productoService.listarProductosAdmin(null, pageable);
+
+        assertNotNull(resultado);
+        verify(productoRepository, times(1)).findAllByEstadoNot(EstadoProducto.ELIMINADO_LOGICO, pageable);
+    }
+
+    @Test
+    @DisplayName("Admin: Debe listar productos con búsqueda por título")
+    void debeListarProductosParaAdminConFiltro() {
+        when(productoRepository.buscarTodosPorTitulo(eq(EstadoProducto.ELIMINADO_LOGICO), eq("RTX"), any()))
+                .thenReturn(org.springframework.data.domain.Page.empty());
+
+        var pageable = org.springframework.data.domain.PageRequest.of(0, 10);
+        var resultado = productoService.listarProductosAdmin("RTX", pageable);
+
+        assertNotNull(resultado);
+        verify(productoRepository, times(1)).buscarTodosPorTitulo(EstadoProducto.ELIMINADO_LOGICO, "RTX", pageable);
+    }
+
+    @Test
+    @DisplayName("Admin: Debe cambiar estado de cualquier producto sin restricción de proveedor")
+    void debeCambiarEstadoPublicacionAdminExitosamente() {
+        var producto = new Producto();
+        producto.setId(5L);
+        producto.setUuid(UUID.randomUUID());
+        producto.setEstado(EstadoProducto.ACTIVO);
+
+        when(productoRepository.findById(5L)).thenReturn(Optional.of(producto));
+        when(productoRepository.save(any(Producto.class))).thenAnswer(i -> i.getArgument(0));
+
+        var req = new CambiarEstadoProductoDTO(EstadoProducto.OCULTO_POR_ADMIN);
+        var resultado = productoService.cambiarEstadoPublicacionAdmin(5L, req);
+
+        assertNotNull(resultado);
+        assertEquals(5L, resultado.id());
+        assertEquals("ACTIVO", resultado.estadoAnterior());
+        assertEquals("OCULTO_POR_ADMIN", resultado.nuevoEstado());
+        assertEquals(EstadoProducto.OCULTO_POR_ADMIN, producto.getEstado());
+        verify(productoRepository, times(1)).save(producto);
+    }
+
+    @Test
+    @DisplayName("Transaccional: Debe fallar atómicamente y propagar excepción si categoría no existe")
+    void debeLanzarExcepcionYNoPersistirCuandoCategoriaNoExiste() {
+        String correo = "ventas.mayoristas@technova.com";
+        var usuario = new Usuario("TechNova", correo, "hash", RolUsuario.PROVEEDOR, EstadoUsuario.ACTIVO);
+        usuario.setId(1L);
+        var perfil = new PerfilProveedor();
+        perfil.setId(10L);
+
+        when(usuarioRepository.findByCorreo(correo)).thenReturn(Optional.of(usuario));
+        when(perfilProveedorRepository.findByUsuarioId(1L)).thenReturn(Optional.of(perfil));
+        when(categoriaRepository.findById("categoria-fantasma")).thenReturn(Optional.empty());
+
+        var request = new CrearProductoRequestDTO(
+                "categoria-fantasma", "Titulo", "Descripcion",
+                ModeloComercial.DISTRIBUIDOR_OFICIAL, "Caja", "10", "1",
+                new BigDecimal("50.00"), new BigDecimal("500.00"), "USD",
+                "Terminos", List.of(), List.of(new CrearProductoRequestDTO.ImagenItemDTO("http://img.jpg", (short) 1))
+        );
+
+        assertThrows(EntityNotFoundException.class, () -> productoService.crearProducto(correo, request));
+        verify(productoRepository, never()).save(any());
+    }
 }

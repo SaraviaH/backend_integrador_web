@@ -28,24 +28,55 @@ public class JwtTokenProvider {
 
     public String generarToken(Authentication authentication) {
         String username;
+        String rol = null;
         if (authentication.getPrincipal() instanceof UserDetails userDetails) {
             username = userDetails.getUsername();
+            rol = userDetails.getAuthorities().stream()
+                    .map(org.springframework.security.core.GrantedAuthority::getAuthority)
+                    .findFirst()
+                    .orElse(null);
         } else {
             username = authentication.getName();
+            if (authentication.getAuthorities() != null) {
+                rol = authentication.getAuthorities().stream()
+                        .map(org.springframework.security.core.GrantedAuthority::getAuthority)
+                        .findFirst()
+                        .orElse(null);
+            }
         }
-        return generarTokenDesdeCorreo(username);
+        if (rol != null && rol.startsWith("ROLE_")) {
+            rol = rol.substring(5);
+        }
+        return generarTokenConRol(username, rol);
     }
 
     public String generarTokenDesdeCorreo(String correo) {
+        return generarTokenConRol(correo, null);
+    }
+
+    public String generarTokenConRol(String correo, String rol) {
         Date ahora = new Date();
         Date expiracion = new Date(ahora.getTime() + expirationMs);
 
-        return Jwts.builder()
+        var builder = Jwts.builder()
                 .subject(correo)
                 .issuedAt(ahora)
-                .expiration(expiracion)
-                .signWith(getSigningKey())
-                .compact();
+                .expiration(expiracion);
+
+        if (rol != null && !rol.isBlank()) {
+            builder.claim("rol", rol);
+        }
+
+        return builder.signWith(getSigningKey()).compact();
+    }
+
+    public String obtenerRolDesdeToken(String token) {
+        Claims claims = Jwts.parser()
+                .verifyWith(getSigningKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+        return claims.get("rol", String.class);
     }
 
     public String obtenerCorreoDesdeToken(String token) {
