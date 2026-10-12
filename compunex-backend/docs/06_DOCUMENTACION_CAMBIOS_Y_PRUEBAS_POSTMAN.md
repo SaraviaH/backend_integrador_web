@@ -251,20 +251,24 @@ Las peticiones están parametrizadas con variables automáticas:
   {
     "categoriaId": "ram",
     "titulo": "Memoria RAM Corsair Vengeance 32GB DDR5 6000MHz",
-    "descripcion": "Kit de memoria de alta velocidad para plataformas AMD e Intel.",
+    "descripcion": "Kit de memoria de alta velocidad optimizado para plataformas AMD EXPO e Intel XMP 3.0.",
     "modeloComercial": "DISTRIBUIDOR_OFICIAL",
-    "tipoFormato": "Caja Master x5",
+    "tipoFormato": "Caja Master x5 Blísteres",
     "unidadesPorPaquete": "5 unidades",
-    "precioMayorista": 420.00,
-    "pedidoMinimo": 2,
-    "stockFisico": 30,
+    "pedidoMinimo": "1 caja (5 unidades)",
+    "precioUnitarioRef": 84.00,
+    "precioTotalRef": 420.00,
+    "moneda": "USD",
+    "terminosComerciales": "Garantía de por vida directa con el fabricante. Factura electrónica.",
     "especificaciones": [
-      { "nombre": "Frecuencia", "valor": "6000 MHz", "orden": 1 },
-      { "nombre": "Capacidad", "valor": "32 GB (2x16GB)", "orden": 2 },
-      { "nombre": "Latencia", "valor": "CL30", "orden": 3 }
+      { "clave": "Capacidad", "valor": "32 GB (2x16GB)" },
+      { "clave": "Frecuencia", "valor": "6000 MHz" },
+      { "clave": "Latencia CAS", "valor": "CL30" },
+      { "clave": "Voltaje", "valor": "1.35V" }
     ],
     "imagenes": [
-      { "url": "https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?w=800", "esPortada": true, "orden": 1 }
+      { "urlImagen": "https://img.compunex.com/products/corsair-ddr5-32gb-front.jpg", "orden": 1 },
+      { "urlImagen": "https://img.compunex.com/products/corsair-ddr5-32gb-box.jpg", "orden": 2 }
     ]
   }
   ```
@@ -303,18 +307,20 @@ Las peticiones están parametrizadas con variables automáticas:
     "titulo": "Memoria RAM Kingston Fury Beast 16GB DDR4 3200MHz Edición Especial",
     "descripcion": "Módulo de memoria RAM DDR4 de alto rendimiento con disipador térmico negro mejorado.",
     "modeloComercial": "DISTRIBUIDOR_OFICIAL",
-    "tipoFormato": "Caja Master x10",
+    "tipoFormato": "Caja Master x10 Blísteres",
     "unidadesPorPaquete": "10 unidades",
-    "precioMayorista": 139.50,
-    "pedidoMinimo": 3,
-    "stockFisico": 45,
+    "pedidoMinimo": "1 caja (10 unidades)",
+    "precioUnitarioRef": 13.95,
+    "precioTotalRef": 139.50,
+    "moneda": "USD",
+    "terminosComerciales": "Garantía extendida de 3 años directa con fabricante.",
     "especificaciones": [
-      { "nombre": "Frecuencia", "valor": "3200 MHz", "orden": 1 },
-      { "nombre": "Capacidad", "valor": "16 GB", "orden": 2 },
-      { "nombre": "Tipo", "valor": "DDR4", "orden": 3 }
+      { "clave": "Capacidad", "valor": "16 GB" },
+      { "clave": "Frecuencia", "valor": "3200 MHz" },
+      { "clave": "Tipo", "valor": "DDR4" }
     ],
     "imagenes": [
-      { "url": "https://images.unsplash.com/photo-1562976540-1502c2145186?w=800", "esPortada": true, "orden": 1 }
+      { "urlImagen": "https://img.compunex.com/products/ram-kingston-16gb-special.jpg", "orden": 1 }
     ]
   }
   ```
