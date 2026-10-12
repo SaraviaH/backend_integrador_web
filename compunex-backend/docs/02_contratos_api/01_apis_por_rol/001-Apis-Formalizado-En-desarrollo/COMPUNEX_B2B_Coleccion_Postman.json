@@ -15,12 +15,71 @@
       "key": "token",
       "value": "",
       "type": "string"
+    },
+    {
+      "key": "adminToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "proveedorToken",
+      "value": "",
+      "type": "string"
     }
   ],
   "item": [
     {
       "name": "00. Autenticación y Sesión",
       "item": [
+        {
+          "name": "[0.0] Registro de Proveedor Mayorista",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code es 201 Created\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.token) {",
+                  "    pm.collectionVariables.set(\"token\", jsonData.token);",
+                  "    pm.environment.set(\"token\", jsonData.token);",
+                  "    console.log(\"Token JWT de Proveedor guardado exitosamente:\", jsonData.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Juan Carlos Rivera\",\n  \"correo\": \"contacto.nuevo@innovapc.com\",\n  \"contrasena\": \"InnovaPass2026!\",\n  \"ruc\": \"20712345678\",\n  \"razonSocial\": \"Innova PC Mayoristas S.A.C.\",\n  \"nombreComercial\": \"Innova PC Wholesale\",\n  \"telefonoContacto\": \"+51 987 111 222\",\n  \"ciudad\": \"Lima\",\n  \"direccion\": \"Av. Garcilaso de la Vega 1348, Int. 201\",\n  \"anosMercado\": \"5 años\",\n  \"descripcion\": \"Especialistas en componentes, placas base y procesadores para ensamblaje.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Registra un nuevo usuario con rol PROVEEDOR y su perfil comercial asociado en una sola transacción, devolviendo un token JWT emitido."
+          }
+        },
         {
           "name": "[0.1] Login y Emisión de Token JWT",
           "event": [
@@ -819,7 +878,560 @@
           }
         }
       ]
+    },
+    {
+      "id": "f35799e1-942d-4605-ac5f-10e141bb2e08",
+      "name": "06. Pruebas de Cambios y Nuevos Endpoints (Guía 06)",
+      "item": [
+        {
+          "id": "958dab43-d997-4a9b-96cc-2289fabb21f2",
+          "name": "[Caso 1] [1.1] Listar Categorías Activas (Público)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/categories",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "categories"
+              ]
+            },
+            "description": "Endpoint público sin autenticación. Retorna HTTP 200 y array de categorías activas con total de productos."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code es 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Retorna lista no vacía de categorías\", function () {",
+                  "    var data = pm.response.json();",
+                  "    pm.expect(data).to.be.an('array');",
+                  "    pm.expect(data.length).to.be.above(0);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "9a792858-1dca-4674-9ec6-46c75019b40f",
+          "name": "[Caso 2] [0.1] Login Proveedor (Emisión de Token JWT)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": \"ventas.mayoristas@technova.com\",\n  \"contrasena\": \"PasswordMayorista123!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Autenticación del proveedor mayorista. Guarda automáticamente el JWT emitido en las variables {{token}} y {{proveedorToken}}."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code es 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.token) {",
+                  "    pm.collectionVariables.set(\"token\", jsonData.token);",
+                  "    pm.collectionVariables.set(\"proveedorToken\", jsonData.token);",
+                  "    pm.environment.set(\"token\", jsonData.token);",
+                  "    pm.environment.set(\"proveedorToken\", jsonData.token);",
+                  "    console.log(\"Token Proveedor guardado en variable 'token':\", jsonData.token);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "833a2b06-3253-476c-8fd0-5a0592982818",
+          "name": "[Caso 3] [0.2] Obtener Sesión Actual (/me)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "me"
+              ]
+            },
+            "description": "Rehidrata la sesión activa y verifica que el rol sea PROVEEDOR."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code es 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Rol es PROVEEDOR y sesión válida\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.rol).to.eql(\"PROVEEDOR\");",
+                  "    pm.expect(jsonData.valido).to.eql(true);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "6ba11abc-36d6-4198-aa88-6ef136bc3327",
+          "name": "[Caso 4] [7.1] Listar Mis Productos Paginados y Búsqueda JPQL",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/providers/me/products?page=0&size=10&search=Kingston",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "providers",
+                "me",
+                "products"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                },
+                {
+                  "key": "search",
+                  "value": "Kingston"
+                }
+              ]
+            },
+            "description": "Lista productos del proveedor autenticado con filtro opcional de búsqueda insensible a mayúsculas."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code es 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Estructura paginada retornada\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.content).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "eca8e154-0ff7-478f-a1c5-443945f07c6a",
+          "name": "[Caso 5] [7.3] Crear Nuevo Producto (Bean Validation)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoriaId\": \"ram\",\n  \"titulo\": \"Memoria RAM Corsair Vengeance 32GB DDR5 6000MHz\",\n  \"descripcion\": \"Kit de memoria de alta velocidad para plataformas AMD e Intel.\",\n  \"modeloComercial\": \"DISTRIBUIDOR_OFICIAL\",\n  \"tipoFormato\": \"Caja Master x5\",\n  \"unidadesPorPaquete\": \"5 unidades\",\n  \"pedidoMinimo\": \"1 caja\",\n  \"precioUnitarioRef\": 110.0,\n  \"precioTotalRef\": 550.0,\n  \"moneda\": \"USD\",\n  \"terminosComerciales\": \"Garant\\u00eda de por vida directa con el fabricante.\",\n  \"especificaciones\": [\n    {\n      \"clave\": \"Capacidad\",\n      \"valor\": \"32 GB\"\n    },\n    {\n      \"clave\": \"Frecuencia\",\n      \"valor\": \"6000 MHz\"\n    }\n  ],\n  \"imagenes\": [\n    {\n      \"urlImagen\": \"https://img.compunex.com/products/corsair-32gb.jpg\",\n      \"orden\": 1\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/providers/me/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "providers",
+                "me",
+                "products"
+              ]
+            },
+            "description": "Crea un nuevo producto validado. Guarda el ID generado en la variable {{nuevoProductoId}}."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code es 201 Created\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.id) {",
+                  "    pm.collectionVariables.set(\"nuevoProductoId\", jsonData.id);",
+                  "    console.log(\"Producto creado con ID:\", jsonData.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "830ea88b-2c44-4662-b837-167be7444f2e",
+          "name": "[Caso 6] [7.5] Alternar Estado de Publicación Proveedor",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"INACTIVO\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/providers/me/products/1/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "providers",
+                "me",
+                "products",
+                "1",
+                "status"
+              ]
+            },
+            "description": "Cambia el estado de un producto del proveedor a INACTIVO."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code es 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "6946890f-8d5e-4e04-aa23-2e8346307585",
+          "name": "[Caso 7] [0.1b] Login Administrador",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": \"admin@compunex.com\",\n  \"contrasena\": \"AdminPassword2026!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Autenticación del Administrador. Guarda automáticamente el token JWT en {{adminToken}}."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code es 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.token) {",
+                  "    pm.collectionVariables.set(\"adminToken\", jsonData.token);",
+                  "    pm.environment.set(\"adminToken\", jsonData.token);",
+                  "    console.log(\"Token Administrador guardado en variable 'adminToken':\", jsonData.token);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "d1e53d28-7866-400d-9a95-430e8bc00e3a",
+          "name": "[Caso 8] [8.1] Listar Productos Globales (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/products?page=0&size=10&search=RAM",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "products"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                },
+                {
+                  "key": "search",
+                  "value": "RAM"
+                }
+              ]
+            },
+            "description": "Endpoint exclusivo para ADMIN. Retorna el catálogo global de todos los proveedores."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code es 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Catálogo global retornado\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.content).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "4caca474-d141-4c0b-9dc0-5e04a0ac0504",
+          "name": "[Caso 9] [8.2] Modificar Estado de Producto (Admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"PENDIENTE_REVISION\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/products/1/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "products",
+                "1",
+                "status"
+              ]
+            },
+            "description": "Endpoint de supervisión donde el Administrador cambia el estado de cualquier producto sin requerir ser propietario."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code es 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "f999048c-4372-452d-9efc-18e859727058",
+          "name": "[Caso 10a] Validación 403 Forbidden (Proveedor en Ruta Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "products"
+              ]
+            },
+            "description": "Intento de un usuario con rol PROVEEDOR de acceder a ruta exclusiva de ADMIN. Debe responder 403 Forbidden."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code es 403 Forbidden\", function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "d34e3ee2-01f1-428b-8074-f1cbb771cb42",
+          "name": "[Caso 10b] Validación 401 Unauthorized (Sin Token)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "me"
+              ]
+            },
+            "description": "Intento de acceder a un endpoint privado sin enviar cabecera Authorization. Debe responder 401 Unauthorized."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code es 401 Unauthorized\", function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "description": "Casos de prueba completos paso a paso documentados en 06_DOCUMENTACION_CAMBIOS_Y_PRUEBAS_POSTMAN.md"
     }
   ]
 }
-

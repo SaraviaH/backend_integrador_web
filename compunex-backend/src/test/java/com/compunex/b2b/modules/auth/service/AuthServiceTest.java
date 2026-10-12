@@ -33,6 +33,9 @@ class AuthServiceTest {
     @Mock
     private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
+    @Mock
+    private com.compunex.b2b.modules.perfiles.repository.PerfilProveedorRepository perfilProveedorRepository;
+
     @InjectMocks
     private AuthServiceImpl authService;
 
@@ -152,5 +155,90 @@ class AuthServiceTest {
         } finally {
             org.springframework.security.core.context.SecurityContextHolder.clearContext();
         }
+    }
+
+    @Test
+    @DisplayName("[0.4] debeRegistrarProveedorExitosamenteConPerfilYToken")
+    void debeRegistrarProveedorExitosamenteConPerfilYToken() {
+        var request = new com.compunex.b2b.modules.auth.dto.request.RegistroProveedorRequestDTO(
+                "Juan Carlos Rivera",
+                "contacto@innovapc.com",
+                "InnovaPass2026!",
+                "20712345678",
+                "Innova PC Mayoristas S.A.C.",
+                "Innova PC Wholesale",
+                "+51 987 111 222",
+                "Lima",
+                "Av. Garcilaso de la Vega 1348, Int. 201",
+                "5 años",
+                "Especialistas en componentes informáticos."
+        );
+
+        when(usuarioRepository.existsByCorreo("contacto@innovapc.com")).thenReturn(false);
+        when(perfilProveedorRepository.existsByIdentificacionFiscal("20712345678")).thenReturn(false);
+        when(passwordEncoder.encode("InnovaPass2026!")).thenReturn("hashPasswordBcrypt");
+
+        when(usuarioRepository.save(any(com.compunex.b2b.modules.auth.entity.Usuario.class)))
+                .thenAnswer(inv -> {
+                    com.compunex.b2b.modules.auth.entity.Usuario u = inv.getArgument(0);
+                    u.setId(2L);
+                    return u;
+                });
+
+        when(perfilProveedorRepository.save(any(com.compunex.b2b.modules.perfiles.entity.PerfilProveedor.class)))
+                .thenAnswer(inv -> {
+                    com.compunex.b2b.modules.perfiles.entity.PerfilProveedor p = inv.getArgument(0);
+                    p.setId(5L);
+                    return p;
+                });
+
+        when(jwtTokenProvider.generarTokenConRol("contacto@innovapc.com", "PROVEEDOR"))
+                .thenReturn("mocked.jwt.token.provider");
+
+        var response = authService.registrarProveedor(request);
+
+        assertNotNull(response);
+        assertEquals(2L, response.usuarioId());
+        assertEquals(5L, response.proveedorId());
+        assertEquals("contacto@innovapc.com", response.correo());
+        assertEquals("PROVEEDOR", response.rol());
+        assertEquals("20712345678", response.ruc());
+        assertEquals("Innova PC Mayoristas S.A.C.", response.razonSocial());
+        assertEquals("mocked.jwt.token.provider", response.token());
+        assertEquals("Bearer", response.tipoToken());
+        assertEquals(86400L, response.expiraEnSegundos());
+        assertNotNull(response.mensaje());
+
+        verify(usuarioRepository, times(1)).save(any());
+        verify(perfilProveedorRepository, times(1)).save(any());
+    }
+
+    @Test
+    @DisplayName("[0.4] debeRechazarRegistroCuandoCorreoYaExiste")
+    void debeRechazarRegistroCuandoCorreoYaExiste() {
+        var request = new com.compunex.b2b.modules.auth.dto.request.RegistroProveedorRequestDTO(
+                "Juan Carlos", "ventas.mayoristas@technova.com", "Password123!",
+                "20712345678", "Tech S.A.C.", "Tech", "+51 987 111 222", "Lima", "Av 123", "2 años", "Desc");
+
+        when(usuarioRepository.existsByCorreo("ventas.mayoristas@technova.com")).thenReturn(true);
+
+        assertThrows(IllegalArgumentException.class, () -> authService.registrarProveedor(request));
+        verify(usuarioRepository, never()).save(any());
+        verify(perfilProveedorRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("[0.4] debeRechazarRegistroCuandoRucYaExiste")
+    void debeRechazarRegistroCuandoRucYaExiste() {
+        var request = new com.compunex.b2b.modules.auth.dto.request.RegistroProveedorRequestDTO(
+                "Juan Carlos", "nuevo@empresa.com", "Password123!",
+                "20608945612", "Tech S.A.C.", "Tech", "+51 987 111 222", "Lima", "Av 123", "2 años", "Desc");
+
+        when(usuarioRepository.existsByCorreo("nuevo@empresa.com")).thenReturn(false);
+        when(perfilProveedorRepository.existsByIdentificacionFiscal("20608945612")).thenReturn(true);
+
+        assertThrows(IllegalArgumentException.class, () -> authService.registrarProveedor(request));
+        verify(usuarioRepository, never()).save(any());
+        verify(perfilProveedorRepository, never()).save(any());
     }
 }

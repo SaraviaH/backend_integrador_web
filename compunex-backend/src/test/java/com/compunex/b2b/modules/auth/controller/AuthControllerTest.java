@@ -150,4 +150,74 @@ class AuthControllerTest {
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    @DisplayName("[0.4] Debe retornar HTTP 201 Created cuando el registro de proveedor es exitoso")
+    void debeRetornarHttp201CuandoRegistroEsExitoso() throws Exception {
+        var request = new com.compunex.b2b.modules.auth.dto.request.RegistroProveedorRequestDTO(
+                "Juan Carlos Rivera",
+                "contacto@innovapc.com",
+                "InnovaPass2026!",
+                "20712345678",
+                "Innova PC Mayoristas S.A.C.",
+                "Innova PC Wholesale",
+                "+51 987 111 222",
+                "Lima",
+                "Av. Garcilaso de la Vega 1348, Int. 201",
+                "5 años",
+                "Especialistas en hardware."
+        );
+
+        var response = new com.compunex.b2b.modules.auth.dto.response.RegistroProveedorResponseDTO(
+                2L,
+                3L,
+                java.util.UUID.randomUUID(),
+                "Juan Carlos Rivera",
+                "contacto@innovapc.com",
+                "PROVEEDOR",
+                "20712345678",
+                "Innova PC Mayoristas S.A.C.",
+                "jwt.token.simulado",
+                "Bearer",
+                86400L,
+                "Proveedor registrado exitosamente en la plataforma COMPUNEX."
+        );
+
+        when(authService.registrarProveedor(any())).thenReturn(response);
+
+        mockMvc.perform(post("/api/v1/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.usuarioId").value(2))
+                .andExpect(jsonPath("$.proveedorId").value(3))
+                .andExpect(jsonPath("$.correo").value("contacto@innovapc.com"))
+                .andExpect(jsonPath("$.rol").value("PROVEEDOR"))
+                .andExpect(jsonPath("$.ruc").value("20712345678"))
+                .andExpect(jsonPath("$.token").value("jwt.token.simulado"))
+                .andExpect(jsonPath("$.tipoToken").value("Bearer"));
+    }
+
+    @Test
+    @DisplayName("[0.4] Debe retornar HTTP 400 Bad Request cuando el registro tiene datos inválidos (RUC menor a 11 dígitos)")
+    void debeRetornarHttp400CuandoRegistroTieneDatosInvalidos() throws Exception {
+        var requestInvalido = new com.compunex.b2b.modules.auth.dto.request.RegistroProveedorRequestDTO(
+                "", // nombre vacío
+                "correo-invalido",
+                "123", // password corto
+                "123", // RUC inválido
+                "", // razon social vacía
+                null,
+                "", // telefono vacío
+                "", // ciudad vacía
+                "", // direccion vacía
+                null,
+                null
+        );
+
+        mockMvc.perform(post("/api/v1/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(requestInvalido)))
+                .andExpect(status().isBadRequest());
+    }
 }

@@ -9,6 +9,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -80,5 +82,30 @@ class SecurityAuthorizationTest {
         mockMvc.perform(get("/api/v1/auth/me")
                 .header("Authorization", "Bearer " + tokenAdmin))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("[Seguridad 8] Acceder a /api/v1/auth/register sin token debe ser público y procesar el registro (HTTP 201 Created)")
+    void debePermitirRegistroProveedorSinToken() throws Exception {
+        String requestJson = """
+                {
+                    "nombre": "Carlos Gomez",
+                    "correo": "proveedor.nuevo.security@compunex.com",
+                    "contrasena": "Password123!",
+                    "ruc": "20999888771",
+                    "razonSocial": "Soluciones TI Security SAC",
+                    "nombreComercial": "TI Security",
+                    "telefonoContacto": "+51999888777",
+                    "ciudad": "Lima",
+                    "direccion": "Av. Central 123",
+                    "anosMercado": "5 años",
+                    "descripcion": "Especialistas en seguridad y hardware"
+                }
+                """;
+
+        mockMvc.perform(post("/api/v1/auth/register")
+                .contentType(APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(status().isCreated());
     }
 }
