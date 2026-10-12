@@ -75,6 +75,12 @@ public class DataInitializer implements CommandLineRunner {
         }
 
         if (usuarioRepository.findByCorreo(PROVEEDOR_EMAIL).isPresent()) {
+            Usuario uExistente = usuarioRepository.findByCorreo(PROVEEDOR_EMAIL).get();
+            if (!passwordEncoder.matches(PROVEEDOR_PASSWORD, uExistente.getHashContrasena())) {
+                uExistente.setHashContrasena(passwordEncoder.encode(PROVEEDOR_PASSWORD));
+                usuarioRepository.save(uExistente);
+                log.info("[COMPUNEX-INIT] 🔄 Contraseña del proveedor de desarrollo sincronizada.");
+            }
             log.info("[COMPUNEX-INIT] La base de datos ya contiene registros del proveedor. Omitiendo seed data de catálogo.");
             return;
         }

@@ -15,7 +15,10 @@ Antes de programar o mover tarjetas en Trello, **cada desarrollador debe guiarse
 📂 **Ruta del documento:**  
 `docs/02_contratos_api/01_apis_por_rol/001-Apis-Formalizado-En-desarrollo/07_API_PROVEEDOR.md`
 
-📄 **Archivo:** [07_API_PROVEEDOR.md](file:///c:/Users/Edison/Downloads/Proyectos/Universidad/Desarrollo%20web%20Integrado/Desarollo%20web%20integrado%20final/backend_integrador_web/compunex-backend/docs/02_contratos_api/01_apis_por_rol/001-Apis-Formalizado-En-desarrollo/07_API_PROVEEDOR.md)
+📄 **Archivo:** [07_API_PROVEEDOR.md](docs/02_contratos_api/01_apis_por_rol/001-Apis-Formalizado-En-desarrollo/07_API_PROVEEDOR.md)
+
+📑 **Resumen de Cambios y Guía de Pruebas en Postman (Sesiones 6 a 9):**  
+Ver el documento: [06_DOCUMENTACION_CAMBIOS_Y_PRUEBAS_POSTMAN.md](docs/06_DOCUMENTACION_CAMBIOS_Y_PRUEBAS_POSTMAN.md)
 
 > ⚠️ **IMPORTANTE:** En este documento encontrarás la especificación canónica exacta de los endpoints que te tocan en Trello:
 > - Nombres exactos de **Controllers**, **DTOs** (`Request` y `Response`), **Services** y **Repositories**.
