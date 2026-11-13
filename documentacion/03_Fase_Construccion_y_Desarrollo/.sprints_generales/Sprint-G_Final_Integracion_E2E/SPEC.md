@@ -1,21 +1,24 @@
-# SPEC — Sprint-G_Final: Integración E2E y Release Candidate
+# SPEC — Sprint-G_Final: Integración E2E y Release Candidate (COMPUNEX B2B)
 
 > **Ámbito:** Sprint General Transversal de Cierre de Construcción  
-> **Objetivo:** Conectar el Frontend real con el Backend real en local (apagando el mock server), ejecutar el recorrido completo de punta a punta con datos nuevos y compilar el binario / paquete de release candidate.
+> **Objetivo:** Conectar la aplicación web Angular (`compunex-frontend`) con el backend Spring Boot (`compunex-backend`) en entorno local, ensayar los flujos completos de compra/venta y generar los paquetes finales de entrega.
 
 ---
 
 ## 📋 1. Alcance
 
 * **Incluye:**
-  * Desactivar el mock server local y apuntar el cliente Frontend a la API del Backend local real.
-  * Ejecutar el flujo de negocio de punta a punta (End-to-End) con una cuenta de usuario nueva y datos reales.
-  * Pruebas de humo (Smoke Tests) de todos los endpoints de la API.
-  * Generación del artefacto o binario de release preliminar (APK, imagen Docker compilada, build de producción).
-  * Ejecución de la **Auditoría de Cierre de Construcción** (`AUDITORIA_HITO_TEMPLATE.md`).
+  * Enlace real entre Angular (`environment.apiUrl`) y Spring Boot (`http://localhost:8080/api/v1`).
+  * Ensayos de flujo completo:
+    1. Registro/Login de empresa y exploración del catálogo.
+    2. Agregar al carrito multi-proveedor validando pedidos mínimos.
+    3. Checkout único con emisión de comprobantes simulados por proveedor (*Split Order*).
+    4. Consulta de "Mis Compras" (comprador) y "Ventas Recibidas" (proveedor).
+    5. Panel de gestión del proveedor: creación, edición y borrado lógico de producto.
+    6. Verificación de ruta 404 ante URLs inexistentes.
+  * Verificación de empaquetado independiente: `PF_BC_GRUPO_XX.rar` (backend) y `PF_FR_GRUPO_XX.rar` (frontend).
 * **NO incluye:**
-  * Despliegue automático a servidores de producción en la nube (eso pertenece a la **Fase 05 CI/CD**).
-  * Pruebas de estrés masivas o auditorías externas de seguridad (pertenecen a la **Fase 04 QA**).
+  * Despliegue en la nube o pasarelas de pago reales.
 
 ---
 
@@ -23,30 +26,28 @@
 
 | Tipo | Responsable | Tarea |
 | :---: | :---: | :--- |
-| **Manual** | **Product Owner / Tester** | Ensayar el recorrido completo en un entorno local y verificar la experiencia de usuario. |
-| **Automatizada** | **Equipo de Desarrollo** | Ejecutar la suite completa de pruebas unitarias y de integración de todo el proyecto. |
-| **Automatizada** | **Equipo de Desarrollo** | Compilar el artefacto de distribución verificando tamaño máximo y ausencia de crashes. |
+| **Integración** | Desarrollador + Agente | Probar comunicación HTTP completa con CORS activo y manejo de errores 400/401/403/404. |
+| **Validación** | Desarrollador + Agente | Ensayar 3 veces consecutivas el flujo de compra y emisión de facturas simuladas. |
+| **Empaquetado** | Desarrollador + Agente | Comprimir proyectos verificando ausencia de carpetas pesadas innecesarias (`target/`, `node_modules/`) y sin contraseñas. |
 
 ---
 
 ## 🧪 3. Escenarios de Comprobación (Given-When-Then)
 
-### E1 — Flujo E2E completo sin caídas
-* **Dado** el backend levantado en local y la aplicación frontend instalada
-* **Cuando** un usuario nuevo completa todo el flujo principal (registro, creación de datos, consulta)
-* **Entonces** el sistema persiste la información en la base de datos real y la refleja en la interfaz sin ningún cierre inesperado (0 crashes).
+### E1 — Compra multi-proveedor de punta a punta
+* **Dado** el backend levantado en el puerto 8080 y el frontend en el puerto 4200
+* **Cuando** un usuario realiza checkout de productos de 2 proveedores
+* **Entonces** la UI muestra la confirmación exitosa y genera en pantalla las 2 facturas simuladas con sus totales calculados por el servidor.
 
-### E2 — Resiliencia ante desconexión / Modo local
-* **Dado** el cliente operando en modo desconectado / avión
-* **Cuando** el usuario interactúa con funciones de lectura y encolado local
-* **Entonces** la UI no se bloquea y los datos se sincronizan fluidamente al reanudar la conexión con el backend real.
+### E2 — Manejo visual de errores y permisos
+* **Dado** una sesión con rol de comprador
+* **Cuando** intenta acceder a la ruta privada de administración o gestión de otro proveedor
+* **Entonces** el sistema intercepta la petición y muestra la pantalla amigable de acceso denegado o redirige a login sin bloquear la interfaz.
 
 ---
 
 ## ✅ 4. Definition of Done (DoD)
 
-- [ ] 100% de los tests del Backend y Frontend pasando en verde simultáneamente.
-- [ ] Recorrido completo ensayado mínimo 3 veces continuas sin un solo fallo o excepción no controlada.
-- [ ] El artefacto de release compila limpiamente cumpliendo las restricciones de tamaño de `TECH_STACK.md`.
-- [ ] Auditoría de cierre completada con **0 Rojos abiertos**.
-- [ ] Merge de todas las ramas a `develop` y pase formal autorizado hacia la **Fase 04 (Pruebas y QA)**.
+- [ ] Todas las pruebas de backend (JUnit) y frontend ejecutadas y en verde.
+- [ ] Flujo E2E probado de extremo a extremo sin caídas de servidor ni excepciones en consola.
+- [ ] Empaquetado de archivos realizado según la nomenclatura de entrega (`PF_BC_GRUPO_XX` y `PF_FR_GRUPO_XX`).

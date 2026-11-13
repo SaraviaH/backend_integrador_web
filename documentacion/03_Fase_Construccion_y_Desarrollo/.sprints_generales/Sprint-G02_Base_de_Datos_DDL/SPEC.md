@@ -1,21 +1,20 @@
-# SPEC — Sprint-G02: Base de Datos DDL Puro y Migraciones V1
+# SPEC — Sprint-G02: Base de Datos, Esquema de 10 Tablas y Semillas (COMPUNEX B2B)
 
-> **Ámbito:** Sprint General Transversal (Previo al inicio del Backend)  
-> **Objetivo:** Materializar el modelo de datos acordado en `DOMAIN.md` y `03_Base_de_Datos/` en scripts DDL puros y migraciones versionadas ejecutadas contra la base de datos local.  
-> **Regla de Oro:** **Cero datos falsos o sentencias `INSERT` en los esquemas DDL.** Los esquemas definen estructura física pura (`CREATE TABLE`, `ALTER TABLE`, `CREATE INDEX`).
+> **Ámbito:** Sprint General Transversal  
+> **Objetivo:** Materializar la estructura física de las 10 tablas definidas en `MODELO_Y_DICCIONARIO_BD.md` e integrar las entidades para soportar el flujo transaccional de órdenes y facturación simulada.  
+> **Regla de Oro:** Esquemas de datos DDL estrictos y reproducibles en local, con integridad referencial completa y sin mezcla de datos de prueba en la definición física.
 
 ---
 
 ## 📋 1. Alcance
 
 * **Incluye:**
-  * Script inicial de migración versionada (`V1__esquema_inicial.sql` o herramienta equivalente de migración).
-  * Creación de todas las tablas principales con tipos de datos estrictos, restricciones `PRIMARY KEY`, `FOREIGN KEY`, `NOT NULL` y `CHECK`.
-  * Índices de optimización para búsquedas frecuentes y claves foráneas.
-  * Script separado de semillas mínimas o catálogos iniciales (`seeds/01_catalogos.sql`).
+  * Mapeo de las 7 entidades existentes en `compunex-backend`: `usuarios`, `perfiles_proveedor`, `categorias`, `subcategorias`, `productos`, `producto_especificaciones`, `imagenes_producto`.
+  * Diseño e implementación de las 3 nuevas entidades: `ordenes`, `subordenes_factura`, `orden_items`.
+  * Integración de restricciones `UNIQUE` (`codigo_orden`, `numero_comprobante`), claves foráneas y cascadas.
+  * Semillas iniciales (`DataInitializer.java`) para categorías de hardware, proveedor demo y productos base con especificaciones e imágenes.
 * **NO incluye:**
-  * Controladores, endpoints ni interfaces de usuario.
-  * Insertar datos de prueba arbitrarios dentro de la migración de estructura.
+  * Lógica de controladores web ni interfaz de usuario.
 
 ---
 
@@ -23,35 +22,29 @@
 
 | Tipo | Responsable | Tarea |
 | :---: | :---: | :--- |
-| **Manual** | **Product Owner / DBA** | Revisar y autorizar los catálogos fijos de negocio (categorías, roles base). |
-| **Automatizada** | **Agente IA** | Redactar el archivo DDL de migración respetando exactamente los nombres de `DOMAIN.md`. |
-| **Automatizada** | **Agente IA** | Ejecutar la migración contra el contenedor de base de datos local y verificar integridad. |
+| **Técnica** | Desarrollador + Agente | Crear las entidades JPA `OrdenCompra`, `SubordenFactura` y `OrdenItem` en `modules/ordenes/`. |
+| **Técnica** | Desarrollador + Agente | Crear los repositorios JPA correspondientes con métodos de consulta por comprador y proveedor. |
+| **Técnica** | Desarrollador + Agente | Actualizar `DataInitializer.java` con categorías completas y productos de prueba para el catálogo. |
+| **Validación** | Desarrollador + Agente | Escribir y ejecutar pruebas `@DataJpaTest` para validar persistencia en cascada e integridad de claves. |
 
 ---
 
 ## 🧪 3. Escenarios de Comprobación (Given-When-Then)
 
-### E1 — Creación limpia de esquemas relacionales
-* **Dado** el contenedor de base de datos vacío
-* **Cuando** se ejecuta la herramienta de migración (Flyway, Prisma, script SQL)
-* **Entonces** todas las tablas del modelo quedan creadas con sus constraints activas y estado exitoso.
+### E1 — Persistencia atómica de Orden y Subórdenes (Split Order)
+* **Dado** una orden de compra con productos de 2 proveedores diferentes
+* **Cuando** se persiste la orden principal con sus subórdenes hijas
+* **Entonces** la base de datos almacena 1 registro en `ordenes`, 2 registros en `subordenes_factura` y sus respectivos ítems en `orden_items` con sus claves foráneas válidas.
 
-### E2 — Integridad referencial protegida en el motor
-* **Dado** una tabla con clave foránea (`FK`) hacia otra entidad
-* **Cuando** se intenta insertar un registro con un `id_padre` inexistente
-* **Entonces** el motor de base de datos rechaza la operación por violación de integridad referencial.
-
-### E3 — Nombres estrictos según DOMAIN.md
-* **Dado** el glosario de términos de `DOMAIN.md`
-* **Cuando** se comparan los nombres de tablas y columnas creadas
-* **Entonces** coinciden carácter por carácter (en `snake_case` plural para tablas, sin sinónimos).
+### E2 — Integridad de clave única en números de comprobante
+* **Dado** una suborden con número de comprobante `SIM-F001-00000201`
+* **Cuando** se intenta insertar otra suborden con el mismo número de comprobante
+* **Entonces** el motor rechaza la operación por violación de restricción `UNIQUE`.
 
 ---
 
 ## ✅ 4. Definition of Done (DoD)
 
-- [ ] La migración inicial se ejecuta limpiamente sobre una base de datos local vacía.
-- [ ] No existen sentencias `INSERT` dentro del archivo de migración DDL de estructura.
-- [ ] Todas las claves foráneas e índices requeridos están presentes físicamente en la base.
-- [ ] Commit realizado en rama `feature/db-esquema-inicial` y aprobado para merge a `develop`.
-- [ ] **Luz verde:** Con este sprint cerrado, el Agente de Backend queda autorizado para iniciar el desarrollo de servicios y repositorios.
+- [ ] Las 10 tablas del modelo creadas y validadas en esquema local.
+- [ ] Entidades JPA mapeadas con precisión numérica `NUMERIC(12,2)` para dinero y `Instant` para fechas.
+- [ ] Pruebas unitarias de repositorio pasando al 100% en H2/motor local.

@@ -1,20 +1,19 @@
-# SPEC — Sprint-G01: Setup del Ecosistema y Entorno Local
+# SPEC — Sprint-G01: Setup del Ecosistema y Entorno Local (COMPUNEX B2B)
 
 > **Ámbito:** Sprint General Transversal  
-> **Objetivo:** Disponer de un entorno de desarrollo 100% reproducible en local para todos los agentes y desarrolladores, con Docker, linters, variables de entorno y validación de salud inicial.
+> **Objetivo:** Disponer del entorno de desarrollo local reproducible para Backend Spring Boot y Frontend Angular, resolviendo la separación de perfiles y externalización de variables de entorno seguras.
 
 ---
 
 ## 📋 1. Alcance
 
 * **Incluye:**
-  * Configuración de repositorios o carpetas de código (`backend/`, `frontend/`, `database/`).
-  * Archivo `docker-compose.yml` para levantar la infraestructura base local (BD, Redis/Cache si aplica).
-  * Plantillas de variables de entorno seguras (`.env.example`).
-  * Endpoint o script de comprobación de salud inicial (`/salud` o comando CLI).
+  * Configuración de perfiles en Backend: `application.properties` (base con perfil dinámico), `application-dev.properties` y `application-prod.properties`.
+  * Externalización de variables de entorno para variables sensibles (`${DB_URL}`, `${DB_USER}`, `${DB_PASS}`, `${JWT_SECRET}`).
+  * Verificación de exclusión de credenciales en `.gitignore`.
+  * Configuración de variables de entorno en Frontend Angular (`src/environments/environment.ts` y `environment.prod.ts`) con `apiUrl: 'http://localhost:8080/api/v1'`.
 * **NO incluye:**
-  * Lógica de negocio de ningún caso de uso.
-  * Diseños visuales de pantallas.
+  * Lógica de nuevos endpoints de negocio ni pantallas de UI.
 
 ---
 
@@ -22,30 +21,30 @@
 
 | Tipo | Responsable | Tarea |
 | :---: | :---: | :--- |
-| **Manual** | **Product Owner / Dev** | Clonar el repositorio y validar permisos locales de Docker/runtime. |
-| **Manual** | **Product Owner / Dev** | Crear el archivo `.env` local copiando de `.env.example` sin versionar secretos. |
-| **Automatizada** | **Agente IA** | Crear `docker-compose.yml` con el motor de BD acordado en `TECH_STACK.md`. |
-| **Automatizada** | **Agente IA** | Configurar scripts de análisis estático / linter en Backend y Frontend. |
+| **Técnica** | Desarrollador + Agente | Crear `application-dev.properties` y `application-prod.properties` en `compunex-backend`. |
+| **Técnica** | Desarrollador + Agente | Parametrizar `application.properties` con `spring.profiles.active=${SPRING_PROFILES_ACTIVE:dev}`. |
+| **Técnica** | Desarrollador + Agente | Configurar `environment.ts` y `environment.prod.ts` en Angular apuntando a `/api/v1`. |
+| **Validación** | Desarrollador + Agente | Ejecutar `.\mvnw.cmd test` en backend para confirmar que las pruebas siguen pasando con perfiles. |
 
 ---
 
 ## 🧪 3. Escenarios de Comprobación (Given-When-Then)
 
-### E1 — Levantamiento de infraestructura local
-* **Dado** una máquina con Docker instalado y el archivo `docker-compose.yml`
-* **Cuando** se ejecuta `docker compose up -d`
-* **Entonces** el contenedor de la base de datos se inicia en estado *healthy* en el puerto acordado.
+### E1 — Carga de perfil dev por defecto
+* **Dado** el backend configurado con perfiles
+* **Cuando** se levanta la aplicación sin pasar `SPRING_PROFILES_ACTIVE`
+* **Entonces** el sistema toma el perfil `dev` y se conecta al entorno de desarrollo local.
 
-### E2 — Integridad de variables de entorno
-* **Dado** el repositorio recién clonado
-* **Cuando** se inspecciona la raíz
-* **Entonces** existe un `.env.example` documentado y `.gitignore` contiene la regla para ignorar `.env`.
+### E2 — Cero contraseñas expuestas en código base
+* **Dado** el archivo `src/main/resources/application.properties` y los perfiles
+* **Cuando** se inspeccionan las propiedades de base de datos y JWT
+* **Entonces** todos los valores sensibles utilizan sintaxis `${...}` con valores de respaldo para desarrollo local, sin credenciales de producción quemadas.
 
 ---
 
 ## ✅ 4. Definition of Done (DoD)
 
-- [ ] Docker Compose levanta y responde en local sin errores.
-- [ ] Linters configurados y pasando en 0 errores en todas las áreas.
-- [ ] `.gitignore` protege todos los archivos sensibles y secretos.
-- [ ] Commit realizado en rama `feature/setup-entorno` y aprobado para merge a `develop`.
+- [ ] Perfiles `application-dev.properties` y `application-prod.properties` creados y funcionales.
+- [ ] Variables de entorno documentadas para ejecución local.
+- [ ] 59 pruebas JUnit ejecutadas con éxito (`BUILD SUCCESS`).
+- [ ] `environment.ts` del Frontend configurado y alineado con `apiUrl`.
