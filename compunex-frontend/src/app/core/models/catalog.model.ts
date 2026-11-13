@@ -79,3 +79,16 @@ export interface UpdateProductRequest extends Partial<CreateProductRequest> {
   id: number;
 }
 
+export interface ProductContactInquiry {
+  productoId: number;
+  proveedorId: number;
+  nombreContacto: string;
+  empresaRuc?: string;
+  correo: string;
+  telefono: string;
+  tipoConsulta: string;
+  mensaje: string;
+  cantidadEstimada?: number;
+}
+
+

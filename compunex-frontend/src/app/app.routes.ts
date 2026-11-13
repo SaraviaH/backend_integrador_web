@@ -4,6 +4,7 @@ import { PanelLayoutComponent } from './layout/panel-layout/panel-layout.compone
 import { HomeViewComponent } from './features/home/home-view.component';
 import { CategoriesComponent } from './features/categories/categories.component';
 import { CatalogComponent } from './features/catalog/catalog.component';
+import { ProductDetailComponent } from './features/product-detail/product-detail.component';
 import { LoginComponent } from './features/auth/login/login.component';
 import { RegisterCompanyComponent } from './features/auth/register-company/register-company.component';
 import { ForbiddenViewComponent } from './features/forbidden/forbidden-view.component';
@@ -35,6 +36,16 @@ export const routes: Routes = [
         path: 'catalog',
         component: CatalogComponent,
         title: 'Catálogo de Hardware B2B · COMPUNEX'
+      },
+      {
+        path: 'catalog/:id',
+        component: ProductDetailComponent,
+        title: 'Detalle de Producto · COMPUNEX B2B'
+      },
+      {
+        path: 'productos/:id',
+        component: ProductDetailComponent,
+        title: 'Detalle de Producto · COMPUNEX B2B'
       },
       {
         path: 'catalogo',
