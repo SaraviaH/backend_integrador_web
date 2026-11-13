@@ -18,6 +18,8 @@ import { ProviderCompanyProfileComponent } from './features/provider/company-pro
 import { ProviderProductsListComponent } from './features/provider/products/products-list/provider-products-list.component';
 import { ProviderProductFormComponent } from './features/provider/products/product-form/provider-product-form.component';
 import { ProviderProductDetailComponent } from './features/provider/products/product-detail/provider-product-detail.component';
+import { ProviderSalesListComponent } from './features/provider/sales/sales-list/provider-sales-list.component';
+import { ProviderSaleDetailComponent } from './features/provider/sales/sale-detail/provider-sale-detail.component';
 import { LoginComponent } from './features/auth/login/login.component';
 import { RegisterCompanyComponent } from './features/auth/register-company/register-company.component';
 import { ForbiddenViewComponent } from './features/forbidden/forbidden-view.component';
@@ -217,6 +219,26 @@ export const routes: Routes = [
       {
         path: 'productos/:id/editar',
         redirectTo: 'products/:id/edit',
+        pathMatch: 'full'
+      },
+      {
+        path: 'sales',
+        component: ProviderSalesListComponent,
+        title: 'Ventas Recibidas B2B · COMPUNEX B2B'
+      },
+      {
+        path: 'ventas',
+        redirectTo: 'sales',
+        pathMatch: 'full'
+      },
+      {
+        path: 'sales/:id',
+        component: ProviderSaleDetailComponent,
+        title: 'Atención de Despacho · COMPUNEX B2B'
+      },
+      {
+        path: 'ventas/:id',
+        redirectTo: 'sales/:id',
         pathMatch: 'full'
       }
     ]
