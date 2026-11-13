@@ -52,7 +52,7 @@ Antes de abrir el proyecto, asegúrate de tener:
    ```
    *(Si tu postgres no tiene contraseña, déjalo vacío `spring.datasource.password=`)*
 
-> 💡 **Nota:** No necesitas crear tablas ni scripts SQL manuales. Las 7 tablas se crearán solas la primera vez que inicies la aplicación gracias a JPA/Hibernate (`ddl-auto=update`).
+> 💡 **Nota:** No necesitas crear tablas ni scripts SQL manuales. Las 10 tablas JPA se crearán solas la primera vez que inicies la aplicación gracias a JPA/Hibernate (`ddl-auto=update`).
 
 ---
 
@@ -82,8 +82,8 @@ Para la rúbrica 20/20 del informe, cada endpoint debe tener sus evidencias de *
 🚀 Fase 4: Postman  ➔ Petición con Status 200, 201 o 204 y JSON (Captura para el Word)
 ```
 
-### Para correr un test en NetBeans:
-* Haz **clic derecho** sobre la clase de prueba que te corresponde (ejemplo `AuthServiceTest.java`, `ProductoServiceTest.java`) y selecciona **Test File** (o presiona `Ctrl + F6`).
+### Para correr un test en NetBeans o Maven Wrapper:
+* Haz **clic derecho** sobre la clase de prueba que te corresponde (ejemplo `AuthServiceTest.java`, `ProductoProveedorServiceTest.java`, `OrderServiceSplitOrderTest.java`) y selecciona **Test File** (o ejecuta `.\mvnw.cmd clean test` — actualmente **83 pruebas en verde**).
 * Las pruebas usan base de datos en memoria **H2**, por lo que se ejecutan al instante sin afectar tu PostgreSQL.
 
 ---

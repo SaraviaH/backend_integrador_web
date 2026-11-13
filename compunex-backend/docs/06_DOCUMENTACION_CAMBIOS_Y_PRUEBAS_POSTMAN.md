@@ -14,7 +14,7 @@ Este documento detalla exhaustivamente la implementación técnica, la arquitect
    - [6.1 Subcarpeta 06.1: Seguridad, Roles y JWT](#61-subcarpeta-061-seguridad-roles-y-jwt-criterios-5-6-7-8-9)
    - [6.2 Subcarpeta 06.2: JPA y Tablas Relacionadas](#62-subcarpeta-062-jpa-y-tablas-relacionadas-criterios-1-2-3-4)
    - [6.3 Subcarpeta 06.3: Consultas JPQL y Transición de Estados](#63-subcarpeta-063-consultas-jpql-y-transición-de-estados-criterios-1-4)
-7. [Batería de Pruebas Automatizadas (Maven - 59 Tests)](#7-batería-de-pruebas-automatizadas-maven---59-tests)
+7. [Batería de Pruebas Automatizadas (Maven - 83 Tests)](#7-batería-de-pruebas-automatizadas-maven---83-tests)
 
 ---
 
@@ -25,7 +25,7 @@ Este documento detalla exhaustivamente la implementación técnica, la arquitect
 | **1** | **Lectura en tablas Relacionadas** (mínimo 4 casos) | 2 | Relaciones `Categoria` -> `Subcategoria`, `Categoria` -> `Producto`, `Producto` -> `PerfilProveedor`, y `Producto` -> `Especificaciones` / `Imagenes`. | Casos 8, 9, 10 y 11 |
 | **2** | **Escritura en tablas Relacionadas** (mínimo 2 casos) | 4 | **Caso A:** Creación de producto vinculándolo a categoría existente y guardando especificaciones e imágenes hijas en cascada.<br>**Caso B:** Registro de proveedor vinculando `Usuario` y `PerfilProveedor`. | Casos 12 y 13 |
 | **3** | **Actualización en tablas Relacionadas** (mínimo 1 caso) | 2 | Actualización de producto permitiendo la modificación de su relación con la categoría y actualización de especificaciones. | Caso 14 |
-| **4** | **Transacciones (`@Transactional`)** | 2 | Anotación `@Transactional` en métodos de servicio multientidad (`ProductoServiceImpl.crearProducto`, `ProductoServiceImpl.actualizarProducto`, `AuthServiceImpl.registrarProveedor`). | Casos 12, 13 y 14 |
+| **4** | **Transacciones (`@Transactional`)** | 2 | Anotación `@Transactional` en métodos de servicio multientidad (`ProductoProveedorServiceImpl.crearProducto`, `ProductoProveedorServiceImpl.actualizarProducto`, `RegistroCorporativoServiceImpl.registrarProveedor`). | Casos 12, 13 y 14 |
 | **5** | **Spring Security con usuarios en BD** | 1 | `SecurityConfig`, `CustomUserDetailsService` que carga usuarios desde PostgreSQL y contraseñas cifradas con `BCryptPasswordEncoder`. | Casos 1, 2, 3 y 4 |
 | **6** | **Registro e inicio de sesión** | 2 | `AuthController`: `POST /api/v1/auth/register` (registro corporativo) y `POST /api/v1/auth/login` (login con validación de credenciales). | Casos 1 y 2 |
 | **7** | **Roles Definidos** (mínimo 2 roles) | 1 | Enumeración `RolUsuario`: `ROLE_ADMIN`, `ROLE_PROVEEDOR`, `ROLE_COMPRADOR`. Control de acceso basado en roles (RBAC) en `SecurityConfig`. | Casos 1, 2, 3, 6 y 7 |
@@ -67,9 +67,9 @@ El modelo relacional mapea las siguientes entidades:
 
 ### Transaccionalidad Atómica (`@Transactional`)
 Los métodos críticos están anotados con `@Transactional` de `org.springframework.transaction.annotation`:
-- `AuthServiceImpl.registrarProveedor`: Garantiza que si la inserción del `PerfilProveedor` falla, el `Usuario` hace rollback automático.
-- `ProductoServiceImpl.crearProducto`: Persiste el producto y todas sus entidades hijas (`especificaciones`, `imagenes`) en una sola unidad de trabajo atómica.
-- `ProductoServiceImpl.actualizarProducto`: Actualiza campos propios y sincroniza las colecciones hijas bajo aislamiento de transacción.
+- `RegistroCorporativoServiceImpl.registrarProveedor`: Garantiza que si la inserción del `PerfilProveedor` falla, el `Usuario` hace rollback automático.
+- `ProductoProveedorServiceImpl.crearProducto`: Persiste el producto y todas sus entidades hijas (`especificaciones`, `imagenes`) en una sola unidad de trabajo atómica.
+- `ProductoProveedorServiceImpl.actualizarProducto`: Actualiza campos propios y sincroniza las colecciones hijas bajo aislamiento de transacción.
 
 ---
 
@@ -368,30 +368,25 @@ Las peticiones están parametrizadas con variables automáticas:
 
 ---
 
-## 7. Batería de Pruebas Automatizadas (Maven - 59 Tests)
+## 7. Batería de Pruebas Automatizadas (Maven - 83 Tests)
 
-El proyecto cuenta con 59 pruebas automatizadas unitarias, de integración y de capa web que se ejecutan sobre base de datos en memoria H2 aislada:
+El proyecto cuenta con 83 pruebas automatizadas unitarias, de repositorio, de integración y de capa web distribuidas en 25 clases sobre base de datos en memoria H2 en modo PostgreSQL:
 
 ```powershell
 # Desde el directorio compunex-backend:
-.\mvnw.cmd test
+.\mvnw.cmd clean test
 ```
 
 ### Resultados de Ejecución
-- **Total de pruebas:** 59
+- **Total de pruebas:** 83
 - **Fallos (Failures):** 0
 - **Errores (Errors):** 0
 - **Omitidas (Skipped):** 0
 - **Resultado:** **`BUILD SUCCESS`**
 
 ### Clases de Prueba Ejecutadas
-1. `CompunexBackendApplicationTests`: Carga del ApplicationContext de Spring Boot 3.5.16.
-2. `AuthServiceTest`: Pruebas de servicio unitarias para registro y login con PasswordEncoder y emisión de JWT.
-3. `AuthControllerTest`: Pruebas de capa web (`@WebMvcTest`) para login y registro con validación de Bean Validation.
-4. `CategoriaServiceTest`: Pruebas de servicio para listado y detalle de categorías.
-5. `CategoriaControllerTest`: Pruebas del controlador público de categorías.
-6. `ProductoServiceTest`: 13 pruebas unitarias para creación, edición, borrado lógico y estados bajo `@Transactional`.
-7. `ProductoProveedorControllerTest`: Pruebas web del CRUD del proveedor.
-8. `AdminProductoControllerTest`: Pruebas web del controlador de administración.
-9. `ProductoRepositoryTest`: Pruebas de integración de persistencia con `@DataJpaTest` validando consultas personalizadas `@Query` en JPQL.
-10. `SecurityAuthorizationTest`: 8 pruebas de integración de seguridad validando respuestas 200, 401 Unauthorized y 403 Forbidden según token y roles.
+1. `CompunexBackendApplicationTests`: Carga del `ApplicationContext` de Spring Boot `3.5.16`.
+2. **Auth y Perfiles (`AuthServiceTest`, `RegistroCorporativoServiceTest`, `AuthControllerTest`, `CompanyRegistrationTest`, `ProviderProfileControllerTest`)**: Login, sesión, cambio de clave, registro de proveedor/empresa y activación comercial con JWT.
+3. **Catálogo y Admin (`CategoriaServiceTest`, `CategoriaControllerTest`, `ProductoProveedorServiceTest`, `AdminProductoServiceTest`, `ProductoProveedorControllerTest`, `ProductoPublicoControllerTest`, `AdminProductoControllerTest`, `AdminProductControllerTest`, `ProductoRepositoryTest`)**: CRUD de proveedor, catálogo público facetado con JPA `Specification`, moderación admin y consultas JPQL.
+4. **Órdenes y Split Order (`OrderRepositoryTest`, `SubordenRepositoryTest`, `OrderServiceSplitOrderTest`, `OrderControllerTest`, `OrderHistoryTest`, `OrderSecurityTest`, `ProviderSalesControllerTest`)**: Persistencia en cascada, checkout transaccional Split Order ACID con IGV 18%, historial y ventas/despacho multi-tenant.
+5. **Media, Auditoría y Seguridad (`MediaControllerTest`, `AuditAspectTest`, `SecurityAuthorizationTest`)**: Subida y descarga multipart de imágenes, trazabilidad `@Auditable` y reglas `200`/`401`/`403`.

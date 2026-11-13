@@ -105,11 +105,13 @@ Se implementó la búsqueda personalizada con JPQL y `@Query`:
 
 ## 📊 6. Ejecución de Pruebas Automatizadas
 
-Para ejecutar la batería completa de pruebas unitarias y de integración (usando base de datos en memoria H2):
+Para ejecutar la batería completa de pruebas unitarias, de repositorio y de integración (usando base de datos en memoria H2 en modo PostgreSQL):
 
-```bash
+```powershell
 cd compunex-backend
-.\mvnw test
+.\mvnw.cmd clean test
 ```
 
-**Resultado:** 53 pruebas ejecutadas, 0 fallos, 0 errores.
+**Resultado:** 83 pruebas ejecutadas, 0 fallos, 0 errores, 0 omitidas (`BUILD SUCCESS`).
+
+> ℹ️ **Cobertura ampliada (Sprints B02–B09):** Además de los 14 endpoints base listados arriba, la API vigente incluye registro empresarial (`POST /api/v1/auth/register-company`), perfil/activación de proveedor (`GET /api/v1/providers/me/profile`, `POST /api/v1/providers/me/activate`), catálogo público (`GET /api/v1/products`, `GET /api/v1/products/{id}`), checkout Split Order e historial (`POST /api/v1/orders/checkout`, `GET /api/v1/orders/me`, `GET /api/v1/orders/me/{ordenId}`), ventas/despacho de proveedor (`GET /api/v1/providers/me/sales/**`, `PATCH /api/v1/providers/me/sales/{subordenId}/status`) y multimedia (`POST /api/v1/media/upload`, `GET /api/v1/media/files/{folder}/{filename}`). Ver el detalle completo en `CONTRATOS_JSON.md` y `AUDITORIA_1.md`.

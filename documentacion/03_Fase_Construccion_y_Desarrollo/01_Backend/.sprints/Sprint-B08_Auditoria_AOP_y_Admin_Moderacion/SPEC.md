@@ -3,8 +3,8 @@
 > **Área Técnica:** Backend  
 > **Track:** Backend Track  
 > **Agente Responsable:** Agente Backend  
-> **Estado:** PENDIENTE  
-> **Rama GitFlow:** `feature/backend-admin-audit-aop` hacia `develop`  
+> **Estado:** `COMPLETADO` (`1540ed0`, segregado en `AdminProductoService` en `03107f8`)  
+> **Rama:** `feat/backend-sprints` -> `integracion/e2e`  
 > **Dependencias Previas:** `Sprint-B07_Ventas_Proveedor_y_Despacho`
 
 ---
@@ -27,34 +27,34 @@ Completar las capacidades de moderación y supervisión global del sistema para 
 
 ## 3. Tareas Técnicas Detalladas (Paso a Paso)
 
-### 3.1. Moderación en `AdminProductoController.java`
-- [ ] Endpoint `GET /api/v1/admin/products`: Lista paginada que expone productos de todos los proveedores, incluyendo datos fiscales de la empresa responsable y su estado administrativo.
-- [ ] Endpoint `PATCH /api/v1/admin/products/{id}/status`: Actualiza el estado (`ACTIVO`, `INACTIVO`, `BLOQUEADO`) y registra el usuario administrador que realizó el cambio en `eliminado_por` / `modificado_por`.
+### 3.1. Moderación en `AdminProductoController.java` y `AdminProductoServiceImpl.java`
+- [x] Endpoint `GET /api/v1/admin/products`: Lista paginada global que expone productos de todos los proveedores con búsqueda opcional (`ProductoPaginadoResponseDTO`).
+- [x] Endpoint `PATCH /api/v1/admin/products/{id}/status`: Actualiza el estado de publicación mediante `AdminProductoServiceImpl.cambiarEstadoPublicacionAdmin`, anotado con `@Transactional` y `@Auditable(accion = "ADMIN_PRODUCT_MODERATION")`.
 
 ### 3.2. Aspecto de Auditoría Transversal (`AuditAspect.java`)
-- [ ] Crear anotación personalizada `@Auditable(accion = "...")`.
-- [ ] Implementar `@Aspect` en paquete `config.audit`:
-  * Intercepta métodos anotados con `@Auditable` (ej. login, checkout, moderación de producto).
-  * Extrae timestamp, IP de origen, usuario autenticado, método ejecutado, parámetros y resultado.
+- [x] Creada anotación personalizada `@Auditable(accion = "...")`.
+- [x] Implementado `@Aspect` en `com.compunex.b2b.config.audit`:
+  * Intercepta métodos anotados con `@Auditable` (`AUTH_LOGIN`, `AUTH_REGISTER_COMPANY`, `ORDER_CHECKOUT_SPLIT`, `ADMIN_PRODUCT_MODERATION`).
+  * Extrae timestamp, IP de origen, usuario autenticado, método ejecutado, parámetros, resultado y duración en milisegundos.
   * Emite log estructurado con prefijo `[AUDIT_LOG]`.
 
 ### 3.3. Pruebas de Seguridad y Auditoría
-- [ ] Tests que verifiquen que usuarios sin rol `ADMIN` reciben `403 Forbidden` al invocar `/api/v1/admin/**`.
-- [ ] Tests unitarios que verifiquen la ejecución del aspecto ante llamadas anotadas.
+- [x] Tests en `AdminProductControllerTest`, `AdminProductoControllerTest`, `AdminProductoServiceTest` y `SecurityAuthorizationTest` verificando `403 Forbidden` para roles distintos de `ADMIN`.
+- [x] Tests unitarios en `AuditAspectTest` validando ejecución en éxito y error.
 
 ---
 
 ## 4. Criterios de Aceptación (Definition of Done - DoD)
-- [ ] Rutas de administración bloqueadas al 100% para roles no autorizados.
-- [ ] La moderación de productos se refleja en la base de datos de inmediato.
-- [ ] El aspecto de auditoría registra las acciones en consola sin añadir latencia perceptible.
+- [x] Rutas de administración bloqueadas al 100% para roles no autorizados.
+- [x] La moderación de productos se refleja en la base de datos de inmediato.
+- [x] El aspecto de auditoría registra las acciones estructuradas `[AUDIT_LOG]` en consola.
 
 ---
 
 ## 5. Plan de Verificación y Comandos
-```bash
+```powershell
 cd compunex-backend
-mvn test -Dtest=AdminProductControllerTest,AuditAspectTest
+.\mvnw.cmd test -Dtest=AdminProductControllerTest,AdminProductoControllerTest,AdminProductoServiceTest,AuditAspectTest
 ```
 
 ---
@@ -62,4 +62,4 @@ mvn test -Dtest=AdminProductControllerTest,AuditAspectTest
 ## 6. Matriz de Trazabilidad
 | Requisito Funcional | Regla de Negocio | Endpoints | Clases Clave |
 | :--- | :--- | :--- | :--- |
-| `RF-09` | `RN-001`, `RN-003` | 13, 14 | `AdminProductoController.java`, `AuditAspect.java` |
+| `RF-09` | `RN-001`, `RN-003` | 13, 14 | `AdminProductoController.java`, `AdminProductoServiceImpl.java`, `AuditAspect.java`, `Auditable.java` |

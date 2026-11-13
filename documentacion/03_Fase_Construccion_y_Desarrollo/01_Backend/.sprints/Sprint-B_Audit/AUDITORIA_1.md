@@ -54,7 +54,7 @@ Evaluación exhaustiva de la API REST de COMPUNEX B2B previo a autorizar la inte
   * `GET /api/v1/providers/me/sales` (23)
   * `GET /api/v1/providers/me/sales/{subordenId}` (24) y `PATCH /api/v1/providers/me/sales/{subordenId}/status`
 - [x] **Sprint-B08 (Auditoría AOP y Moderación):** Interceptor y aspecto `AuditAspect` trazando eventos.
-- [x] **Sprint-B09 (Multimedia Local - 3 endpoints adicionales verificados en `MediaControllerTest`):** `POST /api/v1/media/upload`, `GET /api/v1/media/{folder}/{filename}`, `DELETE /api/v1/media/{folder}/{filename}`.
+- [x] **Sprint-B09 (Multimedia Local - 2 endpoints verificados en `MediaControllerTest`):** `POST /api/v1/media/upload` (`201 Created`) y `GET /api/v1/media/files/{folder}/{filename}` (`200 OK` público).
 
 ### 2.3. Verificación de Reglas de Negocio en Base de Datos
 - [x] `RN-001`: Tokens inválidos o expirados retornan `401 Unauthorized` (y roles insuficientes `403 Forbidden`).
@@ -94,3 +94,4 @@ Evaluación exhaustiva de la API REST de COMPUNEX B2B previo a autorizar la inte
 ## 5. Veredicto Final y Autorización de Pase
 * **Estado:** `APROBADO PARA INTEGRACIÓN E2E`
 * **Evidencia de Cierre:** `.\mvnw.cmd clean test` ejecutado tras el último cambio con `83/83` pruebas en verde (H2 modo PostgreSQL) + verificación de arranque en vivo contra PostgreSQL `localhost:5432` (`CATEGORIES_COUNT=8`, `PRODUCTS_TOTAL=1`, `/api-docs` `200`, `/swagger-ui/index.html` `200`). Colección Postman disponible en `compunex-backend/docs/02_contratos_api/01_apis_por_rol/001-Apis-Formalizado-En-desarrollo/COMPUNEX_B2B_Coleccion_Postman.json`. Se habilita el pase a integración E2E (`Sprint-G_Final`).
+* **Actualización Post-Gate (Refactor Opción B SRP — commit `03107f8`):** Desacoplamiento interno en `catalogo` (`ProductoProveedorService`, `ProductoPublicoService`, `AdminProductoService`), `ordenes` (`SplitOrderCalculator`, `OrderResponseMapper`) y `auth` (`AuthService`, `RegistroCorporativoService`) sin cambios en contratos ni rutas; re-verificado con `.\mvnw.cmd clean test` (`83/83` pruebas en verde). Base lista en rama `integracion/e2e`.

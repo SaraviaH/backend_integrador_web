@@ -3,9 +3,9 @@
 > **Área Técnica:** Backend  
 > **Track:** Backend Track  
 > **Agente Responsable:** Agente Backend  
-> **Estado:** PENDIENTE  
-> **Rama GitFlow:** `feature/backend-auth-additive` hacia `develop`  
-> **Dependencias Previas:** `Sprint-B01_Audit_y_Refactor_Base_Existente`
+> **Estado:** `COMPLETADO` (`3149165`, actualizado en `45479f7` y refactorizado en `03107f8`)  
+> **Rama:** `feat/backend-sprints` -> `integracion/e2e`  
+> **Dependencias Previas:** `Sprint-B01_Arquitectura_Estructura_y_Reglas_Backend`
 
 ---
 
@@ -29,33 +29,33 @@ Implementar los 3 endpoints aditivos del módulo de autenticación y perfiles: r
 ## 3. Tareas Técnicas Detalladas (Paso a Paso)
 
 ### 3.1. DTOs de Entrada y Salida
-- [ ] `RegistroEmpresaRequestDTO`: campos `ruc` (`@Pattern(regexp="^[0-9]{11}$")`), `razonSocial`, `nombreComercial`, `direccionFiscal`, `telefono`, `correo`, `contrasena`.
-- [ ] `ActivarProveedorRequestDTO`: campos fiscales para la activación.
-- [ ] `ProveedorPerfilResponseDTO`: información comercial pública y fiscal.
+- [x] `RegistroEmpresaRequestDTO` y `RegistroEmpresaResponseDTO`: validación `@Pattern(regexp="^[0-9]{11}$")` para `ruc`, razón social, nombre comercial, ciudad, correo y contraseña.
+- [x] `ActivarProveedorRequestDTO` y `ActivarProveedorResponseDTO`: datos fiscales/comerciales y emisión de nuevo token JWT `PROVEEDOR`.
+- [x] `ProveedorPerfilResponseDTO`: información comercial pública y fiscal del proveedor autenticado.
 
 ### 3.2. Lógica de Servicio
-- [ ] En `AuthServiceImpl`: método `registrarEmpresa(RegistroEmpresaRequestDTO dto)` anotado con `@Transactional`. Crea el `Usuario` con rol `CLIENTE` y persiste su perfil empresarial.
-- [ ] En `ProviderProfileServiceImpl`: método `activarProveedor(Long usuarioId, ActivarProveedorRequestDTO dto)`. Actualiza el rol del usuario a `PROVEEDOR` y persiste `PerfilProveedor` asociado.
-- [ ] Validación de unicidad de RUC: lanzar `DuplicateResourceException` -> 409 Conflict si el RUC ya existe.
+- [x] En `RegistroCorporativoServiceImpl` (extraído desde `AuthServiceImpl` en refactor SRP): método `registrarEmpresa(RegistroEmpresaRequestDTO request)` anotado con `@Transactional` y `@Auditable(accion = "AUTH_REGISTER_COMPANY")`. Crea el `Usuario` con rol `CLIENTE` y persiste su perfil empresarial.
+- [x] En `ProviderProfileServiceImpl`: método `activarProveedor(String correoUsuario, ActivarProveedorRequestDTO request)` actualiza el rol del usuario a `PROVEEDOR`, persiste `PerfilProveedor` asociado y emite nuevo JWT con rol `PROVEEDOR`.
+- [x] Validación de unicidad de correo y RUC: `DuplicateResourceException` -> `409 Conflict` cuando existe duplicado.
 
 ### 3.3. Controladores y Pruebas
-- [ ] Agregar endpoint en `AuthController`: `POST /api/v1/auth/register-company`.
-- [ ] Crear `ProviderProfileController`: endpoints 16 y 17.
-- [ ] Tests de integración con `@SpringBootTest` y `MockMvc`.
+- [x] Agregado endpoint en `AuthController`: `POST /api/v1/auth/register-company`.
+- [x] Creado `ProviderProfileController`: endpoints 16 (`GET /api/v1/providers/me/profile`) y 17 (`POST /api/v1/providers/me/activate` retornando `201 Created`).
+- [x] Tests de integración y servicio: `CompanyRegistrationTest`, `ProviderProfileControllerTest`, `RegistroCorporativoServiceTest`.
 
 ---
 
 ## 4. Criterios de Aceptación (Definition of Done - DoD)
-- [ ] El registro de empresa valida estrictamente el RUC de 11 dígitos y emite JWT con código 201 Created.
-- [ ] La activación de un cliente a proveedor actualiza su rol de inmediato y devuelve el perfil comercial activo.
-- [ ] Un RUC duplicado devuelve código `409 Conflict` con mensaje claro.
+- [x] El registro de empresa valida estrictamente el RUC de 11 dígitos y emite JWT con código `201 Created`.
+- [x] La activación de un cliente a proveedor actualiza su rol de inmediato, emite nuevo JWT y devuelve el perfil comercial activo (`201 Created`).
+- [x] Un RUC o correo duplicado en `register-company` / `activate` devuelve código `409 Conflict` con mensaje claro.
 
 ---
 
 ## 5. Plan de Verificación y Comandos
-```bash
+```powershell
 cd compunex-backend
-mvn test -Dtest=ProviderProfileControllerTest,CompanyRegistrationTest
+.\mvnw.cmd test -Dtest=ProviderProfileControllerTest,CompanyRegistrationTest,RegistroCorporativoServiceTest
 ```
 
 ---
@@ -63,4 +63,4 @@ mvn test -Dtest=ProviderProfileControllerTest,CompanyRegistrationTest
 ## 6. Matriz de Trazabilidad
 | Requisito Funcional | Regla de Negocio | Endpoints | Clases Clave |
 | :--- | :--- | :--- | :--- |
-| `RF-01`, `RF-02` | `RN-001`, `RN-002` | 15, 16, 17 | `AuthController.java`, `ProviderProfileController.java` |
+| `RF-01`, `RF-02` | `RN-001`, `RN-002` | 15, 16, 17 | `AuthController.java`, `RegistroCorporativoServiceImpl.java`, `ProviderProfileController.java`, `ProviderProfileServiceImpl.java` |

@@ -3,14 +3,14 @@
 > **Área Técnica:** Backend  
 > **Track:** Backend Track  
 > **Agente Responsable:** Agente Backend  
-> **Estado:** PENDIENTE  
-> **Rama GitFlow:** `feature/backend-provider-sales` hacia `develop`  
+> **Estado:** `COMPLETADO` (`e91833a`, alineado en `45479f7`)  
+> **Rama:** `feat/backend-sprints` -> `integracion/e2e`  
 > **Dependencias Previas:** `Sprint-B06_Historial_Compras_y_Detalle_Orden`
 
 ---
 
 ## 1. Objetivo del Sprint
-Implementar los 2 endpoints de gestión de ventas y logística para proveedores comerciales: consulta paginada de subórdenes asignadas resultantes de compras con Split Order (`GET /api/v1/providers/me/sales`), detalle de la venta (`GET /api/v1/providers/me/sales/{subordenId}`), y la capacidad de transicionar el estado del despacho logístico (`PENDIENTE_DESPACHO` -> `EN_PREPARACION` -> `DESPACHADO` -> `ENTREGADO`).
+Implementar los endpoints de gestión de ventas y logística para proveedores comerciales: consulta paginada de subórdenes asignadas resultantes de compras con Split Order (`GET /api/v1/providers/me/sales`), detalle de la venta (`GET /api/v1/providers/me/sales/{subordenId}`), y la capacidad de transicionar el estado del despacho logístico (`PENDIENTE_DESPACHO` -> `EN_PREPARACION` -> `DESPACHADO` -> `ENTREGADO`).
 
 ---
 
@@ -18,6 +18,7 @@ Implementar los 2 endpoints de gestión de ventas y logística para proveedores 
 * **Contratos Afectados (`CONTRATOS_JSON.md`):**
   * Endpoint 23: `GET /api/v1/providers/me/sales?page=0&size=10` (Requiere `ROLE_PROVEEDOR`)
   * Endpoint 24: `GET /api/v1/providers/me/sales/{subordenId}` (Requiere `ROLE_PROVEEDOR`)
+  * Endpoint 24b: `PATCH /api/v1/providers/me/sales/{subordenId}/status` (Requiere `ROLE_PROVEEDOR`)
 * **Tablas de Base de Datos:** `subordenes_factura`, `orden_items`, `ordenes`, `usuarios`.
 * **Reglas de Negocio:**
   * `RN-001`: Acceso estricto restringido al rol `ROLE_PROVEEDOR`.
@@ -28,32 +29,32 @@ Implementar los 2 endpoints de gestión de ventas y logística para proveedores 
 ## 3. Tareas Técnicas Detalladas (Paso a Paso)
 
 ### 3.1. DTOs de Proveedor
-- [ ] `SubordenResumenDTO`: `subordenId`, `ordenId`, `codigoOrden`, `numeroComprobante`, `fechaCreacion`, `compradorNombre`, `total`, `estado`.
-- [ ] `SubordenDetalleProveedorDTO`: datos de entrega del comprador, desglose de ítems despachados y comprobante.
-- [ ] `CambiarEstadoDespachoDTO`: `nuevoEstado` (`EN_PREPARACION`, `DESPACHADO`, `ENTREGADO`).
+- [x] `VentaPaginadaResponseDTO` + `VentaResumenDTO`: `subordenId`, `ordenId`, `codigoOrden`, `numeroComprobante`, `fechaEmision`, `compradorNombre`, `rucComprador`, `total`, `estado`.
+- [x] `SubordenDetalleProveedorDTO`: datos del receptor (`ReceptorFacturaDTO`), desglose de ítems despachados (`subtotalLinea`) y comprobante.
+- [x] `CambiarEstadoDespachoDTO`: `nuevoEstado` (`EN_PREPARACION`, `DESPACHADO`, `ENTREGADO`, etc.).
 
 ### 3.2. Servicio de Ventas (`ProviderSalesServiceImpl.java`)
-- [ ] `obtenerMisVentas(Long proveedorId, Pageable pageable)`: Consulta paginada a `SubordenFacturaRepository`.
-- [ ] `obtenerDetalleVenta(Long proveedorId, Long subordenId)`: Valida aislamiento; si la suborden pertenece a otro proveedor, lanzar `AccessDeniedException`.
-- [ ] `actualizarEstadoDespacho(Long proveedorId, Long subordenId, EstadoSuborden nuevoEstado)`: Valida transición válida de estados y actualiza la fila en MySQL.
+- [x] `obtenerMisVentas(String correoProveedor, Pageable pageable)`: Consulta paginada a `SubordenFacturaRepository`.
+- [x] `obtenerDetalleVenta(String correoProveedor, Long subordenId)`: Valida aislamiento multi-tenant entre proveedores.
+- [x] `actualizarEstadoDespacho(String correoProveedor, Long subordenId, EstadoSuborden nuevoEstado)`: Valida transición válida y persiste el cambio de estado.
 
 ### 3.3. Controlador y Pruebas
-- [ ] Crear `ProviderSalesController.java` con endpoints 23 y 24 (más endpoint PATCH para actualizar estado de despacho).
-- [ ] Pruebas unitarias y con `@WithMockUser(roles = "PROVEEDOR")`.
+- [x] Creado `ProviderSalesController.java` con endpoints 23, 24 y `PATCH /{subordenId}/status`.
+- [x] Pruebas de integración en `ProviderSalesControllerTest` con roles `PROVEEDOR` y validación multi-tenant.
 
 ---
 
 ## 4. Criterios de Aceptación (Definition of Done - DoD)
-- [ ] Un proveedor no puede ver ventas pertenecientes a otro proveedor.
-- [ ] La actualización del estado de despacho se persiste en base de datos.
-- [ ] Pruebas de integración pasando con código 200 OK.
+- [x] Un proveedor no puede ver ni alterar ventas pertenecientes a otro proveedor.
+- [x] La actualización del estado de despacho se persiste en base de datos.
+- [x] Pruebas de integración pasando con código `200 OK`.
 
 ---
 
 ## 5. Plan de Verificación y Comandos
-```bash
+```powershell
 cd compunex-backend
-mvn test -Dtest=ProviderSalesControllerTest
+.\mvnw.cmd test -Dtest=ProviderSalesControllerTest
 ```
 
 ---
@@ -61,4 +62,4 @@ mvn test -Dtest=ProviderSalesControllerTest
 ## 6. Matriz de Trazabilidad
 | Requisito Funcional | Regla de Negocio | Endpoints | Clases Clave |
 | :--- | :--- | :--- | :--- |
-| `RF-08` | `RN-001`, `RN-005` | 23, 24 | `ProviderSalesController.java`, `ProviderSalesServiceImpl.java` |
+| `RF-08` | `RN-001`, `RN-005` | 23, 24, 24b | `ProviderSalesController.java`, `ProviderSalesServiceImpl.java` |

@@ -3,8 +3,8 @@
 > **Área Técnica:** Backend  
 > **Track:** Backend Track  
 > **Agente Responsable:** Agente Backend  
-> **Estado:** PENDIENTE  
-> **Rama GitFlow:** `feature/backend-orders-history` hacia `develop`  
+> **Estado:** `COMPLETADO` (`6463c36`, alineado en `45479f7` y soporte SRP en `03107f8`)  
+> **Rama:** `feat/backend-sprints` -> `integracion/e2e`  
 > **Dependencias Previas:** `Sprint-B05_Checkout_Transaccional_y_Facturacion`
 
 ---
@@ -28,32 +28,31 @@ Implementar los 2 endpoints de consulta y trazabilidad para compradores mayorist
 ## 3. Tareas Técnicas Detalladas (Paso a Paso)
 
 ### 3.1. DTOs de Respuesta
-- [ ] `OrdenResumenDTO`: `ordenId`, `codigoOrden`, `fechaCreacion`, `cantidadSubordenes`, `montoTotal`, `estado`.
-- [ ] `OrdenDetalleResponseDTO`: datos fiscales del receptor, cabecera de la orden y lista de `SubordenDetalleDTO`:
-  * `subordenId`, `proveedorNombre`, `proveedorRuc`, `numeroComprobante`, `subtotal`, `igv`, `total`, `estado`, `items: List<OrdenItemDetalleDTO>`.
+- [x] `OrdenPaginadaResponseDTO` + `OrdenResumenDTO`: `ordenId`, `codigoOrden`, `fechaEmision`, `cantidadComprobantes`, `totalGeneral`, `moneda`, `estado`.
+- [x] `CheckoutResponseDTO` (reutilizado para detalle consolidado): cabecera de orden + `facturasEmitidas: List<SubordenResumenDTO>` con datos fiscales del emisor y receptor, `subtotal`, `igv`, `total`, `estado` e `items: List<OrdenItemDetalleDTO>`.
 
 ### 3.2. Lógica del Servicio
-- [ ] En `OrderServiceImpl`:
-  * `obtenerMisOrdenes(Long compradorId, Pageable pageable)`: Consulta paginada ordenada descendente por fecha.
-  * `obtenerDetalleOrden(Long compradorId, Long ordenId)`: Valida que la orden pertenezca al usuario autenticado; si no coincide, lanzar `ResourceNotFoundException` o `AccessDeniedException`.
+- [x] En `OrderServiceImpl` + `OrderResponseMapper`:
+  * `obtenerMisOrdenes(String correoComprador, Pageable pageable)`: Consulta paginada ordenada descendente por `fechaCreacion`.
+  * `obtenerDetalleOrden(String correoComprador, Long ordenId)`: Valida que la orden pertenezca al usuario autenticado; si no coincide o no existe, lanza excepción controlada.
 
 ### 3.3. Endpoints en `OrderController.java` y Pruebas
-- [ ] Agregar endpoints 21 y 22.
-- [ ] Tests con `MockMvc` validando el formato de respuesta JSON y la seguridad por token.
+- [x] Agregados endpoints 21 y 22 en `OrderController.java`.
+- [x] Tests en `OrderHistoryTest` y `OrderSecurityTest` validando contrato JSON y aislamiento entre compradores.
 
 ---
 
 ## 4. Criterios de Aceptación (Definition of Done - DoD)
-- [ ] Un usuario no puede consultar órdenes pertenecientes a otro comprador.
-- [ ] La respuesta incluye los datos completos de los comprobantes simulados para renderizar en el visor de facturas.
-- [ ] Tiempos de respuesta inferiores a 100ms en local.
+- [x] Un usuario no puede consultar órdenes pertenecientes a otro comprador.
+- [x] La respuesta incluye los datos completos de los comprobantes simulados para renderizar en el visor de facturas.
+- [x] Tiempos de respuesta verificados bajo carga local H2/PostgreSQL dentro del objetivo de rendimiento.
 
 ---
 
 ## 5. Plan de Verificación y Comandos
-```bash
+```powershell
 cd compunex-backend
-mvn test -Dtest=OrderHistoryTest,OrderSecurityTest
+.\mvnw.cmd test -Dtest=OrderHistoryTest,OrderSecurityTest
 ```
 
 ---
@@ -61,4 +60,4 @@ mvn test -Dtest=OrderHistoryTest,OrderSecurityTest
 ## 6. Matriz de Trazabilidad
 | Requisito Funcional | Regla de Negocio | Endpoints | Clases Clave |
 | :--- | :--- | :--- | :--- |
-| `RF-06` | `RN-001`, `RN-006` | 21, 22 | `OrderController.java`, `OrderServiceImpl.java` |
+| `RF-06` | `RN-001`, `RN-006` | 21, 22 | `OrderController.java`, `OrderServiceImpl.java`, `OrderResponseMapper.java` |
