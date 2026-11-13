@@ -336,4 +336,31 @@ public class ProductoServiceImpl implements ProductoService {
                 producto.getFechaActualizacion()
         );
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ProductoPaginadoResponseDTO listarProductosPublicos(String search, String categoryId, Pageable pageable) {
+        var pagina = productoRepository.findAll(
+                com.compunex.b2b.modules.catalogo.repository.ProductoSpecification.filtroPublico(search, categoryId),
+                pageable
+        );
+        Page<ProductoResumenResponseDTO> paginaDto = pagina.map(ProductoResumenResponseDTO::from);
+        return new ProductoPaginadoResponseDTO(
+                paginaDto.getContent(),
+                paginaDto.getNumber(),
+                paginaDto.getSize(),
+                paginaDto.getTotalElements(),
+                paginaDto.getTotalPages(),
+                paginaDto.isLast()
+        );
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ProductoDetalleResponseDTO obtenerProductoPublicoPorId(Long productoId) {
+        var producto = productoRepository.findById(productoId)
+                .filter(p -> p.getFechaEliminacion() == null && p.getEstado() == EstadoProducto.ACTIVO)
+                .orElseThrow(() -> new com.compunex.b2b.exception.ResourceNotFoundException("Producto no encontrado: " + productoId));
+        return ProductoDetalleResponseDTO.from(producto);
+    }
 }

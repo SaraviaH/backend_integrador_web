@@ -33,5 +33,9 @@ public interface ProductoService {
     // Métodos para rol ADMIN
     ProductoPaginadoResponseDTO listarProductosAdmin(String search, Pageable pageable);
 
+    ProductoPaginadoResponseDTO listarProductosPublicos(String search, String categoryId, Pageable pageable);
+
+    ProductoDetalleResponseDTO obtenerProductoPublicoPorId(Long productoId);
+
     CambioEstadoResponseDTO cambiarEstadoPublicacionAdmin(Long productoId, CambiarEstadoProductoDTO request);
 }

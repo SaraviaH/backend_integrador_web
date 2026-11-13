@@ -80,7 +80,7 @@ class ProductoServiceTest {
         assertEquals(EstadoProducto.ELIMINADO_LOGICO, producto.getEstado());
         assertNotNull(producto.getFechaEliminacion());
         verify(productoRepository, times(1)).save(producto);
-        verify(productoRepository, never()).delete(any());
+        verify(productoRepository, never()).delete(any(Producto.class));
     }
 
     @Test
@@ -98,7 +98,7 @@ class ProductoServiceTest {
 
         assertThrows(EntityNotFoundException.class,
                 () -> productoService.eliminarMiProducto(correo, 99L));
-        verify(productoRepository, never()).delete(any());
+        verify(productoRepository, never()).delete(any(Producto.class));
     }
 
     @Test
