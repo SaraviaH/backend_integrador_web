@@ -57,9 +57,9 @@ import { HomeSearchService } from '../../core/state/home-search.service';
           <a routerLink="/catalog">Catálogo B2B</a>
           <a routerLink="/categories">Categorías</a>
           <a routerLink="/carrito">Carrito @if (cartState.totalItemsCount() > 0) { ({{ cartState.totalItemsCount() }}) }</a>
-          <a href="/#comunidad">Comunidad</a>
-          <a href="/#productos">Destacados</a>
-          <a href="/#como-funciona">Cómo funciona</a>
+          <a [routerLink]="['/']" fragment="comunidad" (click)="scrollToSection('comunidad', $event)">Comunidad</a>
+          <a [routerLink]="['/']" fragment="productos" (click)="scrollToSection('productos', $event)">Destacados</a>
+          <a [routerLink]="['/']" fragment="como-funciona" (click)="scrollToSection('como-funciona', $event)">Cómo funciona</a>
           <span class="header-nav-note">Un espacio para conectar y crecer</span>
         </div>
       </nav>
@@ -80,5 +80,26 @@ export class StoreNavbarComponent {
     } else {
       this.router.navigate(['/catalog']);
     }
+  }
+
+  public scrollToSection(sectionId: string, event: Event): void {
+    event.preventDefault();
+    const currentUrl = this.router.url.split('#')[0];
+    if (currentUrl === '/' || currentUrl === '') {
+      const el = document.getElementById(sectionId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        history.replaceState(null, '', `/#${sectionId}`);
+        return;
+      }
+    }
+    this.router.navigate(['/'], { fragment: sectionId }).then(() => {
+      setTimeout(() => {
+        const el = document.getElementById(sectionId);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 150);
+    });
   }
 }
