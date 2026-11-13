@@ -58,6 +58,9 @@ public class Producto {
     @Column(nullable = false, length = 10)
     private String moneda = "USD";
 
+    @Column(name = "stock_disponible", nullable = false)
+    private Integer stockDisponible = 100;
+
     @Column(name = "terminos_comerciales", columnDefinition = "TEXT")
     private String terminosComerciales;
 
@@ -125,6 +128,8 @@ public class Producto {
     public void setPrecioTotalRef(BigDecimal precioTotalRef) { this.precioTotalRef = precioTotalRef; }
     public String getMoneda() { return moneda; }
     public void setMoneda(String moneda) { this.moneda = moneda; }
+    public Integer getStockDisponible() { return stockDisponible; }
+    public void setStockDisponible(Integer stockDisponible) { this.stockDisponible = stockDisponible; }
     public String getTerminosComerciales() { return terminosComerciales; }
     public void setTerminosComerciales(String terminosComerciales) { this.terminosComerciales = terminosComerciales; }
     public EstadoProducto getEstado() { return estado; }
