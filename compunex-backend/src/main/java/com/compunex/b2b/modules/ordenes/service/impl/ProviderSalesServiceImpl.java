@@ -69,6 +69,7 @@ public class ProviderSalesServiceImpl implements ProviderSalesService {
 
     @Override
     @Transactional
+    @com.compunex.b2b.config.audit.Auditable(accion = "PROVIDER_DISPATCH_UPDATE")
     public SubordenDetalleProveedorDTO actualizarEstadoDespacho(String correoProveedor, Long subordenId, EstadoSuborden nuevoEstado) {
         Usuario proveedor = buscarUsuario(correoProveedor);
         SubordenFactura suborden = buscarSubordenPropia(proveedor.getId(), subordenId);

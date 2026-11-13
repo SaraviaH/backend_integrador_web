@@ -47,6 +47,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @com.compunex.b2b.config.audit.Auditable(accion = "AUTH_LOGIN")
     public AuthResponseDTO login(LoginRequestDTO request) {
         /*
          * =========================================================================
@@ -148,6 +149,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @org.springframework.transaction.annotation.Transactional
+    @com.compunex.b2b.config.audit.Auditable(accion = "AUTH_REGISTER_COMPANY")
     public RegistroProveedorResponseDTO registrarEmpresa(com.compunex.b2b.modules.auth.dto.request.RegistroEmpresaRequestDTO request) {
         if (usuarioRepository.existsByCorreo(request.getCorreo())) {
             throw new com.compunex.b2b.exception.DuplicateResourceException("El correo ya se encuentra registrado");

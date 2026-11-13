@@ -47,6 +47,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @com.compunex.b2b.config.audit.Auditable(accion = "ORDER_CHECKOUT_SPLIT")
     public CheckoutResponseDTO procesarCheckout(String correoComprador, CheckoutRequestDTO request) {
         Usuario comprador = usuarioRepository.findByCorreo(correoComprador)
                 .orElseThrow(() -> new ResourceNotFoundException("Comprador no encontrado"));

@@ -315,6 +315,7 @@ public class ProductoServiceImpl implements ProductoService {
 
     @Override
     @Transactional
+    @com.compunex.b2b.config.audit.Auditable(accion = "ADMIN_PRODUCT_MODERATION")
     public CambioEstadoResponseDTO cambiarEstadoPublicacionAdmin(Long productoId,
             CambiarEstadoProductoDTO request) {
         var producto = productoRepository.findById(productoId)
@@ -322,9 +323,25 @@ public class ProductoServiceImpl implements ProductoService {
 
         EstadoProducto estadoAnterior = producto.getEstado();
         EstadoProducto nuevoEstado = request.estado();
+        Instant ahora = Instant.now();
 
         producto.setEstado(nuevoEstado);
-        producto.setFechaActualizacion(Instant.now());
+        producto.setFechaActualizacion(ahora);
+
+        var auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        if (nuevoEstado == EstadoProducto.OCULTO_POR_ADMIN || nuevoEstado == EstadoProducto.ELIMINADO_LOGICO) {
+            if (auth != null && auth.isAuthenticated()) {
+                usuarioRepository.findByCorreo(auth.getName())
+                        .ifPresent(admin -> producto.setEliminadoPor(admin.getId()));
+            }
+            if (nuevoEstado == EstadoProducto.ELIMINADO_LOGICO && producto.getFechaEliminacion() == null) {
+                producto.setFechaEliminacion(ahora);
+            }
+        } else if (nuevoEstado == EstadoProducto.ACTIVO) {
+            producto.setEliminadoPor(null);
+            producto.setFechaEliminacion(null);
+        }
+
         productoRepository.save(producto);
 
         return new CambioEstadoResponseDTO(
