@@ -5,6 +5,7 @@ import { HomeViewComponent } from './features/home/home-view.component';
 import { CategoriesComponent } from './features/categories/categories.component';
 import { CatalogComponent } from './features/catalog/catalog.component';
 import { ProductDetailComponent } from './features/product-detail/product-detail.component';
+import { CartComponent } from './features/cart/cart.component';
 import { LoginComponent } from './features/auth/login/login.component';
 import { RegisterCompanyComponent } from './features/auth/register-company/register-company.component';
 import { ForbiddenViewComponent } from './features/forbidden/forbidden-view.component';
@@ -50,6 +51,16 @@ export const routes: Routes = [
       {
         path: 'catalogo',
         redirectTo: 'catalog',
+        pathMatch: 'full'
+      },
+      {
+        path: 'carrito',
+        component: CartComponent,
+        title: 'Carrito de Compras B2B · COMPUNEX'
+      },
+      {
+        path: 'cart',
+        redirectTo: 'carrito',
         pathMatch: 'full'
       },
       {

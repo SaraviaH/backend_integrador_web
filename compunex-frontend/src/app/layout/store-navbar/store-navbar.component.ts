@@ -37,6 +37,18 @@ import { HomeSearchService } from '../../core/state/home-search.service';
             </svg>
             Catálogo B2B
           </a>
+
+          <!-- Botón de Carrito Reactivo (Split Order) -->
+          <a routerLink="/carrito" class="relative p-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors flex items-center justify-center" title="Ver carrito B2B">
+            <svg class="w-5 h-5 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+            </svg>
+            @if (cartState.totalItemsCount() > 0) {
+              <span class="absolute -top-1 -right-1 min-w-5 h-5 px-1 bg-[#1E50C0] text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-white shadow-xs">
+                {{ cartState.totalItemsCount() }}
+              </span>
+            }
+          </a>
         </div>
       </div>
       <nav class="header-nav" aria-label="Navegación principal">
@@ -44,6 +56,7 @@ import { HomeSearchService } from '../../core/state/home-search.service';
           <a routerLink="/">Inicio</a>
           <a routerLink="/catalog">Catálogo B2B</a>
           <a routerLink="/categories">Categorías</a>
+          <a routerLink="/carrito">Carrito @if (cartState.totalItemsCount() > 0) { ({{ cartState.totalItemsCount() }}) }</a>
           <a href="/#comunidad">Comunidad</a>
           <a href="/#productos">Destacados</a>
           <a href="/#como-funciona">Cómo funciona</a>
