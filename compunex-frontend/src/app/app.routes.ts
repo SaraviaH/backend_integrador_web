@@ -13,6 +13,8 @@ import { OrderDetailComponent } from './features/orders/order-detail/order-detai
 import { ProfileComponent } from './features/account/profile/profile.component';
 import { ChangePasswordComponent } from './features/account/security/change-password.component';
 import { ActivateProviderComponent } from './features/account/activate-provider/activate-provider.component';
+import { ProviderDashboardComponent } from './features/provider/dashboard/provider-dashboard.component';
+import { ProviderCompanyProfileComponent } from './features/provider/company-profile/provider-company-profile.component';
 import { LoginComponent } from './features/auth/login/login.component';
 import { RegisterCompanyComponent } from './features/auth/register-company/register-company.component';
 import { ForbiddenViewComponent } from './features/forbidden/forbidden-view.component';
@@ -161,10 +163,25 @@ export const routes: Routes = [
       },
       {
         path: 'dashboard',
-        component: HomeViewComponent, // temporalmente reutilizado hasta Sprint-F11
-        title: 'Panel Proveedor · COMPUNEX B2B'
+        component: ProviderDashboardComponent,
+        title: 'Dashboard Métricas Proveedor · COMPUNEX B2B'
+      },
+      {
+        path: 'profile',
+        component: ProviderCompanyProfileComponent,
+        title: 'Perfil Comercial y Branding · COMPUNEX B2B'
+      },
+      {
+        path: 'perfil-comercial',
+        redirectTo: 'profile',
+        pathMatch: 'full'
       }
     ]
+  },
+  {
+    path: 'proveedor',
+    redirectTo: 'panel',
+    pathMatch: 'prefix'
   },
 
   // Fallback 404
