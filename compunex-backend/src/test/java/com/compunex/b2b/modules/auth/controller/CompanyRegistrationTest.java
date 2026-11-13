@@ -28,12 +28,9 @@ class CompanyRegistrationTest {
     @Test
     void registrarEmpresa_datosValidos_retorna201YToken() throws Exception {
         RegistroEmpresaRequestDTO request = RegistroEmpresaRequestDTO.builder()
+                .nombre("María López")
                 .ruc("20601234567")
                 .razonSocial("Tech Buyer SAC")
-                .nombreComercial("Tech Buyer")
-                .direccionFiscal("Av. Javier Prado 123")
-                .ciudad("Lima")
-                .telefono("999888777")
                 .correo("empresa.compradora@test.com")
                 .contrasena("Secret123!")
                 .build();
@@ -42,9 +39,14 @@ class CompanyRegistrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.usuarioId").isNumber())
+                .andExpect(jsonPath("$.correo").value("empresa.compradora@test.com"))
+                .andExpect(jsonPath("$.nombre").value("María López"))
+                .andExpect(jsonPath("$.rol").value("CLIENTE"))
+                .andExpect(jsonPath("$.tienePerfilProveedor").value(false))
                 .andExpect(jsonPath("$.token").isNotEmpty())
                 .andExpect(jsonPath("$.tipoToken").value("Bearer"))
-                .andExpect(jsonPath("$.rol").value("CLIENTE"))
+                .andExpect(jsonPath("$.expiraEnSegundos").value(86400))
                 .andExpect(jsonPath("$.ruc").value("20601234567"));
     }
 

@@ -5,6 +5,7 @@ import com.compunex.b2b.exception.ResourceNotFoundException;
 import com.compunex.b2b.modules.auth.entity.Usuario;
 import com.compunex.b2b.modules.auth.repository.UsuarioRepository;
 import com.compunex.b2b.modules.ordenes.dto.response.OrdenItemDetalleDTO;
+import com.compunex.b2b.modules.ordenes.dto.response.ReceptorFacturaDTO;
 import com.compunex.b2b.modules.ordenes.dto.response.SubordenDetalleProveedorDTO;
 import com.compunex.b2b.modules.ordenes.dto.response.VentaPaginadaResponseDTO;
 import com.compunex.b2b.modules.ordenes.dto.response.VentaResumenDTO;
@@ -37,16 +38,26 @@ public class ProviderSalesServiceImpl implements ProviderSalesService {
         var pagina = subordenFacturaRepository.findByProveedorId(proveedor.getId(), pageable);
 
         var contenido = pagina.getContent().stream()
-                .map(sub -> VentaResumenDTO.builder()
-                        .subordenId(sub.getId())
-                        .ordenId(sub.getOrden().getId())
-                        .codigoOrden(sub.getOrden().getCodigoOrden())
-                        .numeroComprobante(sub.getNumeroComprobante())
-                        .fechaCreacion(sub.getFechaCreacion())
-                        .compradorNombre(sub.getOrden().getComprador().getNombre())
-                        .total(sub.getTotal())
-                        .estado(sub.getEstado().name())
-                        .build())
+                .map(sub -> {
+                    var orden = sub.getOrden();
+                    String razonSocialComprador = (orden.getRazonSocialReceptor() != null
+                            && !orden.getRazonSocialReceptor().isBlank())
+                            ? orden.getRazonSocialReceptor()
+                            : orden.getComprador().getNombre();
+
+                    return VentaResumenDTO.builder()
+                            .subordenId(sub.getId())
+                            .ordenId(orden.getId())
+                            .codigoOrden(orden.getCodigoOrden())
+                            .numeroComprobante(sub.getNumeroComprobante())
+                            .fechaEmision(sub.getFechaCreacion())
+                            .razonSocialComprador(razonSocialComprador)
+                            .rucComprador(orden.getRucReceptor())
+                            .total(sub.getTotal())
+                            .moneda(sub.getMoneda())
+                            .estado(sub.getEstado().name())
+                            .build();
+                })
                 .toList();
 
         return VentaPaginadaResponseDTO.builder()
@@ -116,23 +127,28 @@ public class ProviderSalesServiceImpl implements ProviderSalesService {
                         .titulo(item.getProducto().getTitulo())
                         .cantidad(item.getCantidad())
                         .precioUnitario(item.getPrecioUnitario())
-                        .subtotal(item.getSubtotal())
+                        .subtotalLinea(item.getSubtotal())
                         .build())
                 .toList();
+
+        ReceptorFacturaDTO receptor = ReceptorFacturaDTO.builder()
+                .ruc(orden.getRucReceptor())
+                .razonSocial(orden.getRazonSocialReceptor())
+                .direccionFiscal(orden.getDireccionFiscal())
+                .build();
 
         return SubordenDetalleProveedorDTO.builder()
                 .subordenId(sub.getId())
                 .ordenId(orden.getId())
                 .codigoOrden(orden.getCodigoOrden())
                 .numeroComprobante(sub.getNumeroComprobante())
-                .fechaCreacion(sub.getFechaCreacion())
-                .compradorNombre(orden.getComprador().getNombre())
-                .rucReceptor(orden.getRucReceptor())
-                .razonSocialReceptor(orden.getRazonSocialReceptor())
-                .direccionFiscal(orden.getDireccionFiscal())
+                .tipoComprobante(sub.getTipoComprobante())
+                .fechaEmision(sub.getFechaCreacion())
+                .receptor(receptor)
                 .subtotal(sub.getSubtotal())
                 .igv(sub.getIgv())
                 .total(sub.getTotal())
+                .moneda(sub.getMoneda())
                 .estado(sub.getEstado().name())
                 .items(itemsDto)
                 .build();

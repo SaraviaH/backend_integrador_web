@@ -15,15 +15,16 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProveedorPerfilResponseDTO {
-    private Long id;
+    private Long proveedorId;
     private Long usuarioId;
-    private String correo;
-    private String ruc;
+    private String identificacionFiscal;
     private String razonSocial;
     private String nombreComercial;
     private String telefonoContacto;
+    private String correoContacto;
     private String direccion;
     private String ciudad;
+    private String anosMercado;
     private String descripcion;
     private String politicaComercial;
     private BigDecimal calificacion;

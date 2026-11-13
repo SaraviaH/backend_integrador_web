@@ -40,6 +40,7 @@ public class ActivarProveedorRequestDTO {
     @Size(max = 100, message = "La ciudad no puede superar los 100 caracteres")
     private String ciudad;
 
+    private String anosMercado;
     private String descripcion;
     private String politicaComercial;
 }

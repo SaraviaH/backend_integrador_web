@@ -91,11 +91,20 @@ class ProductoPublicoControllerTest {
                         .param("size", "12"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.contenido[*].titulo", hasItem("Laptop Dell Latitude 5440")))
-                .andExpect(jsonPath("$.contenido[*].titulo", not(hasItem("Laptop Eliminada"))));
+                .andExpect(jsonPath("$.contenido[*].titulo", not(hasItem("Laptop Eliminada"))))
+                .andExpect(jsonPath("$.contenido[*].categoriaNombre", hasItem(categoria.getNombre())))
+                .andExpect(jsonPath("$.contenido[*].stockDisponible", hasItem(100)))
+                .andExpect(jsonPath("$.contenido[*].proveedorId", hasItem(proveedor.getId().intValue())))
+                .andExpect(jsonPath("$.contenido[*].proveedorNombreComercial").exists());
 
         mockMvc.perform(get("/api/v1/products/{id}", activo.getId()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.titulo").value("Laptop Dell Latitude 5440"));
+                .andExpect(jsonPath("$.titulo").value("Laptop Dell Latitude 5440"))
+                .andExpect(jsonPath("$.categoriaNombre").value(categoria.getNombre()))
+                .andExpect(jsonPath("$.stockDisponible").value(100))
+                .andExpect(jsonPath("$.proveedor.id").value(proveedor.getId().intValue()))
+                .andExpect(jsonPath("$.proveedor.razonSocial").value(proveedor.getRazonSocial()))
+                .andExpect(jsonPath("$.proveedor.identificacionFiscal").value(proveedor.getIdentificacionFiscal()));
 
         mockMvc.perform(get("/api/v1/products/{id}", eliminado.getId()))
                 .andExpect(status().isNotFound());

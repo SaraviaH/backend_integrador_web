@@ -15,8 +15,9 @@ import java.time.Instant;
 public class OrdenResumenDTO {
     private Long ordenId;
     private String codigoOrden;
-    private Instant fechaCreacion;
-    private int cantidadSubordenes;
-    private BigDecimal montoTotal;
-    private String estado;
+    private Instant fechaEmision;
+    private int cantidadProveedores;
+    private BigDecimal totalGeneral;
+    private String moneda;
+    private Boolean esSimulado;
 }

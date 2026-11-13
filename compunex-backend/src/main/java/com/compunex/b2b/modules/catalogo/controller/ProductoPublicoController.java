@@ -1,7 +1,7 @@
 package com.compunex.b2b.modules.catalogo.controller;
 
-import com.compunex.b2b.modules.catalogo.dto.response.ProductoDetalleResponseDTO;
-import com.compunex.b2b.modules.catalogo.dto.response.ProductoPaginadoResponseDTO;
+import com.compunex.b2b.modules.catalogo.dto.response.ProductoPublicoDetalleDTO;
+import com.compunex.b2b.modules.catalogo.dto.response.ProductoPublicoPaginadoResponseDTO;
 import com.compunex.b2b.modules.catalogo.service.ProductoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,7 +28,7 @@ public class ProductoPublicoController {
             summary = "[18] Buscar productos públicos con paginación y filtros",
             description = "Retorna productos activos (no eliminados) filtrados por texto y/o categoría."
     )
-    public ResponseEntity<ProductoPaginadoResponseDTO> listarProductosPublicos(
+    public ResponseEntity<ProductoPublicoPaginadoResponseDTO> listarProductosPublicos(
             @RequestParam(required = false) String search,
             @RequestParam(required = false) String categoryId,
             @RequestParam(defaultValue = "0") int page,
@@ -42,7 +42,7 @@ public class ProductoPublicoController {
             summary = "[19] Consultar ficha técnica pública de producto",
             description = "Retorna el detalle completo de un producto activo con sus especificaciones e imágenes."
     )
-    public ResponseEntity<ProductoDetalleResponseDTO> obtenerProductoPublico(@PathVariable Long id) {
+    public ResponseEntity<ProductoPublicoDetalleDTO> obtenerProductoPublico(@PathVariable Long id) {
         return ResponseEntity.ok(productoService.obtenerProductoPublicoPorId(id));
     }
 }

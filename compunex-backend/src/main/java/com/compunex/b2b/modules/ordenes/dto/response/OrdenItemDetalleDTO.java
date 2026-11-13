@@ -16,5 +16,5 @@ public class OrdenItemDetalleDTO {
     private String titulo;
     private Integer cantidad;
     private BigDecimal precioUnitario;
-    private BigDecimal subtotal;
+    private BigDecimal subtotalLinea;
 }

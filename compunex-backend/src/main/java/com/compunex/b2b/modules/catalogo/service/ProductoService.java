@@ -10,6 +10,8 @@ import com.compunex.b2b.modules.catalogo.dto.response.CambioEstadoResponseDTO;
 import com.compunex.b2b.modules.catalogo.dto.response.CrearProductoResponseDTO;
 import com.compunex.b2b.modules.catalogo.dto.response.ProductoDetalleResponseDTO;
 import com.compunex.b2b.modules.catalogo.dto.response.ProductoPaginadoResponseDTO;
+import com.compunex.b2b.modules.catalogo.dto.response.ProductoPublicoDetalleDTO;
+import com.compunex.b2b.modules.catalogo.dto.response.ProductoPublicoPaginadoResponseDTO;
 
 public interface ProductoService {
 
@@ -33,9 +35,9 @@ public interface ProductoService {
     // Métodos para rol ADMIN
     ProductoPaginadoResponseDTO listarProductosAdmin(String search, Pageable pageable);
 
-    ProductoPaginadoResponseDTO listarProductosPublicos(String search, String categoryId, Pageable pageable);
+    ProductoPublicoPaginadoResponseDTO listarProductosPublicos(String search, String categoryId, Pageable pageable);
 
-    ProductoDetalleResponseDTO obtenerProductoPublicoPorId(Long productoId);
+    ProductoPublicoDetalleDTO obtenerProductoPublicoPorId(Long productoId);
 
     CambioEstadoResponseDTO cambiarEstadoPublicacionAdmin(Long productoId, CambiarEstadoProductoDTO request);
 }

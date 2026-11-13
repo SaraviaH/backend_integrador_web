@@ -18,14 +18,13 @@ public class SubordenDetalleProveedorDTO {
     private Long ordenId;
     private String codigoOrden;
     private String numeroComprobante;
-    private Instant fechaCreacion;
-    private String compradorNombre;
-    private String rucReceptor;
-    private String razonSocialReceptor;
-    private String direccionFiscal;
+    private String tipoComprobante;
+    private Instant fechaEmision;
+    private ReceptorFacturaDTO receptor;
     private BigDecimal subtotal;
     private BigDecimal igv;
     private BigDecimal total;
+    private String moneda;
     private String estado;
     private List<OrdenItemDetalleDTO> items;
 }

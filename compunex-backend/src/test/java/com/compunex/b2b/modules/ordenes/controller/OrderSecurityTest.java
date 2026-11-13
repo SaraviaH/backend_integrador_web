@@ -13,6 +13,7 @@ import com.compunex.b2b.modules.catalogo.repository.CategoriaRepository;
 import com.compunex.b2b.modules.catalogo.repository.ProductoRepository;
 import com.compunex.b2b.modules.ordenes.dto.request.CheckoutItemDTO;
 import com.compunex.b2b.modules.ordenes.dto.request.CheckoutRequestDTO;
+import com.compunex.b2b.modules.ordenes.dto.request.DatosFacturacionDTO;
 import com.compunex.b2b.modules.ordenes.service.OrderService;
 import com.compunex.b2b.modules.perfiles.entity.PerfilProveedor;
 import com.compunex.b2b.modules.perfiles.repository.PerfilProveedorRepository;
@@ -83,9 +84,11 @@ class OrderSecurityTest {
         prod = productoRepository.save(prod);
 
         var checkout = orderService.procesarCheckout(dueno.getCorreo(), CheckoutRequestDTO.builder()
-                .rucReceptor("20601234567")
-                .razonSocialReceptor("Dueno SAC")
-                .direccionFiscal("Av. Lima 123")
+                .datosFacturacion(DatosFacturacionDTO.builder()
+                        .rucReceptor("20601234567")
+                        .razonSocialReceptor("Dueno SAC")
+                        .direccionFiscal("Av. Lima 123")
+                        .build())
                 .items(List.of(new CheckoutItemDTO(prod.getId(), 1)))
                 .build());
 

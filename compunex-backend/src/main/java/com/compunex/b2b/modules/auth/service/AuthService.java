@@ -6,6 +6,7 @@ import com.compunex.b2b.modules.auth.dto.request.RegistroEmpresaRequestDTO;
 import com.compunex.b2b.modules.auth.dto.request.RegistroProveedorRequestDTO;
 import com.compunex.b2b.modules.auth.dto.response.AuthResponseDTO;
 import com.compunex.b2b.modules.auth.dto.response.CambioPasswordResponseDTO;
+import com.compunex.b2b.modules.auth.dto.response.RegistroEmpresaResponseDTO;
 import com.compunex.b2b.modules.auth.dto.response.RegistroProveedorResponseDTO;
 import com.compunex.b2b.modules.auth.dto.response.UsuarioSesionDTO;
 
@@ -14,5 +15,5 @@ public interface AuthService {
     UsuarioSesionDTO obtenerSesion();
     CambioPasswordResponseDTO cambiarPassword(CambiarPasswordDTO request);
     RegistroProveedorResponseDTO registrarProveedor(RegistroProveedorRequestDTO request);
-    RegistroProveedorResponseDTO registrarEmpresa(RegistroEmpresaRequestDTO request);
+    RegistroEmpresaResponseDTO registrarEmpresa(RegistroEmpresaRequestDTO request);
 }

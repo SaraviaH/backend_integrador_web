@@ -17,8 +17,10 @@ public class VentaResumenDTO {
     private Long ordenId;
     private String codigoOrden;
     private String numeroComprobante;
-    private Instant fechaCreacion;
-    private String compradorNombre;
+    private Instant fechaEmision;
+    private String razonSocialComprador;
+    private String rucComprador;
     private BigDecimal total;
+    private String moneda;
     private String estado;
 }

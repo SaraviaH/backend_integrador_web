@@ -13,6 +13,7 @@ import com.compunex.b2b.modules.catalogo.repository.CategoriaRepository;
 import com.compunex.b2b.modules.catalogo.repository.ProductoRepository;
 import com.compunex.b2b.modules.ordenes.dto.request.CheckoutItemDTO;
 import com.compunex.b2b.modules.ordenes.dto.request.CheckoutRequestDTO;
+import com.compunex.b2b.modules.ordenes.dto.request.DatosFacturacionDTO;
 import com.compunex.b2b.modules.perfiles.entity.PerfilProveedor;
 import com.compunex.b2b.modules.perfiles.repository.PerfilProveedorRepository;
 import com.compunex.b2b.security.JwtTokenProvider;
@@ -85,9 +86,13 @@ class OrderControllerTest {
         String token = jwtTokenProvider.generarTokenConRol(comprador.getCorreo(), RolUsuario.CLIENTE.name());
 
         CheckoutRequestDTO request = CheckoutRequestDTO.builder()
-                .rucReceptor("20601234567")
-                .razonSocialReceptor("Comprador HTTP SAC")
-                .direccionFiscal("Av. Javier Prado 500")
+                .datosFacturacion(DatosFacturacionDTO.builder()
+                        .tipoComprobante("FACTURA")
+                        .rucReceptor("20601234567")
+                        .razonSocialReceptor("Comprador HTTP SAC")
+                        .direccionFiscal("Av. Javier Prado 500")
+                        .metodoPagoSimulado("TRANSFERENCIA_B2B")
+                        .build())
                 .items(List.of(new CheckoutItemDTO(prod.getId(), 2)))
                 .build();
 
@@ -97,7 +102,14 @@ class OrderControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.codigoOrden").isNotEmpty())
-                .andExpect(jsonPath("$.montoTotal").value(1180.0))
-                .andExpect(jsonPath("$.subordenes.length()").value(1));
+                .andExpect(jsonPath("$.fechaEmision").isNotEmpty())
+                .andExpect(jsonPath("$.moneda").value("PEN"))
+                .andExpect(jsonPath("$.totalGeneral").value(1180.0))
+                .andExpect(jsonPath("$.esSimulado").value(true))
+                .andExpect(jsonPath("$.facturasEmitidas.length()").value(1))
+                .andExpect(jsonPath("$.facturasEmitidas[0].tipoComprobante").value("FACTURA"))
+                .andExpect(jsonPath("$.facturasEmitidas[0].emisor.ruc").value(proveedor.getIdentificacionFiscal()))
+                .andExpect(jsonPath("$.facturasEmitidas[0].receptor.ruc").value("20601234567"))
+                .andExpect(jsonPath("$.facturasEmitidas[0].items[0].subtotalLinea").value(1000.0));
     }
 }

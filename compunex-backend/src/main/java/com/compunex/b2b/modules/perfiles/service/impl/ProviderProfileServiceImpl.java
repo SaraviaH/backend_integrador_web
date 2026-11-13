@@ -6,10 +6,12 @@ import com.compunex.b2b.modules.auth.entity.RolUsuario;
 import com.compunex.b2b.modules.auth.entity.Usuario;
 import com.compunex.b2b.modules.auth.repository.UsuarioRepository;
 import com.compunex.b2b.modules.perfiles.dto.request.ActivarProveedorRequestDTO;
+import com.compunex.b2b.modules.perfiles.dto.response.ActivarProveedorResponseDTO;
 import com.compunex.b2b.modules.perfiles.dto.response.ProveedorPerfilResponseDTO;
 import com.compunex.b2b.modules.perfiles.entity.PerfilProveedor;
 import com.compunex.b2b.modules.perfiles.repository.PerfilProveedorRepository;
 import com.compunex.b2b.modules.perfiles.service.ProviderProfileService;
+import com.compunex.b2b.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +27,7 @@ public class ProviderProfileServiceImpl implements ProviderProfileService {
 
     private final UsuarioRepository usuarioRepository;
     private final PerfilProveedorRepository perfilProveedorRepository;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Override
     @Transactional(readOnly = true)
@@ -40,7 +43,7 @@ public class ProviderProfileServiceImpl implements ProviderProfileService {
 
     @Override
     @Transactional
-    public ProveedorPerfilResponseDTO activarProveedor(String correo, ActivarProveedorRequestDTO request) {
+    public ActivarProveedorResponseDTO activarProveedor(String correo, ActivarProveedorRequestDTO request) {
         Usuario usuario = usuarioRepository.findByCorreo(correo)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
@@ -66,25 +69,40 @@ public class ProviderProfileServiceImpl implements ProviderProfileService {
         perfil.setTelefonoContacto(request.getTelefonoContacto());
         perfil.setDireccion(request.getDireccion());
         perfil.setCiudad(request.getCiudad());
+        if (request.getAnosMercado() != null && !request.getAnosMercado().isBlank()) {
+            perfil.setAnosMercado(request.getAnosMercado());
+        } else if (perfil.getAnosMercado() == null || perfil.getAnosMercado().isBlank()) {
+            perfil.setAnosMercado("0 años");
+        }
         perfil.setDescripcion(request.getDescripcion());
         perfil.setPoliticaComercial(request.getPoliticaComercial());
         perfil.setFechaActualizacion(Instant.now());
 
         perfil = perfilProveedorRepository.save(perfil);
-        return mapToResponse(usuario, perfil);
+        String nuevoToken = jwtTokenProvider.generarTokenConRol(usuario.getCorreo(), RolUsuario.PROVEEDOR.name());
+
+        return new ActivarProveedorResponseDTO(
+                perfil.getId(),
+                RolUsuario.PROVEEDOR.name(),
+                nuevoToken,
+                "Bearer",
+                86400L,
+                "Perfil de proveedor activado exitosamente. Utiliza el nuevo token para gestionar tu catálogo."
+        );
     }
 
     private ProveedorPerfilResponseDTO mapToResponse(Usuario usuario, PerfilProveedor perfil) {
         return ProveedorPerfilResponseDTO.builder()
-                .id(perfil.getId())
+                .proveedorId(perfil.getId())
                 .usuarioId(usuario.getId())
-                .correo(usuario.getCorreo())
-                .ruc(perfil.getIdentificacionFiscal())
+                .identificacionFiscal(perfil.getIdentificacionFiscal())
                 .razonSocial(perfil.getRazonSocial())
                 .nombreComercial(perfil.getNombreComercial())
                 .telefonoContacto(perfil.getTelefonoContacto())
+                .correoContacto(usuario.getCorreo())
                 .direccion(perfil.getDireccion())
                 .ciudad(perfil.getCiudad())
+                .anosMercado(perfil.getAnosMercado())
                 .descripcion(perfil.getDescripcion())
                 .politicaComercial(perfil.getPoliticaComercial())
                 .calificacion(perfil.getCalificacion())

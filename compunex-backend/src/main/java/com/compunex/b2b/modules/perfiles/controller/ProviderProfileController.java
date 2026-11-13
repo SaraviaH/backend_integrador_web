@@ -1,6 +1,7 @@
 package com.compunex.b2b.modules.perfiles.controller;
 
 import com.compunex.b2b.modules.perfiles.dto.request.ActivarProveedorRequestDTO;
+import com.compunex.b2b.modules.perfiles.dto.response.ActivarProveedorResponseDTO;
 import com.compunex.b2b.modules.perfiles.dto.response.ProveedorPerfilResponseDTO;
 import com.compunex.b2b.modules.perfiles.service.ProviderProfileService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -8,6 +9,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -39,11 +41,12 @@ public class ProviderProfileController {
     @PreAuthorize("isAuthenticated()")
     @Operation(
             summary = "[17] Activar perfil comercial de proveedor",
-            description = "Actualiza el rol del cliente autenticado a PROVEEDOR y registra su perfil comercial."
+            description = "Actualiza el rol del cliente autenticado a PROVEEDOR, registra su perfil comercial y emite un nuevo JWT."
     )
-    public ResponseEntity<ProveedorPerfilResponseDTO> activarPerfilProveedor(
+    public ResponseEntity<ActivarProveedorResponseDTO> activarPerfilProveedor(
             Authentication authentication,
             @Valid @RequestBody ActivarProveedorRequestDTO request) {
-        return ResponseEntity.ok(providerProfileService.activarProveedor(authentication.getName(), request));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(providerProfileService.activarProveedor(authentication.getName(), request));
     }
 }

@@ -8,7 +8,13 @@ import com.compunex.b2b.modules.catalogo.entity.Producto;
 import com.compunex.b2b.modules.catalogo.repository.ProductoRepository;
 import com.compunex.b2b.modules.ordenes.dto.request.CheckoutItemDTO;
 import com.compunex.b2b.modules.ordenes.dto.request.CheckoutRequestDTO;
+import com.compunex.b2b.modules.ordenes.dto.request.DatosFacturacionDTO;
 import com.compunex.b2b.modules.ordenes.dto.response.CheckoutResponseDTO;
+import com.compunex.b2b.modules.ordenes.dto.response.EmisorFacturaDTO;
+import com.compunex.b2b.modules.ordenes.dto.response.OrdenItemDetalleDTO;
+import com.compunex.b2b.modules.ordenes.dto.response.OrdenPaginadaResponseDTO;
+import com.compunex.b2b.modules.ordenes.dto.response.OrdenResumenDTO;
+import com.compunex.b2b.modules.ordenes.dto.response.ReceptorFacturaDTO;
 import com.compunex.b2b.modules.ordenes.dto.response.SubordenResumenDTO;
 import com.compunex.b2b.modules.ordenes.entity.Orden;
 import com.compunex.b2b.modules.ordenes.entity.OrdenItem;
@@ -16,8 +22,13 @@ import com.compunex.b2b.modules.ordenes.entity.SubordenFactura;
 import com.compunex.b2b.modules.ordenes.exception.AutoCompraException;
 import com.compunex.b2b.modules.ordenes.exception.StockInsuficienteException;
 import com.compunex.b2b.modules.ordenes.repository.OrdenRepository;
+import com.compunex.b2b.modules.ordenes.repository.SubordenFacturaRepository;
 import com.compunex.b2b.modules.ordenes.service.OrderService;
+import com.compunex.b2b.modules.perfiles.entity.PerfilProveedor;
+import com.compunex.b2b.modules.perfiles.repository.PerfilProveedorRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +38,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Motor transaccional Split Order ACID con recálculo fiscal en servidor (IGV 18%).
@@ -37,13 +47,12 @@ import java.util.concurrent.atomic.AtomicLong;
 public class OrderServiceImpl implements OrderService {
 
     private static final BigDecimal IGV_RATE = new BigDecimal("0.18");
-    private static final AtomicLong CORRELATIVO_FACTURA = new AtomicLong(1);
-    private static final AtomicLong CORRELATIVO_ORDEN = new AtomicLong(1);
 
     private final UsuarioRepository usuarioRepository;
     private final ProductoRepository productoRepository;
     private final OrdenRepository ordenRepository;
-    private final com.compunex.b2b.modules.perfiles.repository.PerfilProveedorRepository perfilProveedorRepository;
+    private final SubordenFacturaRepository subordenFacturaRepository;
+    private final PerfilProveedorRepository perfilProveedorRepository;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -53,6 +62,7 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new ResourceNotFoundException("Comprador no encontrado"));
 
         Map<Long, List<ItemResuelto>> itemsPorProveedor = new LinkedHashMap<>();
+        String monedaOrden = "PEN";
 
         for (CheckoutItemDTO itemDto : request.getItems()) {
             Producto producto = productoRepository.findById(itemDto.getProductoId())
@@ -68,6 +78,10 @@ public class OrderServiceImpl implements OrderService {
                 throw new StockInsuficienteException("Stock insuficiente para el producto: " + producto.getTitulo());
             }
 
+            if (producto.getMoneda() != null && !producto.getMoneda().isBlank()) {
+                monedaOrden = producto.getMoneda();
+            }
+
             producto.setStockDisponible(producto.getStockDisponible() - itemDto.getCantidad());
             productoRepository.save(producto);
 
@@ -76,12 +90,28 @@ public class OrderServiceImpl implements OrderService {
                     .add(new ItemResuelto(producto, proveedorUsuario, itemDto.getCantidad()));
         }
 
+        DatosFacturacionDTO datos = request.getDatosFacturacion();
+        String tipoComprobante = (datos.getTipoComprobante() != null && !datos.getTipoComprobante().isBlank())
+                ? datos.getTipoComprobante()
+                : "FACTURA";
+        String metodoPago = (datos.getMetodoPagoSimulado() != null && !datos.getMetodoPagoSimulado().isBlank())
+                ? datos.getMetodoPagoSimulado()
+                : "TRANSFERENCIA_B2B";
+
+        Long maxOrdenId = ordenRepository.findMaxId();
+        long siguienteOrden = (maxOrdenId != null ? maxOrdenId : 0L) + 1L;
+        Long maxFacturaId = subordenFacturaRepository.findMaxId();
+        long siguienteFactura = (maxFacturaId != null ? maxFacturaId : 0L) + 1L;
+
         Orden orden = new Orden();
-        orden.setCodigoOrden(String.format("ORD-%08d", CORRELATIVO_ORDEN.getAndIncrement()));
+        orden.setCodigoOrden(String.format("PED-2026-%06d", siguienteOrden));
         orden.setComprador(comprador);
-        orden.setRucReceptor(request.getRucReceptor());
-        orden.setRazonSocialReceptor(request.getRazonSocialReceptor());
-        orden.setDireccionFiscal(request.getDireccionFiscal());
+        orden.setRucReceptor(datos.getRucReceptor());
+        orden.setRazonSocialReceptor(datos.getRazonSocialReceptor());
+        orden.setDireccionFiscal(datos.getDireccionFiscal());
+        orden.setTipoComprobante(tipoComprobante);
+        orden.setMetodoPagoSimulado(metodoPago);
+        orden.setMoneda(monedaOrden);
 
         BigDecimal totalSubtotal = BigDecimal.ZERO;
         BigDecimal totalIgv = BigDecimal.ZERO;
@@ -89,9 +119,12 @@ public class OrderServiceImpl implements OrderService {
 
         for (List<ItemResuelto> grupo : itemsPorProveedor.values()) {
             Usuario proveedor = grupo.get(0).proveedor();
+            String monedaSub = grupo.get(0).producto().getMoneda();
             SubordenFactura suborden = new SubordenFactura();
             suborden.setProveedor(proveedor);
-            suborden.setNumeroComprobante(String.format("F001-%08d", CORRELATIVO_FACTURA.getAndIncrement()));
+            suborden.setNumeroComprobante(String.format("SIM-F001-%08d", siguienteFactura++));
+            suborden.setTipoComprobante(tipoComprobante);
+            suborden.setMoneda(monedaSub != null && !monedaSub.isBlank() ? monedaSub : monedaOrden);
 
             BigDecimal subSubtotal = BigDecimal.ZERO;
             for (ItemResuelto ir : grupo) {
@@ -127,49 +160,29 @@ public class OrderServiceImpl implements OrderService {
         orden.setMontoTotal(totalGeneral);
 
         Orden guardada = ordenRepository.save(orden);
-
-        List<SubordenResumenDTO> subordenResumenes = guardada.getSubordenes().stream()
-                .map(s -> SubordenResumenDTO.builder()
-                        .subordenId(s.getId())
-                        .numeroComprobante(s.getNumeroComprobante())
-                        .proveedorId(s.getProveedor().getId())
-                        .subtotal(s.getSubtotal())
-                        .igv(s.getIgv())
-                        .total(s.getTotal())
-                        .build())
-                .toList();
-
-        return CheckoutResponseDTO.builder()
-                .ordenId(guardada.getId())
-                .codigoOrden(guardada.getCodigoOrden())
-                .montoTotal(guardada.getMontoTotal())
-                .subordenes(subordenResumenes)
-                .build();
-    }
-
-    private record ItemResuelto(Producto producto, Usuario proveedor, int cantidad) {
+        return mapToCheckoutResponse(guardada);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public com.compunex.b2b.modules.ordenes.dto.response.OrdenPaginadaResponseDTO obtenerMisOrdenes(
-            String correoComprador, org.springframework.data.domain.Pageable pageable) {
+    public OrdenPaginadaResponseDTO obtenerMisOrdenes(String correoComprador, Pageable pageable) {
         Usuario comprador = usuarioRepository.findByCorreo(correoComprador)
                 .orElseThrow(() -> new ResourceNotFoundException("Comprador no encontrado"));
 
         var pagina = ordenRepository.findByCompradorId(comprador.getId(), pageable);
         var contenido = pagina.getContent().stream()
-                .map(o -> com.compunex.b2b.modules.ordenes.dto.response.OrdenResumenDTO.builder()
+                .map(o -> OrdenResumenDTO.builder()
                         .ordenId(o.getId())
                         .codigoOrden(o.getCodigoOrden())
-                        .fechaCreacion(o.getFechaCreacion())
-                        .cantidadSubordenes(o.getSubordenes().size())
-                        .montoTotal(o.getMontoTotal())
-                        .estado(o.getEstado().name())
+                        .fechaEmision(o.getFechaCreacion())
+                        .cantidadProveedores(o.getSubordenes().size())
+                        .totalGeneral(o.getMontoTotal())
+                        .moneda(o.getMoneda())
+                        .esSimulado(true)
                         .build())
                 .toList();
 
-        return com.compunex.b2b.modules.ordenes.dto.response.OrdenPaginadaResponseDTO.builder()
+        return OrdenPaginadaResponseDTO.builder()
                 .contenido(contenido)
                 .pagina(pagina.getNumber())
                 .tamano(pagina.getSize())
@@ -181,8 +194,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = true)
-    public com.compunex.b2b.modules.ordenes.dto.response.OrdenDetalleResponseDTO obtenerDetalleOrden(
-            String correoComprador, Long ordenId) {
+    public CheckoutResponseDTO obtenerDetalleOrden(String correoComprador, Long ordenId) {
         Usuario comprador = usuarioRepository.findByCorreo(correoComprador)
                 .orElseThrow(() -> new ResourceNotFoundException("Comprador no encontrado"));
 
@@ -190,30 +202,49 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new ResourceNotFoundException("Orden no encontrada: " + ordenId));
 
         if (!orden.getComprador().getId().equals(comprador.getId())) {
-            throw new org.springframework.security.access.AccessDeniedException("No tienes permiso para consultar esta orden");
+            throw new AccessDeniedException("No tienes permiso para consultar esta orden");
         }
 
-        var subordenesDto = orden.getSubordenes().stream()
+        return mapToCheckoutResponse(orden);
+    }
+
+    private CheckoutResponseDTO mapToCheckoutResponse(Orden orden) {
+        ReceptorFacturaDTO receptor = ReceptorFacturaDTO.builder()
+                .ruc(orden.getRucReceptor())
+                .razonSocial(orden.getRazonSocialReceptor())
+                .direccionFiscal(orden.getDireccionFiscal())
+                .build();
+
+        List<SubordenResumenDTO> facturasEmitidas = orden.getSubordenes().stream()
                 .map(sub -> {
                     var perfilOpt = perfilProveedorRepository.findByUsuarioId(sub.getProveedor().getId());
-                    String provNombre = perfilOpt.map(p -> p.getRazonSocial()).orElse(sub.getProveedor().getNombre());
-                    String provRuc = perfilOpt.map(p -> p.getIdentificacionFiscal()).orElse("");
+                    Long proveedorId = perfilOpt.map(PerfilProveedor::getId).orElse(sub.getProveedor().getId());
+                    String provRuc = perfilOpt.map(PerfilProveedor::getIdentificacionFiscal).orElse("");
+                    String provRazonSocial = perfilOpt.map(PerfilProveedor::getRazonSocial)
+                            .orElse(sub.getProveedor().getNombre());
+
+                    EmisorFacturaDTO emisor = EmisorFacturaDTO.builder()
+                            .proveedorId(proveedorId)
+                            .ruc(provRuc)
+                            .razonSocial(provRazonSocial)
+                            .build();
 
                     var itemsDto = sub.getItems().stream()
-                            .map(item -> com.compunex.b2b.modules.ordenes.dto.response.OrdenItemDetalleDTO.builder()
+                            .map(item -> OrdenItemDetalleDTO.builder()
                                     .productoId(item.getProducto().getId())
                                     .titulo(item.getProducto().getTitulo())
                                     .cantidad(item.getCantidad())
                                     .precioUnitario(item.getPrecioUnitario())
-                                    .subtotal(item.getSubtotal())
+                                    .subtotalLinea(item.getSubtotal())
                                     .build())
                             .toList();
 
-                    return com.compunex.b2b.modules.ordenes.dto.response.SubordenDetalleDTO.builder()
+                    return SubordenResumenDTO.builder()
                             .subordenId(sub.getId())
-                            .proveedorNombre(provNombre)
-                            .proveedorRuc(provRuc)
                             .numeroComprobante(sub.getNumeroComprobante())
+                            .tipoComprobante(sub.getTipoComprobante())
+                            .emisor(emisor)
+                            .receptor(receptor)
                             .subtotal(sub.getSubtotal())
                             .igv(sub.getIgv())
                             .total(sub.getTotal())
@@ -223,18 +254,17 @@ public class OrderServiceImpl implements OrderService {
                 })
                 .toList();
 
-        return com.compunex.b2b.modules.ordenes.dto.response.OrdenDetalleResponseDTO.builder()
+        return CheckoutResponseDTO.builder()
                 .ordenId(orden.getId())
                 .codigoOrden(orden.getCodigoOrden())
-                .fechaCreacion(orden.getFechaCreacion())
-                .estado(orden.getEstado().name())
-                .rucReceptor(orden.getRucReceptor())
-                .razonSocialReceptor(orden.getRazonSocialReceptor())
-                .direccionFiscal(orden.getDireccionFiscal())
-                .montoSubtotal(orden.getMontoSubtotal())
-                .montoIgv(orden.getMontoIgv())
-                .montoTotal(orden.getMontoTotal())
-                .subordenes(subordenesDto)
+                .fechaEmision(orden.getFechaCreacion())
+                .moneda(orden.getMoneda())
+                .totalGeneral(orden.getMontoTotal())
+                .esSimulado(true)
+                .facturasEmitidas(facturasEmitidas)
                 .build();
+    }
+
+    private record ItemResuelto(Producto producto, Usuario proveedor, int cantidad) {
     }
 }

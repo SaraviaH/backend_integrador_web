@@ -1,6 +1,7 @@
 package com.compunex.b2b.modules.perfiles.service;
 
 import com.compunex.b2b.modules.perfiles.dto.request.ActivarProveedorRequestDTO;
+import com.compunex.b2b.modules.perfiles.dto.response.ActivarProveedorResponseDTO;
 import com.compunex.b2b.modules.perfiles.dto.response.ProveedorPerfilResponseDTO;
 
 /**
@@ -10,5 +11,5 @@ public interface ProviderProfileService {
 
     ProveedorPerfilResponseDTO obtenerPerfilPorCorreo(String correo);
 
-    ProveedorPerfilResponseDTO activarProveedor(String correo, ActivarProveedorRequestDTO request);
+    ActivarProveedorResponseDTO activarProveedor(String correo, ActivarProveedorRequestDTO request);
 }

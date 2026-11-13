@@ -13,6 +13,7 @@ import com.compunex.b2b.modules.catalogo.repository.CategoriaRepository;
 import com.compunex.b2b.modules.catalogo.repository.ProductoRepository;
 import com.compunex.b2b.modules.ordenes.dto.request.CheckoutItemDTO;
 import com.compunex.b2b.modules.ordenes.dto.request.CheckoutRequestDTO;
+import com.compunex.b2b.modules.ordenes.dto.request.DatosFacturacionDTO;
 import com.compunex.b2b.modules.ordenes.dto.response.CheckoutResponseDTO;
 import com.compunex.b2b.modules.ordenes.exception.AutoCompraException;
 import com.compunex.b2b.modules.ordenes.exception.StockInsuficienteException;
@@ -68,9 +69,13 @@ class OrderServiceSplitOrderTest {
         Producto prod2 = crearProducto(perfil2, cat, "Prod B", new BigDecimal("200.00"), 5);
 
         CheckoutRequestDTO request = CheckoutRequestDTO.builder()
-                .rucReceptor("20601234567")
-                .razonSocialReceptor("Comprador SAC")
-                .direccionFiscal("Av. Lima 100")
+                .datosFacturacion(DatosFacturacionDTO.builder()
+                        .tipoComprobante("FACTURA")
+                        .rucReceptor("20601234567")
+                        .razonSocialReceptor("Comprador SAC")
+                        .direccionFiscal("Av. Lima 100")
+                        .metodoPagoSimulado("TRANSFERENCIA_B2B")
+                        .build())
                 .items(List.of(
                         new CheckoutItemDTO(prod1.getId(), 2),
                         new CheckoutItemDTO(prod2.getId(), 1)
@@ -79,9 +84,13 @@ class OrderServiceSplitOrderTest {
 
         CheckoutResponseDTO resp = orderService.procesarCheckout(comprador.getCorreo(), request);
 
-        assertThat(resp.getSubordenes()).hasSize(2);
+        assertThat(resp.getFacturasEmitidas()).hasSize(2);
         // (200 + 200) * 1.18 = 472.00
-        assertThat(resp.getMontoTotal()).isEqualByComparingTo("472.00");
+        assertThat(resp.getTotalGeneral()).isEqualByComparingTo("472.00");
+        assertThat(resp.getEsSimulado()).isTrue();
+        assertThat(resp.getMoneda()).isEqualTo("PEN");
+        assertThat(resp.getCodigoOrden()).startsWith("PED-2026-");
+        assertThat(resp.getFacturasEmitidas().get(0).getNumeroComprobante()).startsWith("SIM-F001-");
         assertThat(productoRepository.findById(prod1.getId()).orElseThrow().getStockDisponible()).isEqualTo(8);
         assertThat(productoRepository.findById(prod2.getId()).orElseThrow().getStockDisponible()).isEqualTo(4);
     }
@@ -96,9 +105,11 @@ class OrderServiceSplitOrderTest {
         Producto prod = crearProducto(perfil, cat, "Prod Propio", new BigDecimal("50.00"), 10);
 
         CheckoutRequestDTO request = CheckoutRequestDTO.builder()
-                .rucReceptor("20601234567")
-                .razonSocialReceptor("Prov SAC")
-                .direccionFiscal("Av. Lima 100")
+                .datosFacturacion(DatosFacturacionDTO.builder()
+                        .rucReceptor("20601234567")
+                        .razonSocialReceptor("Prov SAC")
+                        .direccionFiscal("Av. Lima 100")
+                        .build())
                 .items(List.of(new CheckoutItemDTO(prod.getId(), 1)))
                 .build();
 
@@ -118,9 +129,11 @@ class OrderServiceSplitOrderTest {
         Producto prod = crearProducto(perfil, cat, "Prod Limitado", new BigDecimal("50.00"), 2);
 
         CheckoutRequestDTO request = CheckoutRequestDTO.builder()
-                .rucReceptor("20601234567")
-                .razonSocialReceptor("Comprador SAC")
-                .direccionFiscal("Av. Lima 100")
+                .datosFacturacion(DatosFacturacionDTO.builder()
+                        .rucReceptor("20601234567")
+                        .razonSocialReceptor("Comprador SAC")
+                        .direccionFiscal("Av. Lima 100")
+                        .build())
                 .items(List.of(new CheckoutItemDTO(prod.getId(), 5)))
                 .build();
 

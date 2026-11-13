@@ -14,6 +14,7 @@ import com.compunex.b2b.modules.catalogo.repository.ProductoRepository;
 import com.compunex.b2b.modules.ordenes.dto.request.CambiarEstadoDespachoDTO;
 import com.compunex.b2b.modules.ordenes.dto.request.CheckoutItemDTO;
 import com.compunex.b2b.modules.ordenes.dto.request.CheckoutRequestDTO;
+import com.compunex.b2b.modules.ordenes.dto.request.DatosFacturacionDTO;
 import com.compunex.b2b.modules.ordenes.entity.EstadoSuborden;
 import com.compunex.b2b.modules.ordenes.service.OrderService;
 import com.compunex.b2b.modules.perfiles.entity.PerfilProveedor;
@@ -101,13 +102,16 @@ class ProviderSalesControllerTest {
         prod = productoRepository.save(prod);
 
         var checkout = orderService.procesarCheckout(comprador.getCorreo(), CheckoutRequestDTO.builder()
-                .rucReceptor("20601234567")
-                .razonSocialReceptor("Comprador Sales SAC")
-                .direccionFiscal("Av. Lima 123")
+                .datosFacturacion(DatosFacturacionDTO.builder()
+                        .tipoComprobante("FACTURA")
+                        .rucReceptor("20601234567")
+                        .razonSocialReceptor("Comprador Sales SAC")
+                        .direccionFiscal("Av. Lima 123")
+                        .build())
                 .items(List.of(new CheckoutItemDTO(prod.getId(), 2)))
                 .build());
 
-        Long subordenId = checkout.getSubordenes().get(0).getSubordenId();
+        Long subordenId = checkout.getFacturasEmitidas().get(0).getSubordenId();
         String tokenProv = jwtTokenProvider.generarTokenConRol(proveedor.getCorreo(), RolUsuario.PROVEEDOR.name());
         String tokenOtro = jwtTokenProvider.generarTokenConRol(otroProv.getCorreo(), RolUsuario.PROVEEDOR.name());
 
@@ -115,12 +119,19 @@ class ProviderSalesControllerTest {
                         .header("Authorization", "Bearer " + tokenProv))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalElementos").value(1))
-                .andExpect(jsonPath("$.contenido[0].subordenId").value(subordenId));
+                .andExpect(jsonPath("$.contenido[0].subordenId").value(subordenId))
+                .andExpect(jsonPath("$.contenido[0].razonSocialComprador").value("Comprador Sales SAC"))
+                .andExpect(jsonPath("$.contenido[0].rucComprador").value("20601234567"))
+                .andExpect(jsonPath("$.contenido[0].moneda").value("PEN"));
 
         mockMvc.perform(get("/api/v1/providers/me/sales/{id}", subordenId)
                         .header("Authorization", "Bearer " + tokenProv))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.estado").value("PENDIENTE_DESPACHO"));
+                .andExpect(jsonPath("$.estado").value("PENDIENTE_DESPACHO"))
+                .andExpect(jsonPath("$.tipoComprobante").value("FACTURA"))
+                .andExpect(jsonPath("$.receptor.ruc").value("20601234567"))
+                .andExpect(jsonPath("$.receptor.razonSocial").value("Comprador Sales SAC"))
+                .andExpect(jsonPath("$.items[0].subtotalLinea").value(500.0));
 
         mockMvc.perform(patch("/api/v1/providers/me/sales/{id}/status", subordenId)
                         .header("Authorization", "Bearer " + tokenProv)

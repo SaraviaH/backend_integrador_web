@@ -6,6 +6,7 @@ import com.compunex.b2b.modules.auth.entity.Usuario;
 import com.compunex.b2b.modules.auth.repository.UsuarioRepository;
 import com.compunex.b2b.modules.perfiles.dto.request.ActivarProveedorRequestDTO;
 import com.compunex.b2b.security.JwtTokenProvider;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,21 +67,34 @@ class ProviderProfileControllerTest {
                 .descripcion("Mayorista de hardware")
                 .build();
 
-        mockMvc.perform(post("/api/v1/providers/me/activate")
+        String responseBody = mockMvc.perform(post("/api/v1/providers/me/activate")
                         .header("Authorization", "Bearer " + tokenCliente)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.ruc").value("20551234567"))
-                .andExpect(jsonPath("$.razonSocial").value("Distribuidora Norte SAC"));
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.proveedorId").isNumber())
+                .andExpect(jsonPath("$.rol").value("PROVEEDOR"))
+                .andExpect(jsonPath("$.token").isNotEmpty())
+                .andExpect(jsonPath("$.tipoToken").value("Bearer"))
+                .andExpect(jsonPath("$.expiraEnSegundos").value(86400))
+                .andExpect(jsonPath("$.mensaje").isNotEmpty())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
 
-        String tokenProveedor = jwtTokenProvider.generarTokenConRol(cliente.getCorreo(), RolUsuario.PROVEEDOR.name());
+        JsonNode json = objectMapper.readTree(responseBody);
+        String tokenProveedor = json.get("token").asText();
 
         mockMvc.perform(get("/api/v1/providers/me/profile")
                         .header("Authorization", "Bearer " + tokenProveedor))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.correo").value("cliente.activar@test.com"))
-                .andExpect(jsonPath("$.ruc").value("20551234567"));
+                .andExpect(jsonPath("$.proveedorId").isNumber())
+                .andExpect(jsonPath("$.identificacionFiscal").value("20551234567"))
+                .andExpect(jsonPath("$.razonSocial").value("Distribuidora Norte SAC"))
+                .andExpect(jsonPath("$.nombreComercial").value("Norte Tech"))
+                .andExpect(jsonPath("$.correoContacto").value("cliente.activar@test.com"))
+                .andExpect(jsonPath("$.anosMercado").value("0 años"))
+                .andExpect(jsonPath("$.verificado").value(false));
     }
 
     @Test

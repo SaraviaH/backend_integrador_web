@@ -150,7 +150,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @org.springframework.transaction.annotation.Transactional
     @com.compunex.b2b.config.audit.Auditable(accion = "AUTH_REGISTER_COMPANY")
-    public RegistroProveedorResponseDTO registrarEmpresa(com.compunex.b2b.modules.auth.dto.request.RegistroEmpresaRequestDTO request) {
+    public com.compunex.b2b.modules.auth.dto.response.RegistroEmpresaResponseDTO registrarEmpresa(com.compunex.b2b.modules.auth.dto.request.RegistroEmpresaRequestDTO request) {
         if (usuarioRepository.existsByCorreo(request.getCorreo())) {
             throw new com.compunex.b2b.exception.DuplicateResourceException("El correo ya se encuentra registrado");
         }
@@ -158,8 +158,12 @@ public class AuthServiceImpl implements AuthService {
             throw new com.compunex.b2b.exception.DuplicateResourceException("El RUC ya se encuentra registrado");
         }
 
+        String nombreUsuario = (request.getNombre() != null && !request.getNombre().isBlank())
+                ? request.getNombre()
+                : request.getRazonSocial();
+
         Usuario usuario = new Usuario(
-                request.getRazonSocial(),
+                nombreUsuario,
                 request.getCorreo(),
                 passwordEncoder.encode(request.getContrasena()),
                 RolUsuario.CLIENTE,
@@ -174,22 +178,25 @@ public class AuthServiceImpl implements AuthService {
         perfil.setNombreComercial(request.getNombreComercial() != null && !request.getNombreComercial().isBlank()
                 ? request.getNombreComercial()
                 : request.getRazonSocial());
-        perfil.setTelefonoContacto(request.getTelefono());
-        perfil.setDireccion(request.getDireccionFiscal());
+        perfil.setTelefonoContacto(request.getTelefono() != null && !request.getTelefono().isBlank()
+                ? request.getTelefono()
+                : "Por confirmar");
+        perfil.setDireccion(request.getDireccionFiscal() != null && !request.getDireccionFiscal().isBlank()
+                ? request.getDireccionFiscal()
+                : "Por confirmar");
         perfil.setCiudad(request.getCiudad() != null && !request.getCiudad().isBlank() ? request.getCiudad() : "Lima");
         perfil.setVerificado(false);
         perfil.setDestacado(false);
-        perfil = perfilProveedorRepository.save(perfil);
+        perfilProveedorRepository.save(perfil);
 
         String token = jwtTokenProvider.generarTokenConRol(usuario.getCorreo(), RolUsuario.CLIENTE.name());
 
-        return new RegistroProveedorResponseDTO(
+        return new com.compunex.b2b.modules.auth.dto.response.RegistroEmpresaResponseDTO(
                 usuario.getId(),
-                perfil.getId(),
-                usuario.getUuid(),
-                usuario.getNombre(),
                 usuario.getCorreo(),
+                usuario.getNombre(),
                 usuario.getRol().name(),
+                false,
                 perfil.getIdentificacionFiscal(),
                 perfil.getRazonSocial(),
                 token,

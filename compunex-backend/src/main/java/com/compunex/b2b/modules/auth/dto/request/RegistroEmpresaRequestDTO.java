@@ -18,6 +18,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RegistroEmpresaRequestDTO {
 
+    @Size(max = 150, message = "El nombre no puede superar los 150 caracteres")
+    private String nombre;
+
     @NotBlank(message = "El RUC es obligatorio")
     @Pattern(regexp = "^[0-9]{11}$", message = "El RUC debe tener exactamente 11 dígitos numéricos")
     private String ruc;
@@ -29,14 +32,12 @@ public class RegistroEmpresaRequestDTO {
     @Size(max = 200, message = "El nombre comercial no puede superar los 200 caracteres")
     private String nombreComercial;
 
-    @NotBlank(message = "La dirección fiscal es obligatoria")
     @Size(max = 300, message = "La dirección fiscal no puede superar los 300 caracteres")
     private String direccionFiscal;
 
     @Size(max = 100, message = "La ciudad no puede superar los 100 caracteres")
     private String ciudad;
 
-    @NotBlank(message = "El teléfono es obligatorio")
     @Size(max = 20, message = "El teléfono no puede superar los 20 caracteres")
     private String telefono;
 

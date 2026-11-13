@@ -67,9 +67,9 @@ public class AuthController {
         summary = "[0.5] Registro directo de empresa compradora",
         description = "Registra una nueva empresa compradora con rol CLIENTE, valida RUC de 11 dígitos y emite un token JWT inicial."
     )
-    public ResponseEntity<com.compunex.b2b.modules.auth.dto.response.RegistroProveedorResponseDTO> registrarEmpresa(
+    public ResponseEntity<com.compunex.b2b.modules.auth.dto.response.RegistroEmpresaResponseDTO> registrarEmpresa(
             @Valid @RequestBody com.compunex.b2b.modules.auth.dto.request.RegistroEmpresaRequestDTO request) {
-        com.compunex.b2b.modules.auth.dto.response.RegistroProveedorResponseDTO response = authService.registrarEmpresa(request);
+        com.compunex.b2b.modules.auth.dto.response.RegistroEmpresaResponseDTO response = authService.registrarEmpresa(request);
         return ResponseEntity.status(org.springframework.http.HttpStatus.CREATED).body(response);
     }
 }

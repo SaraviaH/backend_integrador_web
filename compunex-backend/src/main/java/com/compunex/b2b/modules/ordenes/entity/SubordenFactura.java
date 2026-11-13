@@ -37,6 +37,12 @@ public class SubordenFactura {
     @Column(name = "numero_comprobante", nullable = false, unique = true, length = 30)
     private String numeroComprobante;
 
+    @Column(name = "tipo_comprobante", nullable = false, length = 20, columnDefinition = "varchar(20) default 'FACTURA'")
+    private String tipoComprobante = "FACTURA";
+
+    @Column(name = "moneda", nullable = false, length = 10, columnDefinition = "varchar(10) default 'PEN'")
+    private String moneda = "PEN";
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
     private EstadoSuborden estado = EstadoSuborden.PENDIENTE_DESPACHO;

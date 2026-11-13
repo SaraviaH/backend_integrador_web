@@ -55,6 +55,15 @@ public class Orden {
     @Column(name = "direccion_fiscal", nullable = false, length = 300)
     private String direccionFiscal;
 
+    @Column(name = "tipo_comprobante", nullable = false, length = 20, columnDefinition = "varchar(20) default 'FACTURA'")
+    private String tipoComprobante = "FACTURA";
+
+    @Column(name = "metodo_pago_simulado", length = 40)
+    private String metodoPagoSimulado = "TRANSFERENCIA_B2B";
+
+    @Column(name = "moneda", nullable = false, length = 10, columnDefinition = "varchar(10) default 'PEN'")
+    private String moneda = "PEN";
+
     @Column(name = "fecha_creacion", nullable = false, updatable = false)
     private Instant fechaCreacion = Instant.now();
 

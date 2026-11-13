@@ -1,9 +1,8 @@
 package com.compunex.b2b.modules.ordenes.dto.request;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,15 +16,9 @@ import java.util.List;
 @AllArgsConstructor
 public class CheckoutRequestDTO {
 
-    @NotBlank(message = "El RUC del receptor es obligatorio")
-    @Pattern(regexp = "^[0-9]{11}$", message = "El RUC debe tener 11 dígitos numéricos")
-    private String rucReceptor;
-
-    @NotBlank(message = "La razón social del receptor es obligatoria")
-    private String razonSocialReceptor;
-
-    @NotBlank(message = "La dirección fiscal es obligatoria")
-    private String direccionFiscal;
+    @NotNull(message = "Los datos de facturación son obligatorios")
+    @Valid
+    private DatosFacturacionDTO datosFacturacion;
 
     @NotEmpty(message = "Debe incluir al menos un ítem en el checkout")
     @Valid

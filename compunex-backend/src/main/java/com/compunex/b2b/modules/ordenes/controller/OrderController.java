@@ -63,7 +63,7 @@ public class OrderController {
             summary = "[22] Consultar detalle de una orden y sus comprobantes",
             description = "Retorna el desglose completo de subórdenes, ítems y comprobantes simulados de una orden propia."
     )
-    public ResponseEntity<com.compunex.b2b.modules.ordenes.dto.response.OrdenDetalleResponseDTO> detalleOrden(
+    public ResponseEntity<CheckoutResponseDTO> detalleOrden(
             Authentication authentication,
             @org.springframework.web.bind.annotation.PathVariable Long ordenId) {
         return ResponseEntity.ok(orderService.obtenerDetalleOrden(authentication.getName(), ordenId));

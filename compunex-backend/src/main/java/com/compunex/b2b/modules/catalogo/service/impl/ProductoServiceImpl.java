@@ -18,6 +18,9 @@ import com.compunex.b2b.modules.catalogo.dto.response.CambioEstadoResponseDTO;
 import com.compunex.b2b.modules.catalogo.dto.response.CrearProductoResponseDTO;
 import com.compunex.b2b.modules.catalogo.dto.response.ProductoDetalleResponseDTO;
 import com.compunex.b2b.modules.catalogo.dto.response.ProductoPaginadoResponseDTO;
+import com.compunex.b2b.modules.catalogo.dto.response.ProductoPublicoDetalleDTO;
+import com.compunex.b2b.modules.catalogo.dto.response.ProductoPublicoItemDTO;
+import com.compunex.b2b.modules.catalogo.dto.response.ProductoPublicoPaginadoResponseDTO;
 import com.compunex.b2b.modules.catalogo.dto.response.ProductoResumenResponseDTO;
 import com.compunex.b2b.modules.catalogo.entity.EstadoProducto;
 import com.compunex.b2b.modules.catalogo.entity.ImagenProducto;
@@ -356,13 +359,13 @@ public class ProductoServiceImpl implements ProductoService {
 
     @Override
     @Transactional(readOnly = true)
-    public ProductoPaginadoResponseDTO listarProductosPublicos(String search, String categoryId, Pageable pageable) {
+    public ProductoPublicoPaginadoResponseDTO listarProductosPublicos(String search, String categoryId, Pageable pageable) {
         var pagina = productoRepository.findAll(
                 com.compunex.b2b.modules.catalogo.repository.ProductoSpecification.filtroPublico(search, categoryId),
                 pageable
         );
-        Page<ProductoResumenResponseDTO> paginaDto = pagina.map(ProductoResumenResponseDTO::from);
-        return new ProductoPaginadoResponseDTO(
+        Page<ProductoPublicoItemDTO> paginaDto = pagina.map(ProductoPublicoItemDTO::from);
+        return new ProductoPublicoPaginadoResponseDTO(
                 paginaDto.getContent(),
                 paginaDto.getNumber(),
                 paginaDto.getSize(),
@@ -374,10 +377,10 @@ public class ProductoServiceImpl implements ProductoService {
 
     @Override
     @Transactional(readOnly = true)
-    public ProductoDetalleResponseDTO obtenerProductoPublicoPorId(Long productoId) {
+    public ProductoPublicoDetalleDTO obtenerProductoPublicoPorId(Long productoId) {
         var producto = productoRepository.findById(productoId)
                 .filter(p -> p.getFechaEliminacion() == null && p.getEstado() == EstadoProducto.ACTIVO)
                 .orElseThrow(() -> new com.compunex.b2b.exception.ResourceNotFoundException("Producto no encontrado: " + productoId));
-        return ProductoDetalleResponseDTO.from(producto);
+        return ProductoPublicoDetalleDTO.from(producto);
     }
 }

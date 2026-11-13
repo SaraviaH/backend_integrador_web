@@ -58,7 +58,7 @@ public class Producto {
     @Column(nullable = false, length = 10)
     private String moneda = "USD";
 
-    @Column(name = "stock_disponible", nullable = false)
+    @Column(name = "stock_disponible", nullable = false, columnDefinition = "integer default 100")
     private Integer stockDisponible = 100;
 
     @Column(name = "terminos_comerciales", columnDefinition = "TEXT")

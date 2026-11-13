@@ -2,7 +2,6 @@ package com.compunex.b2b.modules.ordenes.service;
 
 import com.compunex.b2b.modules.ordenes.dto.request.CheckoutRequestDTO;
 import com.compunex.b2b.modules.ordenes.dto.response.CheckoutResponseDTO;
-import com.compunex.b2b.modules.ordenes.dto.response.OrdenDetalleResponseDTO;
 import com.compunex.b2b.modules.ordenes.dto.response.OrdenPaginadaResponseDTO;
 import org.springframework.data.domain.Pageable;
 
@@ -15,5 +14,5 @@ public interface OrderService {
 
     OrdenPaginadaResponseDTO obtenerMisOrdenes(String correoComprador, Pageable pageable);
 
-    OrdenDetalleResponseDTO obtenerDetalleOrden(String correoComprador, Long ordenId);
+    CheckoutResponseDTO obtenerDetalleOrden(String correoComprador, Long ordenId);
 }
