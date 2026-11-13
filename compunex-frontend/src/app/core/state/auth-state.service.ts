@@ -24,11 +24,13 @@ export class AuthStateService {
 
   public setAuth(auth: AuthResponse): void {
     this._token.set(auth.token);
-    this._currentUser.set(auth.usuario);
+    this._currentUser.set(auth.usuario ?? null);
 
     try {
       localStorage.setItem(TOKEN_KEY, auth.token);
-      localStorage.setItem(USER_KEY, JSON.stringify(auth.usuario));
+      if (auth.usuario) {
+        localStorage.setItem(USER_KEY, JSON.stringify(auth.usuario));
+      }
     } catch (e) {
       console.warn('No se pudo persistir la sesión en localStorage:', e);
     }

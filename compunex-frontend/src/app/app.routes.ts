@@ -2,6 +2,8 @@ import { Routes } from '@angular/router';
 import { PublicLayoutComponent } from './layout/public-layout/public-layout.component';
 import { PanelLayoutComponent } from './layout/panel-layout/panel-layout.component';
 import { HomeViewComponent } from './features/home/home-view.component';
+import { LoginComponent } from './features/auth/login/login.component';
+import { RegisterCompanyComponent } from './features/auth/register-company/register-company.component';
 import { ForbiddenViewComponent } from './features/forbidden/forbidden-view.component';
 import { NotFoundViewComponent } from './features/not-found/not-found-view.component';
 import { roleGuard } from './core/guards/role.guard';
@@ -16,6 +18,16 @@ export const routes: Routes = [
         path: '',
         component: HomeViewComponent,
         title: 'COMPUNEX B2B · Mayorista Tecnológico'
+      },
+      {
+        path: 'auth/login',
+        component: LoginComponent,
+        title: 'Iniciar Sesión · COMPUNEX B2B'
+      },
+      {
+        path: 'auth/registro-empresa',
+        component: RegisterCompanyComponent,
+        title: 'Registrar Empresa · COMPUNEX B2B'
       },
       {
         path: 'forbidden',

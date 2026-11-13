@@ -7,6 +7,7 @@ import {
   ChangePasswordRequest,
   LoginRequest,
   RegisterCompanyRequest,
+  RegisterCompanyResponse,
   RequestProviderActivation,
   UserProfile,
 } from '../models/auth.model';
@@ -23,8 +24,8 @@ export class AuthApiService {
     return this.http.post<AuthResponse>(`${this.baseUrl}/auth/login`, credentials);
   }
 
-  public registerCompany(data: RegisterCompanyRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.baseUrl}/auth/registro-empresa`, data);
+  public registerCompany(data: RegisterCompanyRequest): Observable<RegisterCompanyResponse> {
+    return this.http.post<RegisterCompanyResponse>(`${this.baseUrl}/auth/register-company`, data);
   }
 
   public getProfile(): Observable<UserProfile> {

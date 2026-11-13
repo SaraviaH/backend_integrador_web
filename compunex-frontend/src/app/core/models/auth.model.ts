@@ -1,15 +1,18 @@
-export type UserRole = 'ROLE_CLIENTE' | 'ROLE_PROVEEDOR' | 'ROLE_ADMIN';
+export type UserRole = 'ROLE_CLIENTE' | 'ROLE_PROVEEDOR' | 'ROLE_ADMIN' | 'COMPRADOR';
 
 export interface UserProfile {
-  id: number;
-  nombreCompleto: string;
+  id?: number;
+  usuarioId?: number;
+  nombre: string;
+  nombreCompleto?: string;
   correo: string;
   rol: UserRole;
   ruc?: string;
   razonSocial?: string;
-  activo: boolean;
+  activo?: boolean;
   telefono?: string;
   direccion?: string;
+  tienePerfilProveedor?: boolean;
 }
 
 export interface LoginRequest {
@@ -17,21 +20,40 @@ export interface LoginRequest {
   contrasena: string;
 }
 
+export interface LoginResponse {
+  token: string;
+  tipoToken: string;
+  expiraEnSegundos: number;
+}
+
 export interface AuthResponse {
   token: string;
-  tipo: string; // 'Bearer'
-  usuario: UserProfile;
-  expiraEn: number;
+  tipoToken?: string;
+  tipo?: string;
+  usuario?: UserProfile;
+  expiraEn?: number;
+  expiraEnSegundos?: number;
 }
 
 export interface RegisterCompanyRequest {
-  nombreCompleto: string;
+  nombre: string;
   correo: string;
   contrasena: string;
   ruc: string;
   razonSocial: string;
-  direccionFiscal: string;
-  telefono: string;
+  telefono?: string;
+  direccion?: string;
+}
+
+export interface RegisterCompanyResponse {
+  usuarioId: number;
+  correo: string;
+  nombre: string;
+  rol: string;
+  tienePerfilProveedor: boolean;
+  token?: string;
+  tipoToken?: string;
+  expiraEnSegundos?: number;
 }
 
 export interface ChangePasswordRequest {
@@ -44,3 +66,4 @@ export interface RequestProviderActivation {
   categoriaPrincipalId: number;
   documentoRucAdjuntoUrl?: string;
 }
+
