@@ -74,3 +74,12 @@ export interface OrderSummary {
   estadoGeneral: OrderStatus;
   cantidadSubordenes: number;
 }
+
+export interface OrderDetail extends CheckoutResponse {
+  rucFacturacion: string;
+  razonSocialFacturacion: string;
+  direccionFiscal: string;
+  metodoPago: string;
+  estado: OrderStatus;
+}
+

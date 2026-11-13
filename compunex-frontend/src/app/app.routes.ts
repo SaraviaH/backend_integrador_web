@@ -6,6 +6,7 @@ import { CategoriesComponent } from './features/categories/categories.component'
 import { CatalogComponent } from './features/catalog/catalog.component';
 import { ProductDetailComponent } from './features/product-detail/product-detail.component';
 import { CartComponent } from './features/cart/cart.component';
+import { CheckoutWizardComponent } from './features/checkout/checkout-wizard.component';
 import { LoginComponent } from './features/auth/login/login.component';
 import { RegisterCompanyComponent } from './features/auth/register-company/register-company.component';
 import { ForbiddenViewComponent } from './features/forbidden/forbidden-view.component';
@@ -62,6 +63,26 @@ export const routes: Routes = [
         path: 'cart',
         redirectTo: 'carrito',
         pathMatch: 'full'
+      },
+      {
+        path: 'checkout',
+        redirectTo: 'checkout/datos-facturacion',
+        pathMatch: 'full'
+      },
+      {
+        path: 'checkout/datos-facturacion',
+        component: CheckoutWizardComponent,
+        title: 'Datos de Facturación · COMPUNEX B2B'
+      },
+      {
+        path: 'checkout/revision',
+        component: CheckoutWizardComponent,
+        title: 'Revisión del Pedido · COMPUNEX B2B'
+      },
+      {
+        path: 'checkout/confirmacion',
+        component: CheckoutWizardComponent,
+        title: 'Confirmación de Compra · COMPUNEX B2B'
       },
       {
         path: 'auth/login',

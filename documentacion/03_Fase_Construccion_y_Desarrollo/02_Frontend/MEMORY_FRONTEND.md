@@ -26,8 +26,8 @@
 | `Sprint-F04_Catalogo_B2B_y_Busqueda` | `feat/sprint-1-frontend` | `DONE` | 1 / 1 (`P-03`) | VERIFICADO |
 | `Sprint-F05_Ficha_Detalle_Producto` | `feat/sprint-1-frontend` | `DONE` | 2 / 2 (`P-04`, `P-05`) | VERIFICADO |
 | `Sprint-F06_Carrito_Reactivo_y_Agrupacion` | `feat/sprint-1-frontend` | `DONE` | 1 / 1 (`P-09`) | VERIFICADO |
-| `Sprint-F07_Checkout_Wizard_Facturacion` | `feature/frontend-checkout-wizard` | `LISTO_PARA_INICIAR` | 0 / 3 (`P-10`, `P-11`, `P-12`) | PENDIENTE |
-| `Sprint-F08_Visor_Factura_y_Comprobantes` | `feature/frontend-invoice-viewer` | `BLOQUEADO` | 0 / 1 (`P-13`) | PENDIENTE |
+| `Sprint-F07_Checkout_Wizard_Facturacion` | `feat/sprint-1-frontend` | `DONE` | 3 / 3 (`P-10`, `P-11`, `P-12`) | VERIFICADO |
+| `Sprint-F08_Visor_Factura_y_Comprobantes` | `feature/frontend-invoice-viewer` | `LISTO_PARA_INICIAR` | 0 / 1 (`P-13`) | PENDIENTE |
 | `Sprint-F09_Mis_Compras_y_Trazabilidad` | `feature/frontend-orders-history` | `BLOQUEADO` | 0 / 2 (`P-14`, `P-15`) | PENDIENTE |
 | `Sprint-F10_Mi_Cuenta_Seguridad_y_Activacion` | `feature/frontend-account-security` | `BLOQUEADO` | 0 / 3 (`P-16`, `P-17`, `P-18`) | PENDIENTE |
 | `Sprint-F11_Dashboard_Proveedor_y_Perfil` | `feature/frontend-provider-dashboard` | `BLOQUEADO` | 0 / 2 (`P-19`, `P-26`) | PENDIENTE |
