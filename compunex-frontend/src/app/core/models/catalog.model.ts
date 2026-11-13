@@ -1,17 +1,19 @@
 export interface Category {
-  id: number;
+  id: string | number;
   nombre: string;
   descripcion?: string;
   icono?: string;
-  slug: string;
+  slug?: string;
   totalProductos?: number;
+  subcategorias?: Subcategory[];
 }
 
 export interface Subcategory {
-  id: number;
-  categoriaId: number;
+  id: string | number;
+  categoriaId?: string | number;
   nombre: string;
-  slug: string;
+  slug?: string;
+  descripcion?: string;
 }
 
 export interface ProductSpecification {

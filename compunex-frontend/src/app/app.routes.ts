@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { PublicLayoutComponent } from './layout/public-layout/public-layout.component';
 import { PanelLayoutComponent } from './layout/panel-layout/panel-layout.component';
 import { HomeViewComponent } from './features/home/home-view.component';
+import { CategoriesComponent } from './features/categories/categories.component';
 import { LoginComponent } from './features/auth/login/login.component';
 import { RegisterCompanyComponent } from './features/auth/register-company/register-company.component';
 import { ForbiddenViewComponent } from './features/forbidden/forbidden-view.component';
@@ -18,6 +19,16 @@ export const routes: Routes = [
         path: '',
         component: HomeViewComponent,
         title: 'COMPUNEX B2B · Mayorista Tecnológico'
+      },
+      {
+        path: 'categories',
+        component: CategoriesComponent,
+        title: 'Categorías de Hardware · COMPUNEX B2B'
+      },
+      {
+        path: 'categorias',
+        redirectTo: 'categories',
+        pathMatch: 'full'
       },
       {
         path: 'auth/login',

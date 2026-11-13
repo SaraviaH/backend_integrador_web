@@ -7,12 +7,18 @@ export interface ApiResponse<T> {
 }
 
 export interface PaginatedResponse<T> {
-  content: T[];
-  totalElements: number;
-  totalPages: number;
-  page: number;
-  size: number;
-  last: boolean;
+  content?: T[];
+  contenido?: T[];
+  totalElements?: number;
+  totalElementos?: number;
+  totalPages?: number;
+  totalPaginas?: number;
+  page?: number;
+  pagina?: number;
+  size?: number;
+  tamano?: number;
+  last?: boolean;
+  esUltima?: boolean;
 }
 
 export interface ApiErrorResponse {
