@@ -8,6 +8,8 @@ import { ProductDetailComponent } from './features/product-detail/product-detail
 import { CartComponent } from './features/cart/cart.component';
 import { CheckoutWizardComponent } from './features/checkout/checkout-wizard.component';
 import { InvoiceViewerComponent } from './features/invoices/invoice-viewer.component';
+import { MyOrdersComponent } from './features/orders/my-orders/my-orders.component';
+import { OrderDetailComponent } from './features/orders/order-detail/order-detail.component';
 import { LoginComponent } from './features/auth/login/login.component';
 import { RegisterCompanyComponent } from './features/auth/register-company/register-company.component';
 import { ForbiddenViewComponent } from './features/forbidden/forbidden-view.component';
@@ -94,6 +96,16 @@ export const routes: Routes = [
         path: 'comprobantes/:id',
         redirectTo: 'pedidos/:id/comprobante',
         pathMatch: 'full'
+      },
+      {
+        path: 'cuenta/mis-compras',
+        component: MyOrdersComponent,
+        title: 'Mis Compras B2B · COMPUNEX'
+      },
+      {
+        path: 'cuenta/mis-compras/:id',
+        component: OrderDetailComponent,
+        title: 'Detalle de Orden y Trazabilidad · COMPUNEX B2B'
       },
       {
         path: 'auth/login',
