@@ -1,7 +1,5 @@
 package com.compunex.b2b.modules.catalogo.service;
 
-import org.springframework.data.domain.Pageable;
-
 import com.compunex.b2b.modules.catalogo.dto.request.ActualizarProductoRequestDTO;
 import com.compunex.b2b.modules.catalogo.dto.request.CambiarEstadoProductoDTO;
 import com.compunex.b2b.modules.catalogo.dto.request.CrearProductoRequestDTO;
@@ -10,10 +8,12 @@ import com.compunex.b2b.modules.catalogo.dto.response.CambioEstadoResponseDTO;
 import com.compunex.b2b.modules.catalogo.dto.response.CrearProductoResponseDTO;
 import com.compunex.b2b.modules.catalogo.dto.response.ProductoDetalleResponseDTO;
 import com.compunex.b2b.modules.catalogo.dto.response.ProductoPaginadoResponseDTO;
-import com.compunex.b2b.modules.catalogo.dto.response.ProductoPublicoDetalleDTO;
-import com.compunex.b2b.modules.catalogo.dto.response.ProductoPublicoPaginadoResponseDTO;
+import org.springframework.data.domain.Pageable;
 
-public interface ProductoService {
+/**
+ * Operaciones del catálogo privado gestionado por el proveedor autenticado.
+ */
+public interface ProductoProveedorService {
 
     ProductoPaginadoResponseDTO listarMisProductos(String correoAutenticado, String search, Pageable pageable);
 
@@ -27,17 +27,7 @@ public interface ProductoService {
 
     ActualizarProductoResponseDTO actualizarProducto(String correoAutenticado, Long productoId, ActualizarProductoRequestDTO request);
 
-    CambioEstadoResponseDTO cambiarEstadoPublicacion(String correoAutenticado, Long productoId,
-            CambiarEstadoProductoDTO request);
+    CambioEstadoResponseDTO cambiarEstadoPublicacion(String correoAutenticado, Long productoId, CambiarEstadoProductoDTO request);
 
     void eliminarMiProducto(String correoAutenticado, Long productoId);
-
-    // Métodos para rol ADMIN
-    ProductoPaginadoResponseDTO listarProductosAdmin(String search, Pageable pageable);
-
-    ProductoPublicoPaginadoResponseDTO listarProductosPublicos(String search, String categoryId, Pageable pageable);
-
-    ProductoPublicoDetalleDTO obtenerProductoPublicoPorId(Long productoId);
-
-    CambioEstadoResponseDTO cambiarEstadoPublicacionAdmin(Long productoId, CambiarEstadoProductoDTO request);
 }

@@ -25,7 +25,7 @@ import com.compunex.b2b.modules.catalogo.dto.response.CambioEstadoResponseDTO;
 import com.compunex.b2b.modules.catalogo.dto.response.CrearProductoResponseDTO;
 import com.compunex.b2b.modules.catalogo.dto.response.ProductoDetalleResponseDTO;
 import com.compunex.b2b.modules.catalogo.dto.response.ProductoPaginadoResponseDTO;
-import com.compunex.b2b.modules.catalogo.service.ProductoService;
+import com.compunex.b2b.modules.catalogo.service.ProductoProveedorService;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,9 +37,9 @@ import jakarta.validation.Valid;
 @SecurityRequirement(name = "bearerAuth")
 public class ProductoProveedorController {
 
-    private final ProductoService productoService;
+    private final ProductoProveedorService productoService;
 
-    public ProductoProveedorController(ProductoService productoService) {
+    public ProductoProveedorController(ProductoProveedorService productoService) {
         this.productoService = productoService;
     }
 

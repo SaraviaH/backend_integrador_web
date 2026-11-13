@@ -4,6 +4,7 @@ import com.compunex.b2b.config.SecurityConfig;
 import com.compunex.b2b.modules.auth.dto.request.LoginRequestDTO;
 import com.compunex.b2b.modules.auth.dto.response.AuthResponseDTO;
 import com.compunex.b2b.modules.auth.service.AuthService;
+import com.compunex.b2b.modules.auth.service.RegistroCorporativoService;
 import com.compunex.b2b.security.JwtAuthenticationFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -53,6 +54,9 @@ class AuthControllerTest {
 
     @MockitoBean
     private AuthService authService;
+
+    @MockitoBean
+    private RegistroCorporativoService registroCorporativoService;
 
     @Test
     @DisplayName("🔵 FASE 3 REFACTOR: Debe retornar HTTP 200 OK y AuthResponseDTO cuando el login es exitoso")
@@ -183,7 +187,7 @@ class AuthControllerTest {
                 "Proveedor registrado exitosamente en la plataforma COMPUNEX."
         );
 
-        when(authService.registrarProveedor(any())).thenReturn(response);
+        when(registroCorporativoService.registrarProveedor(any())).thenReturn(response);
 
         mockMvc.perform(post("/api/v1/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)

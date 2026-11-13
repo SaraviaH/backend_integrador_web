@@ -3,7 +3,7 @@ package com.compunex.b2b.modules.catalogo.controller;
 import com.compunex.b2b.modules.catalogo.dto.request.CambiarEstadoProductoDTO;
 import com.compunex.b2b.modules.catalogo.dto.response.CambioEstadoResponseDTO;
 import com.compunex.b2b.modules.catalogo.dto.response.ProductoPaginadoResponseDTO;
-import com.compunex.b2b.modules.catalogo.service.ProductoService;
+import com.compunex.b2b.modules.catalogo.service.AdminProductoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,9 +22,9 @@ import org.springframework.web.bind.annotation.*;
 @SecurityRequirement(name = "bearerAuth")
 public class AdminProductoController {
 
-    private final ProductoService productoService;
+    private final AdminProductoService productoService;
 
-    public AdminProductoController(ProductoService productoService) {
+    public AdminProductoController(AdminProductoService productoService) {
         this.productoService = productoService;
     }
 

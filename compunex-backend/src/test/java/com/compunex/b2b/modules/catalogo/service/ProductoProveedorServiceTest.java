@@ -20,14 +20,15 @@ import com.compunex.b2b.modules.catalogo.entity.Producto;
 import com.compunex.b2b.modules.catalogo.entity.ProductoEspecificacion;
 import com.compunex.b2b.modules.catalogo.repository.CategoriaRepository;
 import com.compunex.b2b.modules.catalogo.repository.ProductoRepository;
-import com.compunex.b2b.modules.catalogo.service.impl.ProductoServiceImpl;
+import com.compunex.b2b.modules.catalogo.service.impl.ProductoProveedorServiceImpl;
+import com.compunex.b2b.modules.catalogo.service.support.ProveedorContextHelper;
 import com.compunex.b2b.modules.perfiles.entity.PerfilProveedor;
 import com.compunex.b2b.modules.perfiles.repository.PerfilProveedorRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -38,10 +39,12 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ProductoServiceTest {
+class ProductoProveedorServiceTest {
 
     @Mock
     private UsuarioRepository usuarioRepository;
@@ -55,8 +58,14 @@ class ProductoServiceTest {
     @Mock
     private CategoriaRepository categoriaRepository;
 
-    @InjectMocks
-    private ProductoServiceImpl productoService;
+    private ProductoProveedorServiceImpl productoService;
+
+    @BeforeEach
+    void setUp() {
+        ProveedorContextHelper helper = new ProveedorContextHelper(
+                usuarioRepository, perfilProveedorRepository, productoRepository);
+        productoService = new ProductoProveedorServiceImpl(helper, productoRepository, categoriaRepository);
+    }
 
     @Test
     @DisplayName("[2.6] debeEjecutarEliminacionLogicaSinBorrarRegistroFisico")
@@ -334,7 +343,6 @@ class ProductoServiceTest {
         assertEquals("ACTIVO", resultado.estado());
         assertNotNull(resultado.fechaActualizacion());
 
-        // Verificar mutación en la entidad Producto
         assertEquals("5 unidades", producto.getPedidoMinimo());
         assertEquals("Precio rebajado por compra directa a partir de 5 piezas.", producto.getTerminosComerciales());
         assertEquals(3, producto.getEspecificaciones().size());
@@ -366,54 +374,6 @@ class ProductoServiceTest {
         assertNotNull(resultado);
         verify(productoRepository, times(1)).buscarPorProveedorYTitulo(10L, EstadoProducto.ELIMINADO_LOGICO, "SSD", pageable);
         verify(productoRepository, never()).findAllByProveedorIdAndEstadoNot(any(), any(), any());
-    }
-
-    @Test
-    @DisplayName("Admin: Debe listar productos de todos los proveedores sin filtro")
-    void debeListarProductosParaAdminSinFiltro() {
-        when(productoRepository.findAllByEstadoNot(eq(EstadoProducto.ELIMINADO_LOGICO), any()))
-                .thenReturn(org.springframework.data.domain.Page.empty());
-
-        var pageable = org.springframework.data.domain.PageRequest.of(0, 10);
-        var resultado = productoService.listarProductosAdmin(null, pageable);
-
-        assertNotNull(resultado);
-        verify(productoRepository, times(1)).findAllByEstadoNot(EstadoProducto.ELIMINADO_LOGICO, pageable);
-    }
-
-    @Test
-    @DisplayName("Admin: Debe listar productos con búsqueda por título")
-    void debeListarProductosParaAdminConFiltro() {
-        when(productoRepository.buscarTodosPorTitulo(eq(EstadoProducto.ELIMINADO_LOGICO), eq("RTX"), any()))
-                .thenReturn(org.springframework.data.domain.Page.empty());
-
-        var pageable = org.springframework.data.domain.PageRequest.of(0, 10);
-        var resultado = productoService.listarProductosAdmin("RTX", pageable);
-
-        assertNotNull(resultado);
-        verify(productoRepository, times(1)).buscarTodosPorTitulo(EstadoProducto.ELIMINADO_LOGICO, "RTX", pageable);
-    }
-
-    @Test
-    @DisplayName("Admin: Debe cambiar estado de cualquier producto sin restricción de proveedor")
-    void debeCambiarEstadoPublicacionAdminExitosamente() {
-        var producto = new Producto();
-        producto.setId(5L);
-        producto.setUuid(UUID.randomUUID());
-        producto.setEstado(EstadoProducto.ACTIVO);
-
-        when(productoRepository.findById(5L)).thenReturn(Optional.of(producto));
-        when(productoRepository.save(any(Producto.class))).thenAnswer(i -> i.getArgument(0));
-
-        var req = new CambiarEstadoProductoDTO(EstadoProducto.OCULTO_POR_ADMIN);
-        var resultado = productoService.cambiarEstadoPublicacionAdmin(5L, req);
-
-        assertNotNull(resultado);
-        assertEquals(5L, resultado.id());
-        assertEquals("ACTIVO", resultado.estadoAnterior());
-        assertEquals("OCULTO_POR_ADMIN", resultado.nuevoEstado());
-        assertEquals(EstadoProducto.OCULTO_POR_ADMIN, producto.getEstado());
-        verify(productoRepository, times(1)).save(producto);
     }
 
     @Test

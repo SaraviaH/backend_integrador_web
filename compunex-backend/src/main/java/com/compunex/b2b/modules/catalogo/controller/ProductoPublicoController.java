@@ -2,7 +2,7 @@ package com.compunex.b2b.modules.catalogo.controller;
 
 import com.compunex.b2b.modules.catalogo.dto.response.ProductoPublicoDetalleDTO;
 import com.compunex.b2b.modules.catalogo.dto.response.ProductoPublicoPaginadoResponseDTO;
-import com.compunex.b2b.modules.catalogo.service.ProductoService;
+import com.compunex.b2b.modules.catalogo.service.ProductoPublicoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "10. Catálogo Público B2B", description = "Búsqueda paginada y ficha técnica pública de productos activos")
 public class ProductoPublicoController {
 
-    private final ProductoService productoService;
+    private final ProductoPublicoService productoService;
 
     @GetMapping
     @Operation(
