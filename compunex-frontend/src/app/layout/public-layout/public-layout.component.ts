@@ -22,7 +22,7 @@ import { ToastContainerComponent } from '../../shared/components/toast-container
       <app-toast-container></app-toast-container>
 
       <!-- Pie de Página Limpio y Elegante -->
-      <footer class="site-footer"><div class="wrap footer-grid"><div><a routerLink="/" class="brand"><span class="brand-mark">C</span><span><strong>COMPUNEX<span>B2B</span></strong><small>MAYORISTA TECNOLÓGICO</small></span></a><p>Una comunidad para conectar empresas y tecnología.</p></div><div><strong>Explora COMPUNEX</strong><a href="/#categorias">Categorías</a><a href="/#comunidad">Comunidad</a><a href="/#como-funciona">Cómo funciona</a></div><div><strong>Hecho para crecer</strong><p>Compra, conecta y descubre oportunidades en el sector tecnológico.</p></div></div></footer>
+      <footer class="site-footer"><div class="wrap footer-grid"><div><a routerLink="/" class="brand"><span class="brand-mark">C</span><span><strong>COMPUNEX<span>B2B</span></strong><small>MAYORISTA TECNOLÓGICO</small></span></a><p>Una comunidad para conectar empresas y tecnología.</p></div><div><strong>Explora COMPUNEX</strong><a [routerLink]="['/']" fragment="categorias">Categorías</a><a [routerLink]="['/']" fragment="comunidad">Comunidad</a><a [routerLink]="['/']" fragment="como-funciona">Cómo funciona</a></div><div><strong>Hecho para crecer</strong><p>Compra, conecta y descubre oportunidades en el sector tecnológico.</p></div></div></footer>
     </div>
   `
 })
