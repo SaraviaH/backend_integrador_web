@@ -20,7 +20,7 @@
 
 | Sprint | Rama GitFlow | Estado | Pantallas Verificadas | 4 Estados UI |
 | :--- | :--- | :---: | :---: | :---: |
-| `Sprint-F01_Setup_UI_y_Design_Tokens` | `feature/frontend-setup-shell` | `PENDIENTE` | Shell Global | PENDIENTE |
+| `Sprint-F01_Arquitectura_Estructura_y_Reglas_Frontend` | `feature/frontend-architecture-scaffold` | `PENDIENTE` | Shell Global | PENDIENTE |
 | `Sprint-F02_Auth_Login_y_Registro_Empresa` | `feature/frontend-auth-company` | `BLOQUEADO` | 0 / 2 (`P-06`, `P-07`) | PENDIENTE |
 | `Sprint-F03_Home_y_Categorias` | `feature/frontend-home-categories` | `BLOQUEADO` | 0 / 2 (`P-01`, `P-02`) | PENDIENTE |
 | `Sprint-F04_Catalogo_B2B_y_Busqueda` | `feature/frontend-catalog-search` | `BLOQUEADO` | 0 / 1 (`P-03`) | PENDIENTE |

@@ -24,7 +24,7 @@ El Agente de Frontend construye la interfaz de usuario en 14 sprints granulares 
 
 | ID Sprint | Título | Pantallas Cubiertas | Componentes Clave | Estado |
 | :--- | :--- | :---: | :--- | :---: |
-| `Sprint-F01` | Setup UI, Design Tokens y Shell | Shell Global | `ShellComponent`, `HeaderComponent`, `FooterComponent`, `NavbarComponent` | `PENDIENTE` |
+| `Sprint-F01` | Arquitectura por Capas, Reglas SOLID y Tokens SASS | Shell Global | `ShellComponent`, `StoreNavbarComponent`, `PanelSidebarComponent`, `CoreModels` | `PENDIENTE` |
 | `Sprint-F02` | Auth, Login y Registro Empresa | `P-06`, `P-07` | `LoginComponent`, `RegisterCompanyComponent`, `AuthService` | `BLOQUEADO` |
 | `Sprint-F03` | Portal de Inicio y Categorías | `P-01`, `P-02` | `HomeComponent`, `CategoriesComponent`, `CategoryCardComponent` | `BLOQUEADO` |
 | `Sprint-F04` | Catálogo B2B y Búsqueda Reactiva | `P-03` | `CatalogComponent`, `ProductCardComponent`, `CatalogStateService` | `BLOQUEADO` |

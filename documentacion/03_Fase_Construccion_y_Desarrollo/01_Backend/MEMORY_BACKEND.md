@@ -20,7 +20,7 @@
 
 | Sprint | Rama GitFlow | Estado | Endpoints Verificados | Test Suite |
 | :--- | :--- | :---: | :---: | :---: |
-| `Sprint-B01_Audit_y_Refactor_Base_Existente` | `feature/backend-base-audit-refactor` | `PENDIENTE` | 0 / 14 | 0 passing |
+| `Sprint-B01_Arquitectura_Estructura_y_Reglas_Backend` | `feature/backend-architecture-scaffold` | `PENDIENTE` | 0 / 14 | 0 passing |
 | `Sprint-B02_Auth_Aditivo_Empresa_y_Activacion` | `feature/backend-auth-additive` | `BLOQUEADO` | 0 / 3 | 0 passing |
 | `Sprint-B03_Catalogo_Publico_B2B` | `feature/backend-public-catalog` | `BLOQUEADO` | 0 / 2 | 0 passing |
 | `Sprint-B04_Persistencia_Ordenes_y_Split_Order` | `feature/backend-orders-persistence` | `BLOQUEADO` | Persistencia DDL JPA | 0 passing |

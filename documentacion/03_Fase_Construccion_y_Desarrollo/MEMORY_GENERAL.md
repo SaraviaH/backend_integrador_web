@@ -25,7 +25,7 @@
 | :--- | :--- | :--- | :--- | :--- | :---: |
 | **Transversal** | `Sprint-G01` | Setup y Entorno Base | Agente DevOps | Ninguna | `PENDIENTE` |
 | **Transversal** | `Sprint-G02` | Base de Datos DDL (10 Tablas + Seeds) | Agente DBA | `Sprint-G01` | `PENDIENTE` |
-| **Backend** | `Sprint-B01` | Auditoría Base Existente (14 EPs) | Agente Backend | `Sprint-G02` | `BLOQUEADO` |
+| **Backend** | `Sprint-B01` | Arquitectura, Estructura y Reglas SOLID (14 EPs Base) | Agente Backend | `Sprint-G02` | `BLOQUEADO` |
 | **Backend** | `Sprint-B02` | Auth Aditivo Empresa y Activación (15, 16, 17) | Agente Backend | `Sprint-B01` | `BLOQUEADO` |
 | **Backend** | `Sprint-B03` | Catálogo Público B2B (18, 19) | Agente Backend | `Sprint-B02` | `BLOQUEADO` |
 | **Backend** | `Sprint-B04` | Persistencia Órdenes y Split Order (DDL JPA) | Agente Backend | `Sprint-B03` | `BLOQUEADO` |
@@ -34,7 +34,7 @@
 | **Backend** | `Sprint-B07` | Ventas Proveedor y Despacho (23, 24) | Agente Backend | `Sprint-B06` | `BLOQUEADO` |
 | **Backend** | `Sprint-B08` | Auditoría AOP y Admin Moderación (13, 14, AOP) | Agente Backend | `Sprint-B07` | `BLOQUEADO` |
 | **Backend** | `Sprint-B_Audit` | **Gate 1: Certificación Backend (24 EPs)** | Agente Auditor Backend | `Sprint-B08` | `BLOQUEADO` |
-| **Frontend** | `Sprint-F01` | Setup UI, Design Tokens y Shell | Agente Frontend | `Sprint-G01` (vía Mock) | `BLOQUEADO` |
+| **Frontend** | `Sprint-F01` | Arquitectura por Capas, Reglas SOLID y Tokens SASS | Agente Frontend | `Sprint-G01` (vía Mock) | `BLOQUEADO` |
 | **Frontend** | `Sprint-F02` | Auth, Login y Registro Empresa (`P-06`, `P-07`) | Agente Frontend | `Sprint-F01` | `BLOQUEADO` |
 | **Frontend** | `Sprint-F03` | Portal de Inicio y Categorías (`P-01`, `P-02`) | Agente Frontend | `Sprint-F01` | `BLOQUEADO` |
 | **Frontend** | `Sprint-F04` | Catálogo B2B y Búsqueda (`P-03`) | Agente Frontend | `Sprint-F03` | `BLOQUEADO` |

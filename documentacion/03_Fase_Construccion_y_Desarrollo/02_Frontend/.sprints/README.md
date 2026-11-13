@@ -10,7 +10,7 @@
 
 Para garantizar alta calidad, cero saturación de código y pruebas visuales exhaustivas, las 27 pantallas se distribuyen en 14 sprints de 1 a 3 pantallas por sprint:
 
-1. [`Sprint-F01_Setup_UI_y_Design_Tokens`](Sprint-F01_Setup_UI_y_Design_Tokens/SPEC.md): Tokens base Tailwind, átomos visuales y Layout Shell responsivo (`Header`, `Footer`, `Navbar`).
+1. [`Sprint-F01_Arquitectura_Estructura_y_Reglas_Frontend`](Sprint-F01_Arquitectura_Estructura_y_Reglas_Frontend/SPEC.md): Estructuración formal de la arquitectura por capas orientada a features en `kebab-case`, reglas SOLID, patrones GoF (Facade, Observer, Interceptor, Strategy), tokens SASS (`_tokens.scss`), contratos tipados en `core/models/` y layout base (`store-navbar`, `panel-sidebar`).
 2. [`Sprint-F02_Auth_Login_y_Registro_Empresa`](Sprint-F02_Auth_Login_y_Registro_Empresa/SPEC.md): `P-06` Iniciar sesión y `P-07` Registro de empresa mayorista con validación RUC 11 dígitos.
 3. [`Sprint-F03_Home_y_Categorias`](Sprint-F03_Home_y_Categorias/SPEC.md): `P-01` Portal de inicio con Hero B2B y `P-02` Grilla visual de categorías con contadores.
 4. [`Sprint-F04_Catalogo_B2B_y_Busqueda`](Sprint-F04_Catalogo_B2B_y_Busqueda/SPEC.md): `P-03` Catálogo y búsqueda reactiva con Signals, debounce y paginador B2B.

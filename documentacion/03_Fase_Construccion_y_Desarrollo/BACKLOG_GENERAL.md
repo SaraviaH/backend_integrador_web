@@ -21,7 +21,7 @@ El desarrollo de COMPUNEX B2B opera de forma desacoplada y paralela mediante el 
                  ┌────────────────────┴────────────────────┐
                  ▼                                         ▼
    [01_Backend/.sprints/]                     [02_Frontend/.sprints/]
-   Sprint-B01: Auditoría Base 14 EPs          Sprint-F01: Setup UI & Tokens
+   Sprint-B01: Arquitectura, SOLID & Base     Sprint-F01: Arquitectura, SOLID & Tokens
    Sprint-B02: Auth Aditivo Empresa           Sprint-F02: Auth & Registro
    Sprint-B03: Catálogo Público B2B           Sprint-F03: Home & Categorías
    Sprint-B04: Persistencia Órdenes           Sprint-F04: Catálogo B2B
@@ -63,7 +63,7 @@ El desarrollo de COMPUNEX B2B opera de forma desacoplada y paralela mediante el 
 ### ⚙️ Pista Backend (8 Sprints + Gate 1)
 | ID Sprint | Título | Endpoints | Tablas | Estado |
 | :---: | :--- | :---: | :--- | :---: |
-| `Sprint-B01` | Auditoría y Refactor Base Existente | 1 a 6, 7 a 14 | `usuarios`, `perfiles_proveedor`, `categorias`, `productos` | `BLOQUEADO` |
+| `Sprint-B01` | Arquitectura, Estructura y Reglas SOLID (14 EPs Base) | 1 a 6, 7 a 14 | `usuarios`, `perfiles_proveedor`, `categorias`, `productos` | `BLOQUEADO` |
 | `Sprint-B02` | Auth Aditivo, Empresa y Activación | 15, 16, 17 | `usuarios`, `perfiles_proveedor` | `BLOQUEADO` |
 | `Sprint-B03` | Catálogo Público B2B | 18, 19 | `productos`, `categorias`, `imagenes`, `specs` | `BLOQUEADO` |
 | `Sprint-B04` | Persistencia Órdenes y Split Order | Modelado DDL JPA | `ordenes`, `subordenes_factura`, `orden_items` | `BLOQUEADO` |
@@ -78,7 +78,7 @@ El desarrollo de COMPUNEX B2B opera de forma desacoplada y paralela mediante el 
 ### 🎨 Pista Frontend (14 Sprints + Gate 2)
 | ID Sprint | Título | Pantallas | Componentes Clave | Estado |
 | :---: | :--- | :---: | :--- | :---: |
-| `Sprint-F01` | Setup UI, Design Tokens y Shell | Shell Global | `ShellComponent`, `HeaderComponent`, `FooterComponent` | `BLOQUEADO` |
+| `Sprint-F01` | Arquitectura por Capas, Reglas SOLID y Tokens SASS | Shell Global | `ShellComponent`, `StoreNavbar`, `PanelSidebar`, `CoreModels` | `BLOQUEADO` |
 | `Sprint-F02` | Auth, Login y Registro Empresa | `P-06`, `P-07` | `LoginComponent`, `RegisterCompanyComponent`, `AuthService` | `BLOQUEADO` |
 | `Sprint-F03` | Portal de Inicio y Categorías | `P-01`, `P-02` | `HomeComponent`, `CategoriesComponent` | `BLOQUEADO` |
 | `Sprint-F04` | Catálogo B2B y Búsqueda Reactiva | `P-03` | `CatalogComponent`, `ProductCardComponent`, `CatalogStateService` | `BLOQUEADO` |

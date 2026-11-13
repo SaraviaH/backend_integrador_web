@@ -25,7 +25,7 @@ El Agente de Backend construye y extiende la API REST de COMPUNEX B2B partiendo 
 
 | ID Sprint | Título / Alcance | Endpoints Cubiertos | Tablas Afectadas | Reglas de Negocio | Estado |
 | :--- | :--- | :---: | :--- | :--- | :---: |
-| `Sprint-B01` | Auditoría y Refactor Base Existente | 1 a 6, 7 a 14 | `usuarios`, `perfiles_proveedor`, `categorias`, `productos` | `RN-001`, `RN-003` | `PENDIENTE` |
+| `Sprint-B01` | Arquitectura, Estructura y Reglas Backend (14 EPs Base) | 1 a 6, 7 a 14 | `usuarios`, `perfiles_proveedor`, `categorias`, `productos` | `RN-001`, `RN-003` | `PENDIENTE` |
 | `Sprint-B02` | Auth Aditivo, Empresa y Activación | 15, 16, 17 | `usuarios`, `perfiles_proveedor` | `RN-001`, `RN-002` | `BLOQUEADO` |
 | `Sprint-B03` | Catálogo Público B2B | 18, 19 | `productos`, `categorias`, `imagenes_producto`, `producto_especificaciones` | `RN-003`, `RN-004` | `BLOQUEADO` |
 | `Sprint-B04` | Persistencia Órdenes y Split Order | Persistencia DDL JPA | `ordenes`, `subordenes_factura`, `orden_items` | `RN-005`, `RN-006` | `BLOQUEADO` |
