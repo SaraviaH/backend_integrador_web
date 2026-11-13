@@ -1,5 +1,12 @@
 export type UserRole = 'ROLE_CLIENTE' | 'ROLE_PROVEEDOR' | 'ROLE_ADMIN' | 'COMPRADOR';
 
+export function normalizeUserRole(rol?: string | null): UserRole {
+  const upper = (rol || '').toUpperCase().trim();
+  if (upper === 'PROVEEDOR' || upper === 'ROLE_PROVEEDOR') return 'ROLE_PROVEEDOR';
+  if (upper === 'ADMIN' || upper === 'ROLE_ADMIN') return 'ROLE_ADMIN';
+  return 'ROLE_CLIENTE';
+}
+
 export interface UserProfile {
   id?: number;
   usuarioId?: number;
@@ -9,6 +16,8 @@ export interface UserProfile {
   rol: UserRole;
   ruc?: string;
   razonSocial?: string;
+  nombreComercial?: string;
+  ciudad?: string;
   activo?: boolean;
   telefono?: string;
   direccion?: string;

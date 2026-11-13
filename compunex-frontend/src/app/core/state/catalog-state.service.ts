@@ -1,6 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { CatalogApiService } from '../services/catalog-api.service';
 import { ProductCard, CatalogFilterParams } from '../models/catalog.model';
+import { environment } from '../../../environments/environment';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Injectable({
@@ -93,7 +94,7 @@ export class CatalogStateService {
 
     const filter: CatalogFilterParams = {
       busqueda: this.searchTerm() || undefined,
-      categoriaId: this.selectedCategory() ? Number(this.selectedCategory()) : undefined,
+      categoriaId: this.selectedCategory() ? String(this.selectedCategory()) : undefined,
       precioMin: this.priceMin() ?? undefined,
       precioMax: this.priceMax() ?? undefined,
       soloConStock: this.onlyInStock() || undefined,
@@ -113,8 +114,8 @@ export class CatalogStateService {
           this.products.set(items);
           this.totalElements.set(total);
           this.totalPages.set(pages || 1);
-        } else if (!this.searchTerm() && !this.selectedCategory()) {
-          // Fallback a catálogo demo inicial si la API aún no tiene datos cargados
+        } else if (environment.useMock && !this.searchTerm() && !this.selectedCategory()) {
+          // Fallback demo únicamente cuando useMock está activo
           const mock = this.getFallbackProducts();
           this.products.set(mock);
           this.totalElements.set(mock.length);
@@ -127,11 +128,14 @@ export class CatalogStateService {
       },
       error: (_err) => {
         this.isLoading.set(false);
-        // En desarrollo local sin backend activo, usar el catálogo de muestra
-        const mock = this.getFallbackProducts();
-        this.products.set(mock);
-        this.totalElements.set(mock.length);
-        this.totalPages.set(1);
+        if (environment.useMock) {
+          const mock = this.getFallbackProducts();
+          this.products.set(mock);
+          this.totalElements.set(mock.length);
+          this.totalPages.set(1);
+        } else {
+          this.hasError.set(true);
+        }
       }
     });
   }

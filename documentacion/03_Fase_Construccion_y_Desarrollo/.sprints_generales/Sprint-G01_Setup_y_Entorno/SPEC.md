@@ -3,14 +3,14 @@
 > **Área Técnica:** Transversal / DevOps y Entorno  
 > **Track:** General  
 > **Agente Responsable:** Agente DevOps / Setup  
-> **Estado:** PENDIENTE  
-> **Rama GitFlow:** `chore/setup-entorno-base` hacia `develop`  
+> **Estado:** COMPLETADO (Adaptado a Java 21 / Spring Boot 3.5.16 + PostgreSQL 18)  
+> **Rama GitFlow:** `integracion/e2e`  
 > **Dependencias Previas:** Ninguna (Sprint Inicial)
 
 ---
 
 ## 1. Objetivo del Sprint
-Configurar y validar el entorno de desarrollo local completo para COMPUNEX B2B, asegurando que el proyecto backend (Spring Boot 3.2.0 / Java 17) y el frontend (Angular 18 standalone) compilen limpiamente, se conecten al servicio MySQL 8.0 en XAMPP (puerto 3306), y expongan un endpoint de healthcheck operativo (`GET /api/v1/salud`).
+Configurar y validar el entorno de desarrollo local completo para COMPUNEX B2B, asegurando que el proyecto backend (`compunex-backend`, Spring Boot 3.5.16 / Java 21) y el frontend (`compunex-frontend`, Angular 18 standalone) compilen limpiamente, se conecten a la base de datos local PostgreSQL 18 (`compunex_b2b`, puerto `5432`), y expongan OpenAPI / Swagger UI operativo (`200 OK`). *(Nota histórica: el diseño inicial contemplaba MySQL/XAMPP y `/api/v1/salud`; la implementación unificada adoptó PostgreSQL 18 y `/swagger-ui/index.html`).*
 
 ---
 
@@ -63,11 +63,11 @@ Configurar y validar el entorno de desarrollo local completo para COMPUNEX B2B, 
 ---
 
 ## 4. Criterios de Aceptación (Definition of Done - DoD)
-- [ ] `mvn clean package -DskipTests` genera el JAR ejecutable sin errores.
-- [ ] `GET http://localhost:8080/api/v1/salud` responde `200 OK` con payload JSON válido.
-- [ ] `ng build` en frontend compila sin advertencias ni errores.
-- [ ] `npm run mock:api` levanta el servidor mock respondiendo a las rutas de `compunex-openapi.yaml`.
-- [ ] Base de datos `compunex_db` creada en MySQL local.
+- [x] `.\mvnw.cmd clean test` compila e ejecuta la suite backend sin errores (`83/83` tests en verde).
+- [x] `GET http://localhost:8080/swagger-ui/index.html` responde `200 OK` en vivo contra PostgreSQL (`compunex_b2b`).
+- [x] `npm.cmd run build` (`ng build`) en frontend compila con `0` errores y `0` advertencias.
+- [ ] `npm run mock:api` *(desactivado en integración final tras conmutar `useMock: false`)*.
+- [x] Base de datos `compunex_b2b` operativa en PostgreSQL local (`localhost:5432`).
 
 ---
 

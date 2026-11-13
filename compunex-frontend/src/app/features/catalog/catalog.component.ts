@@ -472,7 +472,7 @@ export class CatalogComponent implements OnInit, OnDestroy {
 
   public selectCategory(catId: string | number | null): void {
     this.catalogState.setCategory(catId);
-    this.updateQueryParams({ categoryId: catId, page: 0 });
+    this.updateQueryParams({ categoryId: catId, categoriaId: null, page: 0 });
   }
 
   public applyPriceFilter(): void {
@@ -525,7 +525,7 @@ export class CatalogComponent implements OnInit, OnDestroy {
   public getSelectedCategoryName(): string {
     const id = this.catalogState.selectedCategory();
     if (!id) return '';
-    const match = this.categories().find(c => c.id === Number(id));
+    const match = this.categories().find(c => String(c.id) === String(id));
     return match ? match.nombre : `Categoría #${id}`;
   }
 

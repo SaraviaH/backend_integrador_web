@@ -37,6 +37,7 @@ export interface ProductCard {
 }
 
 export interface ProductDetail extends ProductCard {
+  categoriaId?: string;
   descripcion: string;
   marca: string;
   modelo: string;
@@ -50,7 +51,7 @@ export interface ProductDetail extends ProductCard {
 
 export interface CatalogFilterParams {
   busqueda?: string;
-  categoriaId?: number;
+  categoriaId?: string | number;
   precioMin?: number;
   precioMax?: number;
   proveedorId?: number;
@@ -63,7 +64,7 @@ export interface CatalogFilterParams {
 export interface CreateProductRequest {
   nombre: string;
   sku: string;
-  categoriaId: number;
+  categoriaId: string | number;
   precioUnitario: number;
   precioMayorista?: number;
   cantidadMinimaMayorista?: number;

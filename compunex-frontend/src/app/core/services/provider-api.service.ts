@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { Observable, forkJoin, of } from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import {
   ProviderMetrics,
@@ -13,6 +13,144 @@ import {
 import { CreateProductRequest, ProductDetail, UpdateProductRequest } from '../models/catalog.model';
 import { PaginatedResponse, ApiResponse } from '../models/api-response.model';
 import { SuborderStatus } from '../models/order.model';
+import { resolveMediaUrl } from './media-api.service';
+
+interface BackendProductoResumenDTO {
+  id: number;
+  uuid?: string;
+  titulo: string;
+  descripcion: string;
+  categoriaId?: string;
+  categoriaNombre?: string;
+  modeloComercial?: string;
+  tipoFormato?: string;
+  unidadesPorPaquete?: string;
+  pedidoMinimo?: string;
+  precioUnitarioRef: number;
+  precioTotalRef?: number;
+  moneda?: string;
+  terminosComerciales?: string;
+  estado: string;
+  urlImagenPrincipal?: string;
+  imagenes?: { urlImagen: string; orden?: number }[];
+  especificaciones?: { clave: string; valor: string }[];
+  fechaPublicacion?: string;
+  fechaActualizacion?: string;
+}
+
+interface BackendProductoPaginadoDTO {
+  contenido: BackendProductoResumenDTO[];
+  pagina: number;
+  tamano: number;
+  totalElementos: number;
+  totalPaginas: number;
+}
+
+interface BackendProductoDetalleProvDTO {
+  id: number;
+  uuid?: string;
+  proveedorId: number;
+  proveedorRazonSocial?: string;
+  categoriaId?: string;
+  titulo: string;
+  descripcion: string;
+  modeloComercial?: string;
+  tipoFormato?: string;
+  unidadesPorPaquete?: string;
+  pedidoMinimo?: string;
+  precioUnitarioRef: number;
+  precioTotalRef?: number;
+  moneda?: string;
+  terminosComerciales?: string;
+  estado?: string;
+  imagenes?: { urlImagen: string; orden?: number }[];
+  especificaciones?: { clave: string; valor: string }[];
+  fechaPublicacion?: string;
+  fechaActualizacion?: string;
+}
+
+interface BackendVentaResumenDTO {
+  subordenId: number;
+  ordenId: number;
+  codigoOrden: string;
+  numeroComprobante: string;
+  fechaEmision: string;
+  razonSocialComprador: string;
+  rucComprador: string;
+  total: number;
+  moneda?: string;
+  estado: string;
+}
+
+interface BackendVentaPaginadaDTO {
+  contenido: BackendVentaResumenDTO[];
+  pagina: number;
+  tamano: number;
+  totalElementos: number;
+  totalPaginas: number;
+}
+
+interface BackendSubordenDetalleProvDTO {
+  subordenId: number;
+  ordenId: number;
+  codigoOrden: string;
+  numeroComprobante: string;
+  tipoComprobante?: string;
+  fechaEmision: string;
+  receptor?: { ruc: string; razonSocial: string; direccionFiscal?: string };
+  subtotal: number;
+  igv: number;
+  total: number;
+  moneda?: string;
+  estado: string;
+  items?: { productoId: number; titulo: string; cantidad: number; precioUnitario: number; subtotalLinea: number }[];
+}
+
+interface BackendProveedorPerfilDTO {
+  proveedorId: number;
+  usuarioId: number;
+  identificacionFiscal: string;
+  razonSocial: string;
+  nombreComercial?: string;
+  telefonoContacto: string;
+  correoContacto?: string;
+  direccion: string;
+  ciudad?: string;
+  anosMercado?: string;
+  descripcion?: string;
+  politicaComercial?: string;
+}
+
+export interface ActivateProviderBackendRequest {
+  ruc: string;
+  razonSocial: string;
+  nombreComercial?: string;
+  telefonoContacto: string;
+  direccion: string;
+  ciudad: string;
+  anosMercado?: string;
+  descripcion?: string;
+  politicaComercial?: string;
+}
+
+export interface ActivateProviderBackendResponse {
+  proveedorId: number;
+  rol: string;
+  token: string;
+  tipoToken: string;
+  expiraEnSegundos: number;
+  mensaje: string;
+}
+
+function findSpecValue(specs: { clave: string; valor: string }[] | undefined, key: string): string | undefined {
+  return specs?.find(s => s.clave.trim().toLowerCase() === key.toLowerCase())?.valor;
+}
+
+function parseLeadingInt(val?: string, fallback: number = 1): number {
+  if (!val) return fallback;
+  const m = val.match(/\d+/);
+  return m ? Math.max(0, Number(m[0])) : fallback;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -22,21 +160,122 @@ export class ProviderApiService {
   private readonly baseUrl = environment.useMock ? environment.mockApiUrl : environment.apiUrl;
 
   public getDashboardMetrics(): Observable<ProviderMetrics> {
+    if (!environment.useMock) {
+      return forkJoin({
+        products: this.getMyCatalog(0, 100),
+        sales: this.getMySales(0, 100)
+      }).pipe(
+        map(({ products, sales }) => {
+          const prodList = products.content || [];
+          const salesList = sales.content || [];
+          const activeProds = prodList.filter(p => p.activo);
+          const ventasMesActual = Math.round(
+            salesList
+              .filter(s => s.estado !== 'ANULADO')
+              .reduce((acc, s) => acc + s.total, 0) * 100
+          ) / 100;
+          const pedidosPendientes = salesList.filter(
+            s => s.estado === 'PENDIENTE_DESPACHO' || s.estado === 'EN_PREPARACION'
+          ).length;
+          const valorInventario = Math.round(
+            activeProds.reduce((acc, p) => acc + p.precioUnitario * p.stock, 0) * 100
+          ) / 100;
+
+          return {
+            ventasMesActual,
+            pedidosPendientes,
+            productosPublicados: prodList.length,
+            valorInventario
+          };
+        })
+      );
+    }
+
     return this.http.get<ProviderMetrics>(`${this.baseUrl}/providers/me/metrics`).pipe(
       catchError(() => of(this.getFallbackMetrics()))
     );
   }
 
   public getMyCatalog(page: number = 0, size: number = 10): Observable<PaginatedResponse<ProviderProductItem>> {
-    return this.http.get<PaginatedResponse<ProviderProductItem>>(
-      `${this.baseUrl}/providers/me/products?page=${page}&size=${size}`
-    ).pipe(
-      catchError(() => of(this.getFallbackCatalog()))
-    );
+    const request$ = this.http
+      .get<BackendProductoPaginadoDTO>(`${this.baseUrl}/providers/me/products?page=${page}&size=${size}`)
+      .pipe(
+        map(res => ({
+          content: (res.contenido || []).map(p => ({
+            id: p.id,
+            sku: findSpecValue(p.especificaciones, 'SKU') || `CMP-${String(p.id).padStart(4, '0')}`,
+            nombre: p.titulo,
+            categoriaNombre: p.categoriaNombre || p.categoriaId || 'Hardware B2B',
+            precioUnitario: Number(p.precioUnitarioRef),
+            precioMayorista: p.precioTotalRef != null && Number(p.precioTotalRef) < Number(p.precioUnitarioRef)
+              ? Number(p.precioTotalRef)
+              : undefined,
+            cantidadMinimaMayorista: parseLeadingInt(p.pedidoMinimo, 1),
+            stock: parseLeadingInt(findSpecValue(p.especificaciones, 'Stock Referencial'), 100),
+            activo: p.estado === 'ACTIVO',
+            ultimaActualizacion: p.fechaActualizacion || p.fechaPublicacion || new Date().toISOString(),
+            imagenUrl: resolveMediaUrl(p.urlImagenPrincipal || p.imagenes?.[0]?.urlImagen)
+          })),
+          page: res.pagina ?? 0,
+          size: res.tamano ?? size,
+          totalElements: res.totalElementos ?? 0,
+          totalPages: Math.max(res.totalPaginas ?? 1, 1)
+        }))
+      );
+
+    if (!environment.useMock) {
+      return request$;
+    }
+
+    return request$.pipe(catchError(() => of(this.getFallbackCatalog())));
   }
 
   public getMyProductById(id: number): Observable<ApiResponse<ProductDetail>> {
-    return this.http.get<ApiResponse<ProductDetail>>(`${this.baseUrl}/providers/me/products/${id}`).pipe(
+    const request$ = this.http
+      .get<BackendProductoDetalleProvDTO>(`${this.baseUrl}/providers/me/products/${id}`)
+      .pipe(
+        map(d => {
+          const specs = (d.especificaciones || []).map(e => ({ clave: e.clave, valor: e.valor }));
+          const imgs = (d.imagenes || []).map(i => resolveMediaUrl(i.urlImagen));
+          const unitPrice = Number(d.precioUnitarioRef);
+          const totalRef = d.precioTotalRef != null ? Number(d.precioTotalRef) : undefined;
+
+          const detail: ProductDetail = {
+            id: d.id,
+            categoriaId: d.categoriaId,
+            nombre: d.titulo,
+            sku: findSpecValue(specs, 'SKU') || `CMP-${String(d.id).padStart(4, '0')}`,
+            categoriaNombre: d.categoriaId || 'Hardware B2B',
+            precioUnitario: unitPrice,
+            precioMayorista: totalRef && totalRef < unitPrice ? totalRef : undefined,
+            cantidadMinimaMayorista: parseLeadingInt(d.pedidoMinimo, 1),
+            stockDisponible: parseLeadingInt(findSpecValue(specs, 'Stock Referencial'), 100),
+            proveedorId: d.proveedorId,
+            proveedorRazonSocial: d.proveedorRazonSocial || 'Mi Empresa B2B',
+            proveedorRuc: '—',
+            imagenPrincipalUrl: imgs[0] || resolveMediaUrl(null),
+            imagenesSecundarias: imgs.slice(1),
+            descripcion: d.descripcion,
+            marca: findSpecValue(specs, 'Marca') || d.modeloComercial || 'Enterprise',
+            modelo: findSpecValue(specs, 'Modelo') || d.tipoFormato || 'B2B',
+            especificaciones: specs,
+            garantiaMeses: parseLeadingInt(findSpecValue(specs, 'Garantía') || d.terminosComerciales, 12),
+            condicion: 'NUEVO'
+          };
+
+          return {
+            success: true,
+            data: detail,
+            timestamp: new Date().toISOString()
+          };
+        })
+      );
+
+    if (!environment.useMock) {
+      return request$;
+    }
+
+    return request$.pipe(
       catchError(() => of({
         success: true,
         data: this.getFallbackProductDetail(id),
@@ -46,30 +285,56 @@ export class ProviderApiService {
   }
 
   public createProduct(data: CreateProductRequest): Observable<ApiResponse<ProductDetail>> {
-    return this.http.post<ApiResponse<ProductDetail>>(`${this.baseUrl}/providers/me/products`, data).pipe(
+    const payload = this.buildBackendProductPayload(data);
+    const request$ = this.http
+      .post<{ id: number; titulo: string; categoriaId: string; precioUnitarioRef: number; precioTotalRef: number }>(
+        `${this.baseUrl}/providers/me/products`,
+        payload
+      )
+      .pipe(
+        map(res => ({
+          success: true,
+          message: 'Producto registrado exitosamente en el catálogo B2B',
+          data: {
+            id: res.id,
+            categoriaId: res.categoriaId,
+            nombre: res.titulo,
+            sku: data.sku,
+            categoriaNombre: res.categoriaId || 'Hardware B2B',
+            precioUnitario: Number(res.precioUnitarioRef),
+            precioMayorista: Number(res.precioTotalRef),
+            cantidadMinimaMayorista: data.cantidadMinimaMayorista || 1,
+            stockDisponible: data.stockDisponible,
+            proveedorId: 0,
+            proveedorRazonSocial: '',
+            proveedorRuc: '',
+            imagenPrincipalUrl: resolveMediaUrl(data.urlImagen),
+            imagenesSecundarias: [],
+            descripcion: data.descripcion,
+            marca: data.marca,
+            modelo: data.modelo,
+            especificaciones: payload.especificaciones,
+            garantiaMeses: data.garantiaMeses || 12,
+            condicion: 'NUEVO' as const
+          },
+          timestamp: new Date().toISOString()
+        }))
+      );
+
+    if (!environment.useMock) {
+      return request$;
+    }
+
+    return request$.pipe(
       catchError(() => of({
         success: true,
         message: 'Producto registrado exitosamente en el catálogo B2B',
         data: {
-          id: Math.floor(Math.random() * 900) + 100,
+          ...this.getFallbackProductDetail(Math.floor(Math.random() * 900) + 100),
           nombre: data.nombre,
           sku: data.sku,
-          categoriaNombre: 'Hardware B2B',
           precioUnitario: data.precioUnitario,
-          precioMayorista: data.precioMayorista || data.precioUnitario * 0.9,
-          cantidadMinimaMayorista: data.cantidadMinimaMayorista || 5,
-          stockDisponible: data.stockDisponible,
-          proveedorId: 1,
-          proveedorRazonSocial: 'AndesTech Mayorista SAC',
-          proveedorRuc: '20601234567',
-          imagenPrincipalUrl: data.urlImagen,
-          descripcion: data.descripcion,
-          marca: data.marca,
-          modelo: data.modelo,
-          especificaciones: [],
-          imagenesSecundarias: [],
-          garantiaMeses: data.garantiaMeses || 12,
-          condicion: 'NUEVO' as const
+          imagenPrincipalUrl: data.urlImagen
         },
         timestamp: new Date().toISOString()
       }))
@@ -77,13 +342,39 @@ export class ProviderApiService {
   }
 
   public updateProduct(id: number, data: UpdateProductRequest): Observable<ApiResponse<ProductDetail>> {
-    return this.http.put<ApiResponse<ProductDetail>>(`${this.baseUrl}/providers/me/products/${id}`, data).pipe(
+    const payload = this.buildBackendProductPayload(data as CreateProductRequest);
+    const request$ = this.http
+      .put<{ id: number; titulo: string; precioUnitarioRef: number; precioTotalRef: number }>(
+        `${this.baseUrl}/providers/me/products/${id}`,
+        payload
+      )
+      .pipe(
+        map(res => ({
+          success: true,
+          message: 'Producto actualizado con éxito',
+          data: {
+            ...this.getFallbackProductDetail(id),
+            id: res.id,
+            nombre: res.titulo,
+            precioUnitario: Number(res.precioUnitarioRef),
+            imagenPrincipalUrl: resolveMediaUrl(data.urlImagen)
+          },
+          timestamp: new Date().toISOString()
+        }))
+      );
+
+    if (!environment.useMock) {
+      return request$;
+    }
+
+    return request$.pipe(
       catchError(() => of({
         success: true,
         message: 'Producto actualizado con éxito',
         data: {
           ...this.getFallbackProductDetail(id),
           ...data,
+          categoriaId: String(data.categoriaId || this.getFallbackProductDetail(id).categoriaId || 'ram'),
           imagenPrincipalUrl: data.urlImagen || this.getFallbackProductDetail(id).imagenPrincipalUrl
         },
         timestamp: new Date().toISOString()
@@ -92,7 +383,26 @@ export class ProviderApiService {
   }
 
   public toggleProductStatus(id: number, activo: boolean): Observable<ApiResponse<void>> {
-    return this.http.patch<ApiResponse<void>>(`${this.baseUrl}/providers/me/products/${id}/status`, { activo }).pipe(
+    const estado = activo ? 'ACTIVO' : 'DESHABILITADO_POR_PROVEEDOR';
+    const request$ = this.http
+      .patch<{ mensaje?: string; fechaActualizacion?: string }>(
+        `${this.baseUrl}/providers/me/products/${id}/status`,
+        { estado }
+      )
+      .pipe(
+        map(res => ({
+          success: true,
+          message: res?.mensaje || `Estado del producto actualizado a ${activo ? 'Activo' : 'Pausado'}`,
+          data: undefined as void,
+          timestamp: res?.fechaActualizacion || new Date().toISOString()
+        }))
+      );
+
+    if (!environment.useMock) {
+      return request$;
+    }
+
+    return request$.pipe(
       catchError(() => of({
         success: true,
         message: `Estado del producto actualizado a ${activo ? 'Activo' : 'Pausado'}`,
@@ -103,7 +413,20 @@ export class ProviderApiService {
   }
 
   public deleteProduct(id: number): Observable<ApiResponse<void>> {
-    return this.http.delete<ApiResponse<void>>(`${this.baseUrl}/providers/me/products/${id}`).pipe(
+    const request$ = this.http.delete<void>(`${this.baseUrl}/providers/me/products/${id}`).pipe(
+      map(() => ({
+        success: true,
+        message: 'Producto retirado de la venta correctamente',
+        data: undefined as void,
+        timestamp: new Date().toISOString()
+      }))
+    );
+
+    if (!environment.useMock) {
+      return request$;
+    }
+
+    return request$.pipe(
       catchError(() => of({
         success: true,
         message: 'Producto retirado de la venta correctamente',
@@ -114,17 +437,79 @@ export class ProviderApiService {
   }
 
   public getMySales(page: number = 0, size: number = 10): Observable<PaginatedResponse<ProviderSaleItem>> {
-    return this.http.get<PaginatedResponse<ProviderSaleItem>>(
-      `${this.baseUrl}/providers/me/sales?page=${page}&size=${size}`
-    ).pipe(
-      catchError(() => of(this.getFallbackSales()))
-    );
+    const request$ = this.http
+      .get<BackendVentaPaginadaDTO>(`${this.baseUrl}/providers/me/sales?page=${page}&size=${size}`)
+      .pipe(
+        map(res => ({
+          content: (res.contenido || []).map(v => {
+            const total = Number(v.total);
+            const subtotal = Math.round((total / 1.18) * 100) / 100;
+            const igv = Math.round((total - subtotal) * 100) / 100;
+            return {
+              subordenId: v.subordenId,
+              ordenId: v.ordenId,
+              codigoOrden: v.codigoOrden,
+              clienteRazonSocial: v.razonSocialComprador,
+              clienteRuc: v.rucComprador,
+              fechaCreacion: v.fechaEmision,
+              estado: (v.estado === 'CANCELADO' ? 'ANULADO' : v.estado) as SuborderStatus,
+              subtotal,
+              igv,
+              total,
+              numeroFacturaSimulada: v.numeroComprobante,
+              items: []
+            };
+          }),
+          page: res.pagina ?? 0,
+          size: res.tamano ?? size,
+          totalElements: res.totalElementos ?? 0,
+          totalPages: Math.max(res.totalPaginas ?? 1, 1)
+        }))
+      );
+
+    if (!environment.useMock) {
+      return request$;
+    }
+
+    return request$.pipe(catchError(() => of(this.getFallbackSales())));
   }
 
   public getSaleDetail(subordenId: number): Observable<ApiResponse<ProviderSaleItem>> {
-    return this.http.get<ApiResponse<ProviderSaleItem>>(
-      `${this.baseUrl}/providers/me/sales/${subordenId}`
-    ).pipe(
+    const request$ = this.http
+      .get<BackendSubordenDetalleProvDTO>(`${this.baseUrl}/providers/me/sales/${subordenId}`)
+      .pipe(
+        map(d => ({
+          success: true,
+          data: {
+            subordenId: d.subordenId,
+            ordenId: d.ordenId,
+            codigoOrden: d.codigoOrden,
+            clienteRazonSocial: d.receptor?.razonSocial || 'Cliente B2B',
+            clienteRuc: d.receptor?.ruc || '—',
+            fechaCreacion: d.fechaEmision,
+            estado: (d.estado === 'CANCELADO' ? 'ANULADO' : d.estado) as SuborderStatus,
+            subtotal: Number(d.subtotal),
+            igv: Number(d.igv),
+            total: Number(d.total),
+            numeroFacturaSimulada: d.numeroComprobante,
+            items: (d.items || []).map(i => ({
+              productoId: i.productoId,
+              nombre: i.titulo,
+              sku: `CMP-${String(i.productoId).padStart(4, '0')}`,
+              cantidad: i.cantidad,
+              precioUnitario: Number(i.precioUnitario),
+              subtotal: Number(i.subtotalLinea)
+            }))
+          },
+          timestamp: new Date().toISOString()
+        }))
+      );
+
+    if (!environment.useMock) {
+      return request$;
+    }
+
+    return request$.pipe(
       catchError(() => {
         const salesList = this.getFallbackSales().content || [];
         const found = salesList.find(s => s.subordenId === subordenId) || salesList[0];
@@ -138,10 +523,26 @@ export class ProviderApiService {
   }
 
   public updateSuborderStatus(subordenId: number, nuevoEstado: SuborderStatus): Observable<ApiResponse<void>> {
-    return this.http.patch<ApiResponse<void>>(
-      `${this.baseUrl}/providers/me/sales/${subordenId}/status`,
-      { nuevoEstado }
-    ).pipe(
+    const backendEstado = nuevoEstado === 'ANULADO' ? 'CANCELADO' : nuevoEstado;
+    const request$ = this.http
+      .patch<BackendSubordenDetalleProvDTO>(
+        `${this.baseUrl}/providers/me/sales/${subordenId}/status`,
+        { nuevoEstado: backendEstado }
+      )
+      .pipe(
+        map(() => ({
+          success: true,
+          message: `Estado de la suborden #${subordenId} actualizado a ${nuevoEstado}`,
+          data: undefined as void,
+          timestamp: new Date().toISOString()
+        }))
+      );
+
+    if (!environment.useMock) {
+      return request$;
+    }
+
+    return request$.pipe(
       catchError(() => of({
         success: true,
         message: `Estado de la suborden #${subordenId} actualizado a ${nuevoEstado}`,
@@ -155,7 +556,31 @@ export class ProviderApiService {
    * Obtiene el perfil corporativo del proveedor (requiere ROLE_PROVEEDOR)
    */
   public getProfile(): Observable<ApiResponse<ProviderProfile>> {
-    return this.http.get<ApiResponse<ProviderProfile>>(`${this.baseUrl}/providers/me/profile`).pipe(
+    const request$ = this.http
+      .get<BackendProveedorPerfilDTO>(`${this.baseUrl}/providers/me/profile`)
+      .pipe(
+        map(d => ({
+          success: true,
+          data: {
+            id: d.proveedorId,
+            razonSocial: d.razonSocial,
+            ruc: d.identificacionFiscal,
+            nombreComercial: d.nombreComercial,
+            descripcion: d.descripcion,
+            telefono: d.telefonoContacto,
+            direccion: d.direccion,
+            ciudad: d.ciudad,
+            anosMercado: d.anosMercado
+          },
+          timestamp: new Date().toISOString()
+        }))
+      );
+
+    if (!environment.useMock) {
+      return request$;
+    }
+
+    return request$.pipe(
       catchError(() => of({
         success: true,
         data: this.getFallbackProfile(),
@@ -165,23 +590,72 @@ export class ProviderApiService {
   }
 
   /**
-   * Activa el rol de PROVEEDOR para una empresa autenticada
+   * Activa el rol de PROVEEDOR para una empresa autenticada y retorna nuevo JWT
    */
-  public activateProvider(data: { descripcion?: string; nombreComercial?: string } = {}): Observable<ApiResponse<void>> {
-    return this.http.post<ApiResponse<void>>(`${this.baseUrl}/providers/me/activate`, data).pipe(
+  public activateProvider(data: ActivateProviderBackendRequest): Observable<ApiResponse<ActivateProviderBackendResponse>> {
+    const request$ = this.http
+      .post<ActivateProviderBackendResponse>(`${this.baseUrl}/providers/me/activate`, data)
+      .pipe(
+        map(res => ({
+          success: true,
+          message: res.mensaje,
+          data: res,
+          timestamp: new Date().toISOString()
+        }))
+      );
+
+    if (!environment.useMock) {
+      return request$;
+    }
+
+    return request$.pipe(
       catchError(() => of({
         success: true,
         message: 'Rol de PROVEEDOR activado exitosamente',
-        data: undefined as any,
+        data: {
+          proveedorId: 1,
+          rol: 'PROVEEDOR',
+          token: '',
+          tipoToken: 'Bearer',
+          expiraEnSegundos: 86400,
+          mensaje: 'Rol activado (mock)'
+        },
         timestamp: new Date().toISOString()
       }))
     );
   }
 
   /**
-   * Actualiza el perfil del proveedor enviando urlLogo y/o urlBanner obtenidas previamente de /api/v1/media/upload
+   * Actualiza los datos comerciales del perfil del proveedor
    */
-  public updateProfile(data: UpdateProviderProfileRequest): Observable<ApiResponse<ProviderProfile>> {
+  public updateProfile(data: UpdateProviderProfileRequest & { anosMercado?: string }): Observable<ApiResponse<ProviderProfile>> {
+    if (!environment.useMock) {
+      return this.getProfile().pipe(
+        switchMap(current =>
+          this.activateProvider({
+            ruc: current.data.ruc,
+            razonSocial: current.data.razonSocial,
+            nombreComercial: data.nombreComercial || current.data.nombreComercial,
+            telefonoContacto: data.telefono || current.data.telefono,
+            direccion: data.direccion || current.data.direccion,
+            ciudad: data.ciudad || current.data.ciudad || 'Lima',
+            anosMercado: data.anosMercado || current.data.anosMercado,
+            descripcion: data.descripcion || current.data.descripcion
+          }).pipe(
+            switchMap(() => this.getProfile()),
+            map(refreshed => ({
+              ...refreshed,
+              data: {
+                ...refreshed.data,
+                urlLogo: data.urlLogo ?? refreshed.data.urlLogo,
+                urlBanner: data.urlBanner ?? refreshed.data.urlBanner
+              }
+            }))
+          )
+        )
+      );
+    }
+
     return this.http.put<ApiResponse<ProviderProfile>>(`${this.baseUrl}/providers/me/profile`, data).pipe(
       catchError(() => of({
         success: true,
@@ -190,6 +664,38 @@ export class ProviderApiService {
         timestamp: new Date().toISOString()
       }))
     );
+  }
+
+  private buildBackendProductPayload(data: CreateProductRequest) {
+    const qtyMin = data.cantidadMinimaMayorista || 1;
+    const specs: { clave: string; valor: string }[] = [
+      { clave: 'SKU', valor: data.sku || 'CMP-B2B' },
+      { clave: 'Marca', valor: data.marca || 'Enterprise' },
+      { clave: 'Modelo', valor: data.modelo || 'Corporativo' },
+      { clave: 'Stock Referencial', valor: String(data.stockDisponible ?? 100) },
+      { clave: 'Garantía', valor: `${data.garantiaMeses || 12} meses` }
+    ];
+
+    return {
+      categoriaId: String(data.categoriaId),
+      titulo: data.nombre,
+      descripcion: data.descripcion,
+      modeloComercial: 'DISTRIBUIDOR_OFICIAL',
+      tipoFormato: data.modelo || 'Unidad / Caja Master',
+      unidadesPorPaquete: `${qtyMin} ${qtyMin === 1 ? 'unidad' : 'unidades'}`,
+      pedidoMinimo: `${qtyMin} ${qtyMin === 1 ? 'unidad' : 'unidades'}`,
+      precioUnitarioRef: data.precioUnitario,
+      precioTotalRef: data.precioMayorista && data.precioMayorista > 0 ? data.precioMayorista : data.precioUnitario,
+      moneda: 'PEN',
+      terminosComerciales: `Garantía oficial de ${data.garantiaMeses || 12} meses. Emisión de factura electrónica B2B.`,
+      especificaciones: specs,
+      imagenes: [
+        {
+          urlImagen: data.urlImagen,
+          orden: 1
+        }
+      ]
+    };
   }
 
   private getFallbackMetrics(): ProviderMetrics {

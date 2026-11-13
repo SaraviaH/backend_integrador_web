@@ -18,22 +18,19 @@ export class CartStateService {
     this._items().reduce((acc, item) => acc + item.cantidad, 0)
   );
 
-  // Subtotal base (antes de IGV)
-  public readonly subtotal = computed(() => {
-    const rawTotal = this._items().reduce((acc, item) => acc + item.subtotal, 0);
-    // En B2B los precios se calculan: Base Imponible = Total Bruto / 1.18
-    return Math.round((rawTotal / (1 + IGV_RATE)) * 100) / 100;
-  });
+  // Subtotal base (antes de IGV): suma de líneas (precioUnitario * cantidad)
+  public readonly subtotal = computed(() =>
+    Math.round(this._items().reduce((acc, item) => acc + item.subtotal, 0) * 100) / 100
+  );
 
-  // IGV 18% calculado de forma transparente
-  public readonly igv = computed(() => {
-    const total = this.total();
-    return Math.round((total - this.subtotal()) * 100) / 100;
-  });
+  // IGV 18% calculado sobre el subtotal (alineado con SplitOrderCalculator en backend)
+  public readonly igv = computed(() =>
+    Math.round(this.subtotal() * IGV_RATE * 100) / 100
+  );
 
   // Total general con IGV
   public readonly total = computed(() =>
-    Math.round(this._items().reduce((acc, item) => acc + item.subtotal, 0) * 100) / 100
+    Math.round((this.subtotal() + this.igv()) * 100) / 100
   );
 
   // Agrupación de ítems por Proveedor (Fundamento del Split Order B2B)
@@ -56,11 +53,11 @@ export class CartStateService {
       group.items.push(item);
     }
 
-    // Calcular montos por grupo de proveedor
+    // Calcular montos por grupo de proveedor: subtotal -> +18% IGV -> total
     return Array.from(groupsMap.values()).map(group => {
-      const groupTotal = Math.round(group.items.reduce((acc, it) => acc + it.subtotal, 0) * 100) / 100;
-      const groupSubtotal = Math.round((groupTotal / (1 + IGV_RATE)) * 100) / 100;
-      const groupIgv = Math.round((groupTotal - groupSubtotal) * 100) / 100;
+      const groupSubtotal = Math.round(group.items.reduce((acc, it) => acc + it.subtotal, 0) * 100) / 100;
+      const groupIgv = Math.round(groupSubtotal * IGV_RATE * 100) / 100;
+      const groupTotal = Math.round((groupSubtotal + groupIgv) * 100) / 100;
       return {
         ...group,
         total: groupTotal,

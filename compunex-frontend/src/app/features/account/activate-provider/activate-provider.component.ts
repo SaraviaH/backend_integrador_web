@@ -88,6 +88,52 @@ import { ToastStateService } from '../../../core/state/toast-state.service';
           </h2>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <!-- RUC -->
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1.5">
+                RUC de la Empresa (11 dígitos) *
+              </label>
+              <input
+                type="text"
+                maxlength="11"
+                formControlName="ruc"
+                placeholder="Ej. 20601234567"
+                class="w-full px-4 py-2.5 bg-slate-50 border rounded-2xl text-xs sm:text-sm text-[#142238] outline-none"
+                [class.border-rose-400]="isFieldInvalid('ruc')"
+                [class.border-slate-200]="!isFieldInvalid('ruc')"
+              />
+            </div>
+
+            <!-- Razón Social -->
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1.5">
+                Razón Social *
+              </label>
+              <input
+                type="text"
+                formControlName="razonSocial"
+                placeholder="Ej. AndesTech Mayorista S.A.C."
+                class="w-full px-4 py-2.5 bg-slate-50 border rounded-2xl text-xs sm:text-sm text-[#142238] outline-none"
+                [class.border-rose-400]="isFieldInvalid('razonSocial')"
+                [class.border-slate-200]="!isFieldInvalid('razonSocial')"
+              />
+            </div>
+
+            <!-- Dirección Fiscal -->
+            <div class="sm:col-span-2">
+              <label class="block text-xs font-semibold text-slate-700 mb-1.5">
+                Dirección Fiscal / Almacén *
+              </label>
+              <input
+                type="text"
+                formControlName="direccion"
+                placeholder="Ej. Av. Javier Prado Este 4200, Lima"
+                class="w-full px-4 py-2.5 bg-slate-50 border rounded-2xl text-xs sm:text-sm text-[#142238] outline-none"
+                [class.border-rose-400]="isFieldInvalid('direccion')"
+                [class.border-slate-200]="!isFieldInvalid('direccion')"
+              />
+            </div>
+
             <!-- Nombre Comercial -->
             <div>
               <label class="block text-xs font-semibold text-slate-700 mb-1.5">
@@ -231,6 +277,9 @@ export class ActivateProviderComponent {
   public readonly isActivating = signal<boolean>(false);
 
   public readonly form: FormGroup = this.fb.group({
+    ruc: ['', [Validators.required, Validators.pattern(/^\d{11}$/)]],
+    razonSocial: ['', [Validators.required, Validators.minLength(3)]],
+    direccion: ['', [Validators.required, Validators.minLength(5)]],
     nombreComercial: ['', [Validators.required, Validators.minLength(3)]],
     categoriaPrincipal: ['Laptops y Computadoras', [Validators.required]],
     telefonoComercial: ['', [Validators.required, Validators.minLength(7)]],
@@ -243,6 +292,9 @@ export class ActivateProviderComponent {
     const user = this.authState.currentUser();
     if (user) {
       this.form.patchValue({
+        ruc: user.ruc || '',
+        razonSocial: user.razonSocial || user.nombreCompleto || '',
+        direccion: user.direccion || '',
         nombreComercial: user.razonSocial || user.nombreCompleto || '',
         telefonoComercial: user.telefono || ''
       });
@@ -262,25 +314,45 @@ export class ActivateProviderComponent {
 
     this.isActivating.set(true);
 
+    const val = this.form.value;
     const payload = {
-      nombreComercial: this.form.value.nombreComercial,
-      descripcion: this.form.value.descripcion
+      ruc: val.ruc,
+      razonSocial: val.razonSocial,
+      nombreComercial: val.nombreComercial,
+      telefonoContacto: val.telefonoComercial,
+      direccion: val.direccion,
+      ciudad: val.ciudadAlmacen,
+      descripcion: val.descripcion
     };
 
     this.providerApi.activateProvider(payload).subscribe({
-      next: () => {
+      next: (res) => {
         this.isActivating.set(false);
-        // Actualizar el estado local con ROLE_PROVEEDOR
-        this.authState.setProviderRole();
+        this.authState.setProviderRole(res.data?.token);
+        const cur = this.authState.currentUser();
+        if (cur) {
+          this.authState.updateProfile({
+            ...cur,
+            rol: 'ROLE_PROVEEDOR',
+            tienePerfilProveedor: true,
+            ruc: val.ruc,
+            razonSocial: val.razonSocial,
+            nombreComercial: val.nombreComercial,
+            telefono: val.telefonoComercial,
+            direccion: val.direccion,
+            ciudad: val.ciudadAlmacen
+          });
+        }
         this.toastState.success(
           '¡Perfil de Proveedor Activado!',
           'Bienvenido a la red de proveedores mayoristas de COMPUNEX. Ya tienes acceso a tu panel.'
         );
         this.router.navigate(['/panel']);
       },
-      error: () => {
+      error: (err) => {
         this.isActivating.set(false);
-        this.toastState.error('Error al activar', 'Ocurrió un error al procesar tu solicitud.');
+        const msg = err?.error?.mensaje || err?.error?.message || 'Ocurrió un error al procesar tu solicitud.';
+        this.toastState.error('Error al activar', msg);
       }
     });
   }

@@ -1,7 +1,7 @@
 import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
 import { AuthStateService } from '../state/auth-state.service';
-import { UserRole } from '../models/auth.model';
+import { UserRole, normalizeUserRole } from '../models/auth.model';
 
 export const roleGuard = (allowedRoles: UserRole[]): CanActivateFn => {
   return () => {
@@ -13,7 +13,8 @@ export const roleGuard = (allowedRoles: UserRole[]): CanActivateFn => {
     }
 
     const currentRole = authState.userRole();
-    if (currentRole && allowedRoles.includes(currentRole)) {
+    const normalizedAllowed = allowedRoles.map(r => normalizeUserRole(r));
+    if (currentRole && normalizedAllowed.includes(normalizeUserRole(currentRole))) {
       return true;
     }
 

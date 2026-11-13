@@ -1,16 +1,104 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import {
   CheckoutRequest,
   CheckoutResponse,
   OrderDetail,
+  OrderStatus,
   OrderSummary,
   SuborderInvoice,
+  SuborderStatus,
 } from '../models/order.model';
 import { PaginatedResponse } from '../models/api-response.model';
+
+interface BackendCheckoutResponseDTO {
+  ordenId: number;
+  codigoOrden: string;
+  fechaEmision: string;
+  moneda?: string;
+  totalGeneral: number;
+  esSimulado?: boolean;
+  facturasEmitidas?: BackendSubordenResumenDTO[];
+}
+
+interface BackendSubordenResumenDTO {
+  subordenId: number;
+  numeroComprobante: string;
+  tipoComprobante?: string;
+  emisor?: { proveedorId: number; ruc: string; razonSocial: string };
+  receptor?: { ruc: string; razonSocial: string; direccionFiscal: string };
+  subtotal: number;
+  igv: number;
+  total: number;
+  estado: string;
+  items?: { productoId: number; titulo: string; cantidad: number; precioUnitario: number; subtotalLinea: number }[];
+}
+
+interface BackendOrdenResumenDTO {
+  ordenId: number;
+  codigoOrden: string;
+  fechaEmision: string;
+  cantidadProveedores: number;
+  totalGeneral: number;
+  moneda?: string;
+  esSimulado?: boolean;
+}
+
+interface BackendOrdenPaginadaDTO {
+  contenido: BackendOrdenResumenDTO[];
+  pagina: number;
+  tamano: number;
+  totalElementos: number;
+  totalPaginas: number;
+  esUltima?: boolean;
+}
+
+function mapBackendCheckoutToFrontend(res: BackendCheckoutResponseDTO): CheckoutResponse {
+  const facturas = res.facturasEmitidas || [];
+  const subordenes: SuborderInvoice[] = facturas.map(f => ({
+    subordenId: f.subordenId,
+    proveedorId: f.emisor?.proveedorId || 0,
+    proveedorRazonSocial: f.emisor?.razonSocial || 'Proveedor B2B',
+    proveedorRuc: f.emisor?.ruc || '—',
+    numeroFacturaSimulada: f.numeroComprobante,
+    estado: (f.estado === 'CANCELADO' ? 'ANULADO' : f.estado) as SuborderStatus,
+    subtotal: Number(f.subtotal),
+    igv: Number(f.igv),
+    total: Number(f.total),
+    items: (f.items || []).map(it => ({
+      productoId: it.productoId,
+      nombre: it.titulo,
+      cantidad: it.cantidad,
+      precioUnitario: Number(it.precioUnitario),
+      subtotal: Number(it.subtotalLinea)
+    }))
+  }));
+
+  const subtotalGeneral = Math.round(subordenes.reduce((acc, s) => acc + s.subtotal, 0) * 100) / 100;
+  const igvGeneral = Math.round(subordenes.reduce((acc, s) => acc + s.igv, 0) * 100) / 100;
+
+  return {
+    ordenId: res.ordenId,
+    codigoOrden: res.codigoOrden,
+    fechaEmision: res.fechaEmision,
+    totalGeneral: Number(res.totalGeneral),
+    subtotalGeneral,
+    igvGeneral,
+    subordenes
+  };
+}
+
+function deriveOrderStatus(subordenes: SuborderInvoice[]): OrderStatus {
+  if (!subordenes || subordenes.length === 0) return 'CONFIRMADA';
+  if (subordenes.every(s => s.estado === 'ENTREGADO')) return 'ENTREGADA';
+  if (subordenes.some(s => s.estado === 'DESPACHADO')) return 'DESPACHADA';
+  if (subordenes.some(s => s.estado === 'EN_PREPARACION')) return 'EN_PREPARACION';
+  if (subordenes.every(s => s.estado === 'ANULADO')) return 'CANCELADA';
+  return 'CONFIRMADA';
+}
 
 @Injectable({
   providedIn: 'root'
@@ -20,9 +108,32 @@ export class OrderApiService {
   private readonly baseUrl = environment.useMock ? environment.mockApiUrl : environment.apiUrl;
 
   public checkout(orderData: CheckoutRequest): Observable<CheckoutResponse> {
-    return this.http.post<CheckoutResponse>(`${this.baseUrl}/orders/checkout`, orderData).pipe(
-      catchError(() => of(this.simulateCheckoutResponse(orderData)))
-    );
+    const metodoPagoMap: Record<string, string> = {
+      TRANSFERENCIA_BANCARIA: 'TRANSFERENCIA_B2B',
+      LINEA_CREDITO_B2B: 'LINEA_CREDITO_B2B',
+      TARJETA_EMPRESARIAL: 'TARJETA_CORPORATIVA'
+    };
+
+    const payload = {
+      datosFacturacion: {
+        tipoComprobante: 'FACTURA',
+        rucReceptor: orderData.rucFacturacion,
+        razonSocialReceptor: orderData.razonSocialFacturacion,
+        direccionFiscal: orderData.direccionFiscal,
+        metodoPagoSimulado: metodoPagoMap[orderData.metodoPagoSimulado] || 'TRANSFERENCIA_B2B'
+      },
+      items: orderData.items
+    };
+
+    const request$ = this.http
+      .post<BackendCheckoutResponseDTO>(`${this.baseUrl}/orders/checkout`, payload)
+      .pipe(map(mapBackendCheckoutToFrontend));
+
+    if (!environment.useMock) {
+      return request$;
+    }
+
+    return request$.pipe(catchError(() => of(this.simulateCheckoutResponse(orderData))));
   }
 
   private simulateCheckoutResponse(orderData: CheckoutRequest): CheckoutResponse {
@@ -86,11 +197,30 @@ export class OrderApiService {
   }
 
   public getMyOrders(page: number = 0, size: number = 10): Observable<PaginatedResponse<OrderSummary>> {
-    return this.http.get<PaginatedResponse<OrderSummary>>(
-      `${this.baseUrl}/orders/me?page=${page}&size=${size}`
-    ).pipe(
-      catchError(() => of(this.simulateMyOrders()))
-    );
+    const request$ = this.http
+      .get<BackendOrdenPaginadaDTO>(`${this.baseUrl}/orders/me?page=${page}&size=${size}`)
+      .pipe(
+        map(res => ({
+          content: (res.contenido || []).map(o => ({
+            id: o.ordenId,
+            codigoOrden: o.codigoOrden,
+            fechaCreacion: o.fechaEmision,
+            totalGeneral: Number(o.totalGeneral),
+            estadoGeneral: 'CONFIRMADA' as OrderStatus,
+            cantidadSubordenes: o.cantidadProveedores ?? 1
+          })),
+          page: res.pagina ?? 0,
+          size: res.tamano ?? size,
+          totalElements: res.totalElementos ?? 0,
+          totalPages: Math.max(res.totalPaginas ?? 1, 1)
+        }))
+      );
+
+    if (!environment.useMock) {
+      return request$;
+    }
+
+    return request$.pipe(catchError(() => of(this.simulateMyOrders())));
   }
 
   private simulateMyOrders(): PaginatedResponse<OrderSummary> {
@@ -139,9 +269,28 @@ export class OrderApiService {
   }
 
   public getOrderDetail(ordenId: number): Observable<OrderDetail> {
-    return this.http.get<OrderDetail>(`${this.baseUrl}/orders/me/${ordenId}`).pipe(
-      catchError(() => of(this.simulateOrderDetail(ordenId)))
-    );
+    const request$ = this.http
+      .get<BackendCheckoutResponseDTO>(`${this.baseUrl}/orders/me/${ordenId}`)
+      .pipe(
+        map(res => {
+          const base = mapBackendCheckoutToFrontend(res);
+          const receptor = res.facturasEmitidas?.[0]?.receptor;
+          return {
+            ...base,
+            rucFacturacion: receptor?.ruc || '—',
+            razonSocialFacturacion: receptor?.razonSocial || 'Cliente Corporativo B2B',
+            direccionFiscal: receptor?.direccionFiscal || 'Dirección fiscal registrada',
+            metodoPago: 'Transferencia Bancaria B2B',
+            estado: deriveOrderStatus(base.subordenes)
+          };
+        })
+      );
+
+    if (!environment.useMock) {
+      return request$;
+    }
+
+    return request$.pipe(catchError(() => of(this.simulateOrderDetail(ordenId))));
   }
 
   private simulateOrderDetail(ordenId: number): OrderDetail {

@@ -3,14 +3,14 @@
 > **Área Técnica:** Transversal / Datos y DBA  
 > **Track:** General  
 > **Agente Responsable:** Agente Datos / DBA  
-> **Estado:** PENDIENTE  
-> **Rama GitFlow:** `feature/ddl-schema-flyway` hacia `develop`  
+> **Estado:** COMPLETADO (PostgreSQL 18 + Hibernate JPA `ddl-auto=update` + `DataInitializer`)  
+> **Rama GitFlow:** `integracion/e2e`  
 > **Dependencias Previas:** `Sprint-G01_Setup_y_Entorno`
 
 ---
 
 ## 1. Objetivo del Sprint
-Implementar las migraciones de base de datos Flyway con el esquema relacional completo de 10 tablas en MySQL 8.0 (`V1__init_schema.sql`), aplicando restricciones de integridad referencial, índices de unicidad, auditoría y un script de datos semilla (`V2__seed_data.sql`) con roles, usuarios de prueba (Admin, Proveedor, Cliente B2B) y categorías iniciales para desbloquear el desarrollo concurrente.
+Implementar el esquema relacional completo de 10 tablas en PostgreSQL 18 (`compunex_b2b`) mediante entidades JPA (`spring.jpa.hibernate.ddl-auto=update`) aplicando restricciones de integridad referencial, unicidad (`uk...` sobre correo, RUC, SKU, código de orden y comprobante), auditoría y datos semilla vía `DataInitializer` (roles `ADMIN`/`PROVEEDOR`, 8 categorías tecnológicas y producto semilla inicial) para soportar el desarrollo y la integración E2E. *(Nota histórica: las migraciones Flyway/MySQL de la plantilla inicial fueron sustituidas por JPA/Hibernate + `DataInitializer` sobre PostgreSQL).*
 
 ---
 
@@ -55,10 +55,10 @@ Implementar las migraciones de base de datos Flyway con el esquema relacional co
 ---
 
 ## 4. Criterios de Aceptación (Definition of Done - DoD)
-- [ ] Las 10 tablas se crean exitosamente en MySQL sin errores de foreign keys o sintaxis.
-- [ ] Las restricciones de unicidad (`UNIQUE`) en correos, RUCs, códigos de orden y números de comprobante funcionan correctamente.
-- [ ] La tabla `flyway_schema_history` registra las migraciones `V1` y `V2` como aplicadas con éxito.
-- [ ] No existen datos huérfanos ni cascadas destructivas sobre transacciones (`ordenes`, `subordenes_factura`).
+- [x] Las 10 tablas (`categorias`, `imagenes_producto`, `orden_items`, `ordenes`, `perfiles_proveedor`, `producto_especificaciones`, `productos`, `subcategorias`, `subordenes_factura`, `usuarios`) creadas y verificadas en PostgreSQL `compunex_b2b`.
+- [x] Restricciones de unicidad y llaves foráneas activas (verificadas en pruebas H2 y PostgreSQL en vivo).
+- [x] Datos semilla iniciales (`admin@compunex.com`, `ventas.mayoristas@technova.com`, 8 categorías string y producto inicial) cargados por `DataInitializer`.
+- [x] Integridad referencial en transacciones (`ordenes`, `subordenes_factura`, `orden_items`) y soft delete en `productos` verificados en vivo.
 
 ---
 

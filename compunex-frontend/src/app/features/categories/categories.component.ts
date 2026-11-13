@@ -215,17 +215,15 @@ export class CategoriesComponent implements OnInit {
     this.catalogApi.getCategories().subscribe({
       next: (data) => {
         this.isLoading.set(false);
-        // Si la respuesta es vacía o fallback en desarrollo
         if (data && data.length > 0) {
           this.categories.set(data);
         } else {
-          this.categories.set(this.getMockCategories());
+          this.categories.set([]);
         }
       },
       error: (_err) => {
-        // En desarrollo, si el mock server no está levantado, usa categorías de contingencia
         this.isLoading.set(false);
-        this.categories.set(this.getMockCategories());
+        this.hasError.set(true);
       }
     });
   }

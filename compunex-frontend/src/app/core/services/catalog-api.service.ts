@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import {
   CatalogFilterParams,
@@ -12,6 +12,67 @@ import {
   UpdateProductRequest,
 } from '../models/catalog.model';
 import { PaginatedResponse, ApiResponse } from '../models/api-response.model';
+import { resolveMediaUrl } from './media-api.service';
+
+interface BackendProductItemDTO {
+  id: number;
+  uuid?: string;
+  titulo: string;
+  categoriaId?: string;
+  categoriaNombre?: string;
+  pedidoMinimo?: string;
+  precioUnitarioRef: number;
+  moneda?: string;
+  stockDisponible?: number;
+  urlImagenPrincipal?: string;
+  proveedorId: number;
+  proveedorNombreComercial?: string;
+}
+
+interface BackendProductPageDTO {
+  contenido: BackendProductItemDTO[];
+  pagina: number;
+  tamano: number;
+  totalElementos: number;
+  totalPaginas: number;
+  esUltima?: boolean;
+}
+
+interface BackendProductDetailDTO {
+  id: number;
+  uuid?: string;
+  categoriaId?: string;
+  categoriaNombre?: string;
+  titulo: string;
+  descripcion: string;
+  modeloComercial?: string;
+  tipoFormato?: string;
+  unidadesPorPaquete?: string;
+  pedidoMinimo?: string;
+  precioUnitarioRef: number;
+  precioTotalRef?: number;
+  moneda?: string;
+  stockDisponible?: number;
+  terminosComerciales?: string;
+  estado?: string;
+  especificaciones?: { id?: number; clave: string; valor: string }[];
+  imagenes?: { id?: number; urlImagen: string; orden?: number }[];
+  proveedor?: {
+    id: number;
+    razonSocial?: string;
+    nombreComercial?: string;
+    identificacionFiscal?: string;
+    ciudad?: string;
+    telefonoContacto?: string;
+    correoContacto?: string;
+  };
+}
+
+function parseLeadingPositiveInt(value?: string, fallback: number = 1): number {
+  if (!value) return fallback;
+  const match = value.match(/\d+/);
+  return match ? Math.max(1, Number(match[0])) : fallback;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -21,32 +82,109 @@ export class CatalogApiService {
   private readonly baseUrl = environment.useMock ? environment.mockApiUrl : environment.apiUrl;
 
   public getCategories(): Observable<Category[]> {
-    return this.http.get<Category[]>(`${this.baseUrl}/categorias`);
+    return this.http.get<Category[]>(`${this.baseUrl}/categories`);
   }
 
   public getProducts(filter: CatalogFilterParams = {}): Observable<PaginatedResponse<ProductCard>> {
     let params = new HttpParams();
     if (filter.busqueda) params = params.set('search', filter.busqueda);
-    if (filter.categoriaId) params = params.set('categoryId', filter.categoriaId.toString());
-    if (filter.precioMin != null) params = params.set('precioMin', filter.precioMin.toString());
-    if (filter.precioMax != null) params = params.set('precioMax', filter.precioMax.toString());
-    if (filter.proveedorId) params = params.set('proveedorId', filter.proveedorId.toString());
-    if (filter.soloConStock != null) params = params.set('conStock', String(filter.soloConStock));
+    if (filter.categoriaId !== undefined && filter.categoriaId !== null && filter.categoriaId !== '') {
+      params = params.set('categoryId', String(filter.categoriaId));
+    }
     if (filter.page != null) params = params.set('page', filter.page.toString());
     if (filter.size != null) params = params.set('size', filter.size.toString());
-    if (filter.sort) params = params.set('sort', filter.sort);
 
-    return this.http.get<PaginatedResponse<ProductCard>>(`${this.baseUrl}/products`, { params });
+    return this.http.get<BackendProductPageDTO>(`${this.baseUrl}/products`, { params }).pipe(
+      map(res => {
+        const rawList = res.contenido || [];
+        let content: ProductCard[] = rawList.map(item => ({
+          id: item.id,
+          nombre: item.titulo,
+          sku: `CMP-${String(item.id).padStart(4, '0')}`,
+          categoriaNombre: item.categoriaNombre || 'Hardware B2B',
+          precioUnitario: Number(item.precioUnitarioRef),
+          cantidadMinimaMayorista: parseLeadingPositiveInt(item.pedidoMinimo, 1),
+          stockDisponible: item.stockDisponible ?? 100,
+          proveedorId: item.proveedorId,
+          proveedorRazonSocial: item.proveedorNombreComercial || 'Proveedor COMPUNEX',
+          imagenPrincipalUrl: resolveMediaUrl(item.urlImagenPrincipal),
+          destacado: false
+        }));
+
+        if (filter.precioMin != null) {
+          content = content.filter(p => p.precioUnitario >= filter.precioMin!);
+        }
+        if (filter.precioMax != null) {
+          content = content.filter(p => p.precioUnitario <= filter.precioMax!);
+        }
+        if (filter.soloConStock) {
+          content = content.filter(p => p.stockDisponible > 0);
+        }
+        if (filter.sort === 'precio_asc') {
+          content = [...content].sort((a, b) => a.precioUnitario - b.precioUnitario);
+        } else if (filter.sort === 'precio_desc') {
+          content = [...content].sort((a, b) => b.precioUnitario - a.precioUnitario);
+        } else if (filter.sort === 'nombre_asc') {
+          content = [...content].sort((a, b) => a.nombre.localeCompare(b.nombre));
+        }
+
+        return {
+          content,
+          page: res.pagina ?? 0,
+          size: res.tamano ?? 12,
+          totalElements: res.totalElementos ?? content.length,
+          totalPages: Math.max(res.totalPaginas ?? 1, 1)
+        };
+      })
+    );
   }
 
   public getFeaturedProducts(): Observable<ProductCard[]> {
-    return this.http.get<ProductCard[]>(`${this.baseUrl}/products/destacados`);
+    return this.getProducts({ page: 0, size: 8 }).pipe(map(res => res.content || []));
   }
 
   public getProductDetail(id: number): Observable<ProductDetail> {
-    return this.http.get<ProductDetail>(`${this.baseUrl}/products/${id}`).pipe(
-      catchError(() => of(this.getFallbackDetail(id)))
+    const request$ = this.http.get<BackendProductDetailDTO>(`${this.baseUrl}/products/${id}`).pipe(
+      map(d => {
+        const specs = (d.especificaciones || []).map(e => ({ clave: e.clave, valor: e.valor }));
+        const findSpec = (key: string) =>
+          specs.find(s => s.clave.trim().toLowerCase() === key.toLowerCase())?.valor;
+
+        const imgs = (d.imagenes || []).map(i => resolveMediaUrl(i.urlImagen));
+        const unitPrice = Number(d.precioUnitarioRef);
+        const totalRef = d.precioTotalRef != null ? Number(d.precioTotalRef) : undefined;
+        const warrantyDigits = parseLeadingPositiveInt(findSpec('Garantía') || d.terminosComerciales, 12);
+
+        return {
+          id: d.id,
+          categoriaId: d.categoriaId,
+          nombre: d.titulo,
+          sku: findSpec('SKU') || `CMP-${String(d.id).padStart(4, '0')}`,
+          categoriaNombre: d.categoriaNombre || d.categoriaId || 'Hardware B2B',
+          precioUnitario: unitPrice,
+          precioMayorista: totalRef && totalRef < unitPrice ? totalRef : undefined,
+          cantidadMinimaMayorista: parseLeadingPositiveInt(d.pedidoMinimo, 1),
+          stockDisponible: d.stockDisponible ?? 100,
+          proveedorId: d.proveedor?.id || 0,
+          proveedorRazonSocial: d.proveedor?.nombreComercial || d.proveedor?.razonSocial || 'Proveedor B2B',
+          proveedorRuc: d.proveedor?.identificacionFiscal || '—',
+          imagenPrincipalUrl: imgs[0] || resolveMediaUrl(null),
+          imagenesSecundarias: imgs.slice(1),
+          descripcion: d.descripcion,
+          marca: findSpec('Marca') || d.modeloComercial || 'Enterprise',
+          modelo: findSpec('Modelo') || d.tipoFormato || 'B2B',
+          especificaciones: specs,
+          garantiaMeses: warrantyDigits,
+          condicion: 'NUEVO' as const
+        };
+      })
     );
+
+    if (!environment.useMock) {
+      return request$;
+    }
+
+    return request$.pipe(catchError(() => of(this.getFallbackDetail(id))));
   }
 
   public getFallbackDetail(id: number): ProductDetail {

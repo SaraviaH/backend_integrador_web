@@ -245,9 +245,10 @@ export class ReviewStepComponent {
         this.toastState.success('¡Compra Confirmada!', `Orden ${res.codigoOrden} generada con éxito.`);
         this.orderConfirmed.emit();
       },
-      error: (_err) => {
+      error: (err) => {
         this.isPlacingOrder.set(false);
-        this.toastState.error('Error al procesar la compra', 'Ocurrió un error. Intenta nuevamente.');
+        const msg = err?.error?.mensaje || 'Ocurrió un error al procesar la compra. Intenta nuevamente.';
+        this.toastState.error('Error al procesar la compra', msg);
       }
     });
   }

@@ -388,11 +388,11 @@ export class ProviderProductFormComponent implements OnInit {
     this.catalogApi.getCategories().subscribe({
       next: (cats) => this.categories.set(cats || []),
       error: () => this.categories.set([
-        { id: 1, nombre: 'Laptops & Workstations' },
-        { id: 2, nombre: 'Servidores & Almacenamiento' },
-        { id: 3, nombre: 'Componentes & GPUs' },
-        { id: 4, nombre: 'Monitores & Pantallas' },
-        { id: 5, nombre: 'Networking & Conectividad' }
+        { id: 'ram', nombre: 'Memoria RAM' },
+        { id: 'ssd', nombre: 'Unidades SSD' },
+        { id: 'gpu', nombre: 'Tarjetas Gráficas' },
+        { id: 'cpu', nombre: 'Procesadores' },
+        { id: 'motherboard', nombre: 'Placas Madre' }
       ])
     });
   }
@@ -405,7 +405,7 @@ export class ProviderProductFormComponent implements OnInit {
         this.form.patchValue({
           nombre: p.nombre,
           sku: p.sku,
-          categoriaId: 1,
+          categoriaId: p.categoriaId || this.categories()[0]?.id || 'ram',
           marca: p.marca,
           modelo: p.modelo,
           descripcion: p.descripcion,
@@ -446,7 +446,7 @@ export class ProviderProductFormComponent implements OnInit {
         id: this.productId()!,
         nombre: val.nombre,
         sku: val.sku,
-        categoriaId: Number(val.categoriaId),
+        categoriaId: String(val.categoriaId || 'ram'),
         precioUnitario: Number(val.precioUnitario),
         precioMayorista: val.precioMayorista ? Number(val.precioMayorista) : undefined,
         cantidadMinimaMayorista: val.cantidadMinimaMayorista ? Number(val.cantidadMinimaMayorista) : undefined,
@@ -472,7 +472,7 @@ export class ProviderProductFormComponent implements OnInit {
       const createData: CreateProductRequest = {
         nombre: val.nombre,
         sku: val.sku,
-        categoriaId: Number(val.categoriaId) || 1,
+        categoriaId: String(val.categoriaId || 'ram'),
         precioUnitario: Number(val.precioUnitario),
         precioMayorista: val.precioMayorista ? Number(val.precioMayorista) : undefined,
         cantidadMinimaMayorista: val.cantidadMinimaMayorista ? Number(val.cantidadMinimaMayorista) : undefined,
