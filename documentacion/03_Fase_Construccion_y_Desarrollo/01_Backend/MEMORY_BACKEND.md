@@ -10,44 +10,30 @@
 ## 1. Estado Actual de Ejecución
 
 * **Sprint Activo:** Ninguno (En espera de `Sprint-G02` de DDL).
-* **Endpoints Implementados:** 0 / 24 certificados.
-* **Cobertura de Pruebas Unitarias / MockMvc:** 0%.
-* **Estado de Conexión a Base de Datos:** Verificada en `Sprint-G01`.
+* **Endpoints Existentes en Repositorio:** 14 endpoints listos para auditoría (`Sprint-B01`).
+* **Endpoints Aditivos Pendientes:** 10 endpoints (`Sprint-B02` a `Sprint-B08`).
+* **Total Sprints Backend:** 8 sprints técnicos + `Sprint-B_Audit` (Gate 1).
 
 ---
 
-## 2. Registro de Sprints Backend
+## 2. Registro de Sprints Backend (8 Sprints + Gate 1)
 
 | Sprint | Rama GitFlow | Estado | Endpoints Verificados | Test Suite |
 | :--- | :--- | :---: | :---: | :---: |
-| `Sprint-B01_Auth_y_Seguridad` | `feature/backend-auth-security` | `PENDIENTE` | 0 / 7 | 0 passing |
-| `Sprint-B02_Catalogo_y_Productos` | `feature/backend-catalog` | `BLOQUEADO` | 0 / 4 | 0 passing |
-| `Sprint-B03_Carrito_y_Split_Order` | `feature/backend-split-order` | `BLOQUEADO` | 0 / 3 | 0 passing |
-| `Sprint-B04_Panel_Proveedor_y_Despacho` | `feature/backend-provider-dispatch` | `BLOQUEADO` | 0 / 8 | 0 passing |
-| `Sprint-B05_Auditoria_y_Admin` | `feature/backend-admin-audit` | `BLOQUEADO` | 0 / 2 | 0 passing |
+| `Sprint-B01_Audit_y_Refactor_Base_Existente` | `feature/backend-base-audit-refactor` | `PENDIENTE` | 0 / 14 | 0 passing |
+| `Sprint-B02_Auth_Aditivo_Empresa_y_Activacion` | `feature/backend-auth-additive` | `BLOQUEADO` | 0 / 3 | 0 passing |
+| `Sprint-B03_Catalogo_Publico_B2B` | `feature/backend-public-catalog` | `BLOQUEADO` | 0 / 2 | 0 passing |
+| `Sprint-B04_Persistencia_Ordenes_y_Split_Order` | `feature/backend-orders-persistence` | `BLOQUEADO` | Persistencia DDL JPA | 0 passing |
+| `Sprint-B05_Checkout_Transaccional_y_Facturacion` | `feature/backend-checkout-split-order` | `BLOQUEADO` | 0 / 1 | 0 passing |
+| `Sprint-B06_Historial_Compras_y_Detalle_Orden` | `feature/backend-orders-history` | `BLOQUEADO` | 0 / 2 | 0 passing |
+| `Sprint-B07_Ventas_Proveedor_y_Despacho` | `feature/backend-provider-sales` | `BLOQUEADO` | 0 / 2 | 0 passing |
+| `Sprint-B08_Auditoria_AOP_y_Admin_Moderacion` | `feature/backend-admin-audit-aop` | `BLOQUEADO` | 0 / 2 | 0 passing |
 | `Sprint-B_Audit` (Gate 1) | `release/gate-1-backend-core` | `BLOQUEADO` | 0 / 24 | 0 passing |
 
 ---
 
 ## 3. Decisiones de Arquitectura y Patrones Aplicados
-* **Seguridad y Filtros:** `JwtAuthenticationFilter` captura el header `Authorization: Bearer <token>`, valida la firma con clave secreta HS256 (`JJWT 0.11.5`) y puebla el `SecurityContextHolder`.
-* **Manejo de Transacciones Complejas:** El servicio `OrderServiceImpl` está anotado con `@Transactional(rollbackFor = Exception.class)` para asegurar que la creación de `ordenes`, `subordenes_factura` y `orden_items` sea estrictamente atómica.
-* **Formato de Números de Comprobante:** Se utiliza el patrón `F001-%08d` basado en la secuencia o PK de `subordenes_factura`.
-* **Soft Delete:** Para la entidad `Producto`, el método `deleteById` actualiza `fecha_eliminacion = LocalDateTime.now()` y `estado = INACTIVO`, en lugar de invocar `repository.delete()`.
-
----
-
-## 4. Registro de Bloqueos Técnicos
-| Fecha | Descripción del Bloqueo | Impacto | Solución Propuesta | Estado |
-| :--- | :--- | :--- | :--- | :---: |
-| 2026-11-13 | Espera de esquema DDL en MySQL | No se pueden correr pruebas de integración con JPA real | `Sprint-G02` genera el esquema inicial Flyway | EN CURSO |
-
----
-
-## 5. Instrucciones para el Agente Backend
-1. Antes de iniciar un sprint, leer cuidadosamente su `SPEC.md`.
-2. Crear la rama `feature/...` desde `develop`.
-3. Implementar entidades, repositorios, servicios y controladores.
-4. Escribir pruebas unitarias y de integración (`MockMvc`).
-5. Actualizar la tabla de la Sección 2 en este archivo con la cantidad de tests aprobados.
-6. Notificar al Coordinador Macro en `MEMORY_GENERAL.md` cuando el sprint esté listo para revisión.
+* **Reutilización y Refactor de la Base Existente:** `compunex-backend` ya provee 14 endpoints. El `Sprint-B01` se enfoca en auditar y alinear sus DTOs con `CONTRATOS_JSON.md`, sin reescribir innecesariamente código que ya funciona.
+* **Separación de Sprints Transaccionales:** La persistencia de órdenes se aísla en `Sprint-B04` para validar el modelo relacional antes de implementar el servicio complejo de checkout en `Sprint-B05`.
+* **Split Order ACID:** `OrderServiceImpl` ejecuta la agrupación por proveedor, validación de inventario y recálculo de montos dentro de una única transacción atómica.
+* **Aspecto de Auditoría:** `Sprint-B08` implementa `@Aspect` para separar la preocupación de logging estructurado de la lógica de negocio.

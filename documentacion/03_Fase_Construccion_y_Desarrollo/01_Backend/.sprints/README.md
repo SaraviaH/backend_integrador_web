@@ -2,22 +2,20 @@
 
 > **Área:** Backend  
 > **Fase del SDLC:** 03 · Construcción y Desarrollo  
-> **Objetivo:** Ejecutar la construcción modular de los 24 endpoints de COMPUNEX B2B, garantizando desacoplamiento, pruebas unitarias y cierre con Quality Gate 1 (`AUDITORIA_1.md`).
+> **Objetivo:** Ejecutar la construcción modular de los 24 endpoints de COMPUNEX B2B organizados en 8 sprints técnicos granulares, garantizando desacoplamiento, pruebas unitarias y cierre con Quality Gate 1 (`AUDITORIA_1.md`).
 
 ---
 
-## 1. Organización del Track de Backend
+## 1. Organización de los 8 Sprints de Backend
 
-Los sprints de backend se organizan por afinidad funcional y dominio para maximizar la cohesión y reducir el acoplamiento:
-1. `Sprint-B01_Auth_y_Seguridad`: Autenticación, JWT, registro de empresas y perfiles de proveedor.
-2. `Sprint-B02_Catalogo_y_Productos`: Categorías, catálogo público B2B, paginación, filtros y ficha detallada.
-3. `Sprint-B03_Carrito_y_Split_Order`: Checkout transaccional atómico, división por proveedor y emisión de factura simulada.
-4. `Sprint-B04_Panel_Proveedor_y_Despacho`: Gestión de catálogo propio del proveedor y panel de despacho de subórdenes.
-5. `Sprint-B05_Auditoria_y_Admin`: Moderación de productos por administradores y logs de auditoría AOP.
-6. `Sprint-B_Audit`: Hito de control obligatorio (Quality Gate 1) que audita los 24 endpoints antes de permitir la unión E2E.
+Reconociendo que `compunex-backend` ya cuenta con una base funcional de 14 endpoints, el track de backend se estructura en 8 sprints granulares:
 
----
-
-## 2. Regla de Oro del Track Backend
-* **Prohibido modificar contratos unilateralmente:** Si se requiere un cambio en la estructura de un DTO o ruta, debe solicitarse una revisión macro y actualizar `CONTRATOS_JSON.md` y `compunex-openapi.yaml`.
-* **Prohibidos los mocks en Backend:** El backend interactúa con MySQL 8.0 real o base de datos de pruebas H2/Testcontainers durante los tests de integración; no simula la base de datos con mocks dentro del código productivo.
+1. [`Sprint-B01_Audit_y_Refactor_Base_Existente`](Sprint-B01_Audit_y_Refactor_Base_Existente/SPEC.md): Auditoría y refactor de los 14 endpoints existentes (`AuthController`, `CategoriaController`, `ProductoProveedorController`, `AdminProductoController`) alineándolos a `CONTRATOS_JSON.md`.
+2. [`Sprint-B02_Auth_Aditivo_Empresa_y_Activacion`](Sprint-B02_Auth_Aditivo_Empresa_y_Activacion/SPEC.md): Endpoints aditivos de autenticación (15, 16, 17) para registro de empresas compradoras y activación de rol de proveedor.
+3. [`Sprint-B03_Catalogo_Publico_B2B`](Sprint-B03_Catalogo_Publico_B2B/SPEC.md): Endpoints aditivos de catálogo público (18, 19) con paginación optimizada, filtros facetados y exclusión de soft-delete.
+4. [`Sprint-B04_Persistencia_Ordenes_y_Split_Order`](Sprint-B04_Persistencia_Ordenes_y_Split_Order/SPEC.md): Entidades JPA y repositorios para las 3 tablas relacionales de pedidos (`ordenes`, `subordenes_factura`, `orden_items`).
+5. [`Sprint-B05_Checkout_Transaccional_y_Facturacion`](Sprint-B05_Checkout_Transaccional_y_Facturacion/SPEC.md): Endpoint `POST /api/v1/orders/checkout` (20) con Split Order ACID, recálculo de montos (RN-008) y no auto-compra (RN-007).
+6. [`Sprint-B06_Historial_Compras_y_Detalle_Orden`](Sprint-B06_Historial_Compras_y_Detalle_Orden/SPEC.md): Endpoints 21 y 22 para trazabilidad de compras y comprobantes simulados correlativos `F001-XXXXX`.
+7. [`Sprint-B07_Ventas_Proveedor_y_Despacho`](Sprint-B07_Ventas_Proveedor_y_Despacho/SPEC.md): Endpoints 23 y 24 para gestión de subórdenes asignadas al proveedor y transición de estados logísticos.
+8. [`Sprint-B08_Auditoria_AOP_y_Admin_Moderacion`](Sprint-B08_Auditoria_AOP_y_Admin_Moderacion/SPEC.md): Moderación administrativa de productos y aspecto de auditoría transversal `@Aspect` `AuditAspect`.
+9. [`Sprint-B_Audit`](Sprint-B_Audit/AUDITORIA_1.md): **Quality Gate 1** con certificación formal de los 24 endpoints pasando en Postman con 0 rojos.
