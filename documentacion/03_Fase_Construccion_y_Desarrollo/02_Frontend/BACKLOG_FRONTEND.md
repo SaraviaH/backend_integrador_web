@@ -22,23 +22,23 @@ El Agente de Frontend construye la interfaz de usuario en 14 sprints granulares 
 
 ## 2. Mapa de los 14 Sprints de Frontend
 
-| ID Sprint | Título | Pantallas Cubiertas | Componentes Clave | Estado |
-| :--- | :--- | :---: | :--- | :---: |
-| `Sprint-F01` | Arquitectura por Capas, Reglas SOLID y Tokens SASS | Shell Global | `ShellComponent`, `StoreNavbarComponent`, `PanelSidebarComponent`, `CoreModels` | `PENDIENTE` |
-| `Sprint-F02` | Auth, Login y Registro Empresa | `P-06`, `P-07` | `LoginComponent`, `RegisterCompanyComponent`, `AuthService` | `BLOQUEADO` |
-| `Sprint-F03` | Portal de Inicio y Categorías | `P-01`, `P-02` | `HomeComponent`, `CategoriesComponent`, `CategoryCardComponent` | `BLOQUEADO` |
-| `Sprint-F04` | Catálogo B2B y Búsqueda Reactiva | `P-03` | `CatalogComponent`, `ProductCardComponent`, `CatalogStateService` | `BLOQUEADO` |
-| `Sprint-F05` | Ficha Detalle y Contacto Proveedor | `P-04`, `P-05` | `ProductDetailComponent`, `ProviderContactModalComponent` | `BLOQUEADO` |
-| `Sprint-F06` | Carrito Reactivo y Agrupación | `P-09` | `CartComponent`, `CartGroupItemComponent`, `CartService` (Signals) | `BLOQUEADO` |
-| `Sprint-F07` | Asistente de Checkout en 3 Pasos | `P-10`, `P-11`, `P-12` | `CheckoutWizardComponent`, `BillingStepComponent`, `ReviewStepComponent` | `BLOQUEADO` |
-| `Sprint-F08` | Visor de Factura y Comprobantes | `P-13` | `InvoiceViewerComponent` (Estilos `@media print`) | `BLOQUEADO` |
-| `Sprint-F09` | Mis Compras y Detalle de Pedido | `P-14`, `P-15` | `MyOrdersComponent`, `OrderDetailComponent` | `BLOQUEADO` |
-| `Sprint-F10` | Mi Cuenta, Seguridad y Activación | `P-16`, `P-17`, `P-18` | `ProfileComponent`, `ChangePasswordComponent`, `ActivateProviderComponent` | `BLOQUEADO` |
-| `Sprint-F11` | Dashboard Proveedor y Perfil | `P-19`, `P-26` | `ProviderDashboardComponent`, `ProviderCompanyProfileComponent`, subida previa `urlLogo`/`urlBanner` (`POST /api/v1/media/upload` folder: 'profiles') | `BLOQUEADO` |
-| `Sprint-F12` | CRUD de Catálogo del Proveedor | `P-20`, `P-21`, `P-22`, `P-23` | `ProviderProductsComponent`, `ProductFormComponent`, subida previa `urlImagen` (`POST /api/v1/media/upload` folder: 'products') | `BLOQUEADO` |
-| `Sprint-F13` | Ventas Recibidas y Despacho | `P-24`, `P-25` | `ProviderSalesComponent`, `ProviderSaleDetailComponent` | `BLOQUEADO` |
-| `Sprint-F14` | Páginas de Error y Rutas | `P-36`, `P-37` | `AccessDeniedComponent`, `NotFoundComponent` | `BLOQUEADO` |
-| `Sprint-F_Audit` | **Quality Gate 2: Certificación Frontend** | 27 Pantallas MVP | Suite completa UI contra Prism Mock | `BLOQUEADO` |
+| ID Sprint | Título | Pantallas Cubiertas | Componentes Clave | Estado | Commit Git |
+| :--- | :--- | :---: | :--- | :---: | :---: |
+| `Sprint-F01` | Arquitectura por Capas, Reglas SOLID y Tokens SASS | Shell Global | `ShellComponent`, `StoreNavbarComponent`, `PanelSidebarComponent`, `CoreModels` | `DONE` | `50d9521` |
+| `Sprint-F02` | Auth, Login y Registro Empresa | `P-06`, `P-07` | `LoginComponent`, `RegisterCompanyComponent`, `AuthService` | `DONE` | `e700ad2` |
+| `Sprint-F03` | Portal de Inicio y Categorías | `P-01`, `P-02` | `HomeComponent`, `CategoriesComponent`, `CategoryCardComponent` | `DONE` | `932ec15` |
+| `Sprint-F04` | Catálogo B2B y Búsqueda Reactiva | `P-03` | `CatalogComponent`, `ProductCardComponent`, `CatalogStateService` | `DONE` | `45c468f` |
+| `Sprint-F05` | Ficha Detalle y Contacto Proveedor | `P-04`, `P-05` | `ProductDetailComponent`, `ProviderContactModalComponent` | `DONE` | `5ce3036` |
+| `Sprint-F06` | Carrito Reactivo y Agrupación | `P-09` | `CartComponent`, `CartGroupItemComponent`, `CartService` (Signals) | `DONE` | `cd35fcb` |
+| `Sprint-F07` | Asistente de Checkout en 3 Pasos | `P-10`, `P-11`, `P-12` | `CheckoutWizardComponent`, `BillingStepComponent`, `ReviewStepComponent` | `DONE` | `dccaa09` |
+| `Sprint-F08` | Visor de Factura y Comprobantes | `P-13` | `InvoiceViewerComponent` (Estilos `@media print`) | `DONE` | `a3ec166` |
+| `Sprint-F09` | Mis Compras y Detalle de Pedido | `P-14`, `P-15` | `MyOrdersComponent`, `OrderDetailComponent` | `DONE` | `36019a6` |
+| `Sprint-F10` | Mi Cuenta, Seguridad y Activación | `P-16`, `P-17`, `P-18` | `ProfileComponent`, `ChangePasswordComponent`, `ActivateProviderComponent` | `DONE` | `d4103a5` |
+| `Sprint-F11` | Dashboard Proveedor y Perfil | `P-19`, `P-26` | `ProviderDashboardComponent`, `ProviderCompanyProfileComponent`, subida previa `urlLogo`/`urlBanner` (`POST /api/v1/media/upload` folder: 'profiles') | `DONE` | `dc55a95` |
+| `Sprint-F12` | CRUD de Catálogo del Proveedor | `P-20`, `P-21`, `P-22`, `P-23` | `ProviderProductsComponent`, `ProductFormComponent`, subida previa `urlImagen` (`POST /api/v1/media/upload` folder: 'products') | `DONE` | `b6c7708` |
+| `Sprint-F13` | Ventas Recibidas y Despacho | `P-24`, `P-25` | `ProviderSalesComponent`, `ProviderSaleDetailComponent` | `DONE` | `df7e16d` |
+| `Sprint-F14` | Páginas de Error y Rutas | `P-36`, `P-37` | `AccessDeniedComponent`, `NotFoundComponent` | `DONE` | `59ae2b6` |
+| `Sprint-F_Audit` | **Quality Gate 2: Certificación Frontend** | 27 Pantallas MVP | Suite completa UI contra Prism Mock / Fallbacks | `APROBADO` | `59ae2b6` |
 
 ---
 
