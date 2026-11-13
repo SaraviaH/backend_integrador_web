@@ -7,6 +7,7 @@ import { CatalogComponent } from './features/catalog/catalog.component';
 import { ProductDetailComponent } from './features/product-detail/product-detail.component';
 import { CartComponent } from './features/cart/cart.component';
 import { CheckoutWizardComponent } from './features/checkout/checkout-wizard.component';
+import { InvoiceViewerComponent } from './features/invoices/invoice-viewer.component';
 import { LoginComponent } from './features/auth/login/login.component';
 import { RegisterCompanyComponent } from './features/auth/register-company/register-company.component';
 import { ForbiddenViewComponent } from './features/forbidden/forbidden-view.component';
@@ -83,6 +84,16 @@ export const routes: Routes = [
         path: 'checkout/confirmacion',
         component: CheckoutWizardComponent,
         title: 'Confirmación de Compra · COMPUNEX B2B'
+      },
+      {
+        path: 'pedidos/:id/comprobante',
+        component: InvoiceViewerComponent,
+        title: 'Factura Electrónica SUNAT · COMPUNEX B2B'
+      },
+      {
+        path: 'comprobantes/:id',
+        redirectTo: 'pedidos/:id/comprobante',
+        pathMatch: 'full'
       },
       {
         path: 'auth/login',
