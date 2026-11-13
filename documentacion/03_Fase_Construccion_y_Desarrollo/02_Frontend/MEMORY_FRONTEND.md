@@ -1,0 +1,45 @@
+# MEMORY_FRONTEND.md — Bitácora y Estado Activo del Agente Frontend
+
+> **Área Técnica:** Frontend (Angular 18 Standalone + Signals)  
+> **Proyecto:** COMPUNEX — Marketplace B2B de Cómputo  
+> **Responsable:** Agente Frontend  
+> **Última Actualización:** 2026-11-13
+
+---
+
+## 1. Estado Actual de Ejecución
+
+* **Sprint Activo:** Finalizados todos los 14 sprints de Frontend (`Sprint-F01` a `Sprint-F14`).
+* **Pantallas Construidas:** 27 / 27 MVP certificadas (Quality Gate 2 APROBADO).
+* **Total Sprints Frontend:** 14 sprints técnicos + `Sprint-F_Audit` (Gate 2).
+* **Modo de Conexión:** Mock Server Prism / Local Fallback resiliente (Listo para `http://localhost:8080/api/v1`).
+
+---
+
+## 2. Registro de Sprints Frontend (14 Sprints + Gate 2)
+
+| Sprint | Rama GitFlow | Estado | Pantallas Verificadas | 4 Estados UI |
+| :--- | :--- | :---: | :---: | :---: |
+| `Sprint-F01_Arquitectura_Estructura_y_Reglas_Frontend` | `feat/sprint-1-frontend` | `DONE` | Shell Global, Layouts, Tokens & Contratos | VERIFICADO |
+| `Sprint-F02_Auth_Login_y_Registro_Empresa` | `feat/sprint-1-frontend` | `DONE` | 2 / 2 (`P-06`, `P-07`) | VERIFICADO |
+| `Sprint-F03_Home_y_Categorias` | `feat/sprint-1-frontend` | `DONE` | 2 / 2 (`P-01`, `P-02`) | VERIFICADO |
+| `Sprint-F04_Catalogo_B2B_y_Busqueda` | `feat/sprint-1-frontend` | `DONE` | 1 / 1 (`P-03`) | VERIFICADO |
+| `Sprint-F05_Ficha_Detalle_Producto` | `feat/sprint-1-frontend` | `DONE` | 2 / 2 (`P-04`, `P-05`) | VERIFICADO |
+| `Sprint-F06_Carrito_Reactivo_y_Agrupacion` | `feat/sprint-1-frontend` | `DONE` | 1 / 1 (`P-09`) | VERIFICADO |
+| `Sprint-F07_Checkout_Wizard_Facturacion` | `feat/sprint-1-frontend` | `DONE` | 3 / 3 (`P-10`, `P-11`, `P-12`) | VERIFICADO |
+| `Sprint-F08_Visor_Factura_y_Comprobantes` | `feat/sprint-1-frontend` | `DONE` | 1 / 1 (`P-13`) | VERIFICADO |
+| `Sprint-F09_Mis_Compras_y_Trazabilidad` | `feat/sprint-1-frontend` | `DONE` | 2 / 2 (`P-14`, `P-15`) | VERIFICADO |
+| `Sprint-F10_Mi_Cuenta_Seguridad_y_Activacion` | `feat/sprint-1-frontend` | `DONE` | 3 / 3 (`P-16`, `P-17`, `P-18`) | VERIFICADO |
+| `Sprint-F11_Dashboard_Proveedor_y_Perfil` | `feat/sprint-1-frontend` | `DONE` | 2 / 2 (`P-19`, `P-26`) | VERIFICADO |
+| `Sprint-F12_Gestion_Catalogo_Proveedor` | `feat/sprint-1-frontend` | `DONE` | 4 / 4 (`P-20` a `P-23`) | VERIFICADO |
+| `Sprint-F13_Ventas_Proveedor_y_Despacho` | `feat/sprint-1-frontend` | `DONE` | 2 / 2 (`P-24`, `P-25`) | VERIFICADO |
+| `Sprint-F14_Paginas_de_Error_y_Rutas` | `feat/sprint-1-frontend` | `DONE` | 2 / 2 (`P-36`, `P-37`) | VERIFICADO |
+| `Sprint-F_Audit` (Gate 2) | `feat/sprint-1-frontend` | `DONE` | 27 / 27 | APROBADO |
+
+---
+
+## 3. Decisiones de Arquitectura y Patrones Aplicados
+* **Granularidad de Sprints:** Se evitó sobrecargar sprints agrupando como máximo 1 a 3 pantallas por sprint.
+* **Gestión de Estado Reactivo:** Uso de Signals (`signal()`, `computed()`) para el carrito (`CartService`), la sesión (`AuthService`) y los filtros (`CatalogStateService`).
+* **Estándar de 4 Estados:** Toda vista asíncrona implementa Carga, Vacío, Datos y Error con botón de reintento.
+* **Accesibilidad:** WCAG 2.1 AA garantizada en contrastes y navegación por teclado.

@@ -3,7 +3,7 @@ package com.compunex.b2b.modules.catalogo.controller;
 import com.compunex.b2b.modules.catalogo.dto.request.CambiarEstadoProductoDTO;
 import com.compunex.b2b.modules.catalogo.dto.response.CambioEstadoResponseDTO;
 import com.compunex.b2b.modules.catalogo.dto.response.ProductoPaginadoResponseDTO;
-import com.compunex.b2b.modules.catalogo.service.ProductoService;
+import com.compunex.b2b.modules.catalogo.service.AdminProductoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -12,17 +12,19 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/admin/products")
+@PreAuthorize("hasRole('ADMIN')")
 @Tag(name = "08. API de Productos - Administrador", description = "Endpoints de administración global de productos (Requiere rol ADMIN)")
 @SecurityRequirement(name = "bearerAuth")
 public class AdminProductoController {
 
-    private final ProductoService productoService;
+    private final AdminProductoService productoService;
 
-    public AdminProductoController(ProductoService productoService) {
+    public AdminProductoController(AdminProductoService productoService) {
         this.productoService = productoService;
     }
 

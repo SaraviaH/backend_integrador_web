@@ -1,2 +1,7 @@
 compunex-backend/package-lock.json
 ~$*
+**/node_modules/
+**/dist/
+**/.angular/
+compunex-backend/target/
+

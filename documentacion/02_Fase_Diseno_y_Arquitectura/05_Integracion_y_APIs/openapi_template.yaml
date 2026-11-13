@@ -1,0 +1,307 @@
+openapi: 3.1.0
+info:
+  title: API Contract — Especificación Canónica
+  version: 1.0.0
+  summary: Plantilla oficial OpenAPI 3.1 para contratos de integración y datos JSON.
+  description: >-
+    Especificación formal ejecutable de la API del proyecto. Define rutas, métodos HTTP,
+    parámetros, códigos de estado y esquemas de datos JSON.
+    Las convenciones globales de formato, estándares de fecha (ISO-8601), IDs (UUID v4) y
+    catálogo de errores están documentados en `CONTRATOS_JSON.md`.
+  contact:
+    name: Development Team
+servers:
+  - url: http://localhost:8080
+    description: Servidor de desarrollo local (Local-First)
+  - url: https://api.staging.proyecto.com
+    description: Entorno de pruebas y staging
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Recursos
+    description: Operaciones sobre las entidades principales del dominio.
+  - name: Sistema
+    description: Monitoreo, salud y comprobaciones de infraestructura.
+
+paths:
+  /v1/salud:
+    get:
+      tags: [Sistema]
+      operationId: obtenerSaludSistema
+      summary: Comprobación de salud del servicio (Health Check).
+      description: Permite a monitores locales o pipelines verificar que la API está operativa.
+      security: []
+      responses:
+        '200':
+          description: Servicio saludable y listo para responder peticiones.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [estado, version, timestamp]
+                properties:
+                  estado:
+                    type: string
+                    example: "OK"
+                  version:
+                    type: string
+                    example: "1.0.0"
+                  timestamp:
+                    type: string
+                    format: date-time
+                    example: "2026-11-09T18:00:00Z"
+
+  /v1/recursos:
+    get:
+      tags: [Recursos]
+      operationId: listarRecursos
+      summary: Listar recursos de forma paginada.
+      parameters:
+        - name: pagina
+          in: query
+          description: Número de página (1-based).
+          required: false
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: limite
+          in: query
+          description: Cantidad máxima de elementos por página.
+          required: false
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+      responses:
+        '200':
+          description: Listado paginado de elementos recuperados con éxito.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListaRecursosResponse'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+
+    post:
+      tags: [Recursos]
+      operationId: crearRecurso
+      summary: Crear o registrar un nuevo recurso.
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CrearRecursoRequest'
+      responses:
+        '201':
+          description: Recurso creado exitosamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecursoResponse'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '409':
+          $ref: '#/components/responses/409Conflict'
+
+  /v1/recursos/{id}:
+    get:
+      tags: [Recursos]
+      operationId: obtenerRecursoPorId
+      summary: Obtener el detalle de un recurso por su ID.
+      parameters:
+        - $ref: '#/components/parameters/RecursoId'
+      responses:
+        '200':
+          description: Detalle del recurso encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecursoResponse'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      description: Clave UUID v4 generada por el cliente para asegurar procesamiento único ante reintentos.
+      required: false
+      schema:
+        type: string
+        format: uuid
+        example: "550e8400-e29b-41d4-a716-446655440000"
+
+    RecursoId:
+      name: id
+      in: path
+      required: true
+      description: Identificador único del recurso (UUID v4).
+      schema:
+        type: string
+        format: uuid
+        example: "550e8400-e29b-41d4-a716-446655440000"
+
+  schemas:
+    CrearRecursoRequest:
+      type: object
+      required: [id, nombre, categoria_id]
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: ID generado en cliente (UUID v4) para soporte offline y upsert.
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        nombre:
+          type: string
+          minLength: 3
+          maxLength: 150
+          example: "Nombre del elemento"
+        descripcion:
+          type: string
+          maxLength: 1000
+          example: "Descripción opcional del elemento"
+        categoria_id:
+          type: string
+          example: "CAT-01"
+        creado_en_dispositivo:
+          type: string
+          format: date-time
+          example: "2026-11-09T18:00:00Z"
+
+    RecursoResponse:
+      type: object
+      required: [id, nombre, estado, creado_en]
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        nombre:
+          type: string
+          example: "Nombre del elemento"
+        descripcion:
+          type: [string, "null"]
+          example: "Descripción opcional del elemento"
+        estado:
+          type: string
+          enum: [activo, inactivo, archivado]
+          example: "activo"
+        creado_en_dispositivo:
+          type: string
+          format: date-time
+          example: "2026-11-09T18:00:00Z"
+        creado_en:
+          type: string
+          format: date-time
+          example: "2026-11-09T18:00:01Z"
+        actualizado_en:
+          type: string
+          format: date-time
+          example: "2026-11-09T18:00:01Z"
+
+    Paginacion:
+      type: object
+      required: [pagina_actual, elementos_por_pagina, total_elementos, total_paginas]
+      properties:
+        pagina_actual:
+          type: integer
+          example: 1
+        elementos_por_pagina:
+          type: integer
+          example: 20
+        total_elementos:
+          type: integer
+          example: 100
+        total_paginas:
+          type: integer
+          example: 5
+
+    ListaRecursosResponse:
+      type: object
+      required: [datos, paginacion]
+      properties:
+        datos:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecursoResponse'
+        paginacion:
+          $ref: '#/components/schemas/Paginacion'
+
+    ErrorRFC9457:
+      type: object
+      required: [type, title, status, detail, codigo]
+      properties:
+        type:
+          type: string
+          format: uri
+          example: "https://api.proyecto.com/errores/recurso-no-encontrado"
+        title:
+          type: string
+          example: "Recurso no encontrado"
+        status:
+          type: integer
+          example: 404
+        detail:
+          type: string
+          example: "El elemento con el ID especificado no existe."
+        instance:
+          type: string
+          example: "/v1/recursos/550e8400-e29b-41d4-a716-446655440000"
+        codigo:
+          type: string
+          example: "ERR_NOT_FOUND"
+        errores_validacion:
+          type: array
+          items:
+            type: object
+            required: [campo, motivo]
+            properties:
+              campo:
+                type: string
+                example: "nombre"
+              motivo:
+                type: string
+                example: "El nombre es obligatorio y debe tener al menos 3 caracteres."
+
+  responses:
+    400BadRequest:
+      description: Petición inválida o error en validación de campos.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ErrorRFC9457'
+
+    401Unauthorized:
+      description: Credencial o token de autorización ausente o inválido.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ErrorRFC9457'
+
+    404NotFound:
+      description: Recurso no encontrado.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ErrorRFC9457'
+
+    409Conflict:
+      description: Conflicto con el estado actual o regla de negocio violada.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ErrorRFC9457'

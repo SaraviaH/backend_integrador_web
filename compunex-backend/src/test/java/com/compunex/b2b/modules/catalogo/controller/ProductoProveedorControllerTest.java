@@ -5,7 +5,7 @@ import com.compunex.b2b.modules.catalogo.dto.response.ActualizarProductoResponse
 import com.compunex.b2b.modules.catalogo.dto.response.CambioEstadoResponseDTO;
 import com.compunex.b2b.modules.catalogo.dto.response.CrearProductoResponseDTO;
 import com.compunex.b2b.modules.catalogo.dto.response.ProductoDetalleResponseDTO;
-import com.compunex.b2b.modules.catalogo.service.ProductoService;
+import com.compunex.b2b.modules.catalogo.service.ProductoProveedorService;
 import com.compunex.b2b.security.JwtAuthenticationFilter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -49,7 +49,7 @@ class ProductoProveedorControllerTest {
     private MockMvc mockMvc;
 
     @MockitoBean
-    private ProductoService productoService;
+    private ProductoProveedorService productoService;
 
     @Test
     @DisplayName("[2.6] Debe retornar HTTP 204 al eliminar producto propio")

@@ -1,0 +1,922 @@
+<!DOCTYPE html><html lang="es" class="h-full scroll-smooth"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>COMPUNEX — SSD NVMe 1TB PCIe 4.0 M.2 2280</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">/** @type {import('tailwindcss').Config} */
+globalThis.tailwind = globalThis.tailwind || {};
+globalThis.tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      colors: {
+        'primary': '#2456C6',
+        'on-primary': '#FFFFFF',
+        'primary-hover': '#1B449E',
+        'accent-soft': '#EBF1FC',
+        'on-accent-soft': '#1B449E',
+        'accent-soft-border': '#C7D8F5',
+        'surface': '#FFFFFF',
+        'on-surface': '#142238',
+        'surface-alt': '#F5F7FA',
+        'surface-border': '#D9E1EA',
+        'surface-border-subtle': '#CBD5E1',
+        'text-primary': '#142238',
+        'text-secondary': '#4B5D75',
+        'text-muted': '#6B7C93',
+        'success': '#166534',
+        'on-success': '#FFFFFF',
+        'success-surface': '#F0FDF4',
+        'success-border': '#BBF7D0',
+        'warning': '#B45309',
+        'on-warning': '#FFFFFF',
+        'warning-surface': '#FFFBEB',
+        'warning-border': '#FDE68A',
+        'error': '#B91C1C',
+        'on-error': '#FFFFFF',
+        'error-surface': '#FEF2F2',
+        'error-border': '#FECACA',
+        'outline': '#8E9EAF',
+      },
+      borderRadius: {
+        'xs': '4px',
+        'sm': '8px',
+        'md': '12px',
+        'lg': '16px',
+        'xl': '20px',
+        'full': '9999px',
+      },
+      spacing: {
+        'gutter-xs': '4px',
+        'gutter-sm': '8px',
+        'gutter-md': '16px',
+        'gutter-lg': '24px',
+        'gutter-xl': '32px',
+        'gutter-2xl': '48px',
+        'page-margin': '24px',
+        'page-margin-mobile': '16px',
+      },
+      fontFamily: {
+        'display': ['"Source Serif 4"', 'sans-serif'],
+        'headline': ['"Manrope"', 'sans-serif'],
+        'body': ['"Manrope"', 'sans-serif'],
+        'label': ['"Manrope"', 'sans-serif'],
+      },
+      fontSize: {
+        'display-lg': ['36px', { lineHeight: '44px', letterSpacing: '-0.02em', fontWeight: '700' }],
+        'display-lg-mobile': ['28px', { lineHeight: '36px', letterSpacing: '-0.01em', fontWeight: '700' }],
+        'headline-lg': ['28px', { lineHeight: '36px', letterSpacing: '-0.01em', fontWeight: '700' }],
+        'headline-lg-mobile': ['22px', { lineHeight: '30px', fontWeight: '600' }],
+        'headline-md': ['22px', { lineHeight: '30px', fontWeight: '700' }],
+        'headline-sm': ['18px', { lineHeight: '26px', fontWeight: '700' }],
+        'body-lg': ['18px', { lineHeight: '28px', fontWeight: '400' }],
+        'body-md': ['16px', { lineHeight: '24px', fontWeight: '400' }],
+        'label-lg': ['16px', { lineHeight: '24px', fontWeight: '600' }],
+        'label-md': ['14px', { lineHeight: '20px', fontWeight: '500' }],
+        'label-sm': ['12px', { lineHeight: '16px', letterSpacing: '0.04em', fontWeight: '600' }],
+      },
+      transitionDuration: {
+        'state-change': '120ms',
+        'surface-enter': '200ms',
+      },
+      transitionDelay: {
+        'state-change': '0ms',
+        'surface-enter': '0ms',
+      },
+      transitionTimingFunction: {
+        'state-change': 'ease-out',
+        'surface-enter': 'cubic-bezier(0.16, 1, 0.3, 1)',
+      },
+    },
+  },
+};
+if (typeof module !== 'undefined') module.exports = globalThis.tailwind.config;
+</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400;1,8..60,600&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet">
+  <style>
+    .material-symbols-outlined {
+      display: inline-block;
+      width: 1em;
+      height: 1em;
+      line-height: 1 !important;
+      box-sizing: content-box;
+      overflow: hidden;
+      white-space: nowrap;
+      direction: ltr;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body class="bg-surface-alt text-on-surface font-body min-h-[1024px] flex flex-col antialiased selection:bg-accent-soft selection:text-primary overflow-x-hidden" data-stitch-vh="min-h-[1024px]===min-h-screen">
+
+  <!-- ENLACE DE ACCESIBILIDAD PARA SALTAR DIRECTO AL CONTENIDO -->
+  <a href="#contenido-principal" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-3 focus:bg-primary focus:text-on-primary focus:rounded-sm shadow-lg font-label font-bold text-label-md">
+    Saltar al contenido principal
+  </a>
+
+  <!-- TOP BAR INSTITUCIONAL / ESTADO COMERCIAL & PERFIL ACTIVO -->
+  <aside aria-label="Información institucional y estado comercial" class="bg-surface text-text-secondary border-b border-surface-border text-label-sm py-2 px-4 sm:px-6">
+    <div class="max-w-[1280px] mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+      <div class="flex items-center gap-3">
+        <span class="inline-flex items-center gap-1.5 font-semibold text-text-primary">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-600 animate-pulse"></span>
+          Mercado B2B de Hardware
+        </span>
+        <span class="text-surface-border">|</span>
+        <span class="text-text-muted">Perfil Empresa Conectada: <strong class="text-text-primary font-mono">TechNova SAC (RUC 20551234567)</strong></span>
+      </div>
+      <div class="flex items-center gap-4 text-label-sm">
+        <span class="inline-flex items-center gap-1 text-primary bg-accent-soft px-2.5 py-0.5 rounded-full font-medium">
+          <span class="material-symbols-outlined text-sm">shield</span> Entorno Transaccional Simulado
+        </span>
+        <span class="hidden md:inline text-text-muted">Moneda de Liquidación: <strong>USD ($)</strong></span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- NAVBAR PRINCIPAL DE LA TIENDA -->
+  <header class="bg-surface border-b border-surface-border sticky top-0 z-30 shadow-xs">
+    <div class="max-w-[1280px] mx-auto px-4 sm:px-6 h-20 flex items-center justify-between gap-4">
+      
+      <!-- LOGO -->
+      <div class="flex items-center gap-3 flex-shrink-0">
+        <button type="button" id="btn-mobile-menu" onclick="toggleMobileMenu()" class="lg:hidden inline-flex items-center justify-center w-12 h-12 text-text-primary rounded-sm hover:bg-surface-alt focus:outline-none focus:ring-2 focus:ring-primary" aria-expanded="false" aria-controls="nav-drawer" aria-label="Abrir navegación principal">
+          <span id="menu-icon" class="material-symbols-outlined text-2xl">menu</span>
+        </button>
+
+        <a href="../compunex-marketplace/CompunexMarketplace.html#inicio" class="flex items-center gap-3 focus:outline-none focus:ring-2 focus:ring-primary rounded-sm py-1" aria-label="COMPUNEX - Inicio">
+          <div class="w-10 h-10 rounded-sm bg-primary flex items-center justify-center text-white shadow-xs">
+            <span class="material-symbols-outlined text-2xl" aria-hidden="true">memory</span>
+          </div>
+          <div class="flex flex-col leading-none">
+            <span class="font-display font-bold text-2xl text-text-primary tracking-tight">COMPUNEX</span>
+            <span class="text-label-sm font-semibold text-primary uppercase tracking-wider text-[11px] mt-0.5">Comunidad &amp; Hardware B2B</span>
+          </div>
+        </a>
+      </div>
+
+      <!-- BUSCADOR GLOBAL -->
+      <div class="hidden md:flex flex-1 max-w-md mx-2">
+        <form role="search" onsubmit="event.preventDefault();" class="relative w-full">
+          <label for="detail-search-input" class="sr-only">Buscar componentes de hardware</label>
+          <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted text-xl pointer-events-none" aria-hidden="true">search</span>
+          <input id="detail-search-input" type="search" placeholder="Buscar por componente (SSD, RAM, GPU), SKU mayorista..." class="w-full pl-11 pr-24 py-2.5 bg-surface-alt text-text-primary border border-surface-border rounded-sm font-body text-body-md placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary focus:bg-surface min-h-[48px]">
+          <button type="submit" class="absolute right-1.5 top-1/2 -translate-y-1/2 px-3 py-1.5 bg-primary text-on-primary text-label-sm font-label rounded-xs hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary min-h-[36px]">
+            Buscar
+          </button>
+        </form>
+      </div>
+
+      <!-- ENLACES DE NAVEGACIÓN -->
+      <nav aria-label="Navegación principal" class="hidden lg:flex items-center gap-1">
+        <a href="../compunex-marketplace/CompunexMarketplace.html#inicio" class="px-3.5 py-2 text-label-md font-medium text-text-secondary hover:text-text-primary hover:bg-surface-alt rounded-sm focus:outline-none focus:ring-2 focus:ring-primary min-h-[44px] flex items-center">
+          Inicio
+        </a>
+        <a href="../compunex-catalog/CompunexCatalog.html" class="px-3.5 py-2 text-label-md font-bold text-primary bg-accent-soft rounded-sm border border-accent-soft-border focus:outline-none focus:ring-2 focus:ring-primary min-h-[44px] flex items-center">
+          Catálogo
+        </a>
+        <a href="../compunex-categories/CompunexCategories.html" class="px-3.5 py-2 text-label-md font-medium text-text-secondary hover:text-text-primary hover:bg-surface-alt rounded-sm focus:outline-none focus:ring-2 focus:ring-primary min-h-[44px] flex items-center">
+          Categorías
+        </a>
+        <a href="../compunex-marketplace/CompunexMarketplace.html#como-funciona" class="px-3.5 py-2 text-label-md font-medium text-text-secondary hover:text-text-primary hover:bg-surface-alt rounded-sm focus:outline-none focus:ring-2 focus:ring-primary min-h-[44px] flex items-center">
+          Cómo funciona
+        </a>
+      </nav>
+
+      <!-- ACCIONES: CARRITO Y ACCESO (48px TÁCTILES) -->
+      <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+        <button id="btn-cart-toggle" type="button" onclick="toggleCartDrawer()" class="relative inline-flex items-center justify-center gap-2 px-3.5 h-12 bg-surface text-text-primary border border-surface-border rounded-sm hover:border-primary hover:bg-accent-soft focus:outline-none focus:ring-2 focus:ring-primary transition-all min-w-[48px]" aria-expanded="false" aria-controls="cart-drawer-panel" aria-label="Abrir carrito multi-proveedor con 3 artículos por lote">
+          <span class="material-symbols-outlined text-2xl text-primary" aria-hidden="true">shopping_cart</span>
+          <span class="font-label text-label-md font-bold hidden sm:inline">Carrito</span>
+          <span id="cart-badge-count" class="inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 rounded-full bg-primary text-on-primary text-label-sm font-bold tabular-nums">
+            3
+          </span>
+        </button>
+
+        <div class="relative">
+          <button type="button" onclick="toggleAccountMenu()" class="inline-flex items-center gap-2.5 px-3 h-12 bg-text-primary text-white rounded-sm hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors min-w-[48px]" aria-expanded="false" aria-label="Menú de acceso y perfil corporativo: TechNova SAC">
+            <span class="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-xs font-bold text-white">TN</span>
+            <span class="text-label-sm font-bold hidden xl:inline">Acceso / Empresa</span>
+            <span class="material-symbols-outlined text-base text-slate-400">arrow_drop_down</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- MENÚ DESPLEGABLE DE ACCESO CORPORATIVO -->
+  <div id="account-dropdown" class="hidden absolute right-4 sm:right-6 top-24 w-80 bg-surface rounded-md border border-surface-border shadow-xl z-40 p-4 transition-all" role="menu" aria-label="Opciones de acceso corporativo">
+    <div class="pb-3 border-b border-surface-border mb-3">
+      <div class="flex items-center justify-between">
+        <span class="font-headline font-bold text-text-primary text-label-lg">TechNova SAC</span>
+        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+          Comprador
+        </span>
+      </div>
+      <p class="text-label-sm text-text-muted font-mono mt-0.5">RUC: 20551234567</p>
+      <p class="text-label-sm text-text-secondary mt-1">Usted compra directamente sin intermediarios.</p>
+    </div>
+    <div class="space-y-1 text-label-md">
+      <a href="../compunex-marketplace/CompunexMarketplace.html#mis-pedidos" class="flex items-center gap-2 p-2 rounded-xs hover:bg-surface-alt text-text-secondary hover:text-text-primary">
+        <span class="material-symbols-outlined text-lg">history_edu</span>
+        <span>Historial de Cotizaciones y Proformas</span>
+      </a>
+      <a href="../compunex-categories/CompunexCategories.html" class="flex items-center gap-2 p-2 rounded-xs hover:bg-surface-alt text-text-secondary hover:text-text-primary">
+        <span class="material-symbols-outlined text-lg">category</span>
+        <span>Explorar por Categorías</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- NAVEGACIÓN MÓVIL COLAPSABLE (375px) -->
+  <nav id="nav-drawer" aria-label="Navegación móvil" class="fixed inset-y-0 left-0 w-[300px] bg-surface z-50 shadow-2xl border-r border-surface-border transform -translate-x-full transition-transform duration-200 ease-in-out flex flex-col hidden lg:hidden">
+    <div class="p-4 border-b border-surface-border flex items-center justify-between bg-surface-alt">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-sm bg-primary flex items-center justify-center text-white">
+          <span class="material-symbols-outlined text-lg">memory</span>
+        </div>
+        <span class="font-display font-bold text-xl text-text-primary">COMPUNEX</span>
+      </div>
+      <button type="button" onclick="toggleMobileMenu(false)" class="w-12 h-12 inline-flex items-center justify-center text-text-muted hover:text-text-primary rounded-sm focus:outline-none focus:ring-2 focus:ring-primary" aria-label="Cerrar menú móvil">
+        <span class="material-symbols-outlined text-2xl">close</span>
+      </button>
+    </div>
+
+    <div class="p-4 flex-1 overflow-y-auto space-y-2">
+      <a href="../compunex-marketplace/CompunexMarketplace.html#inicio" onclick="toggleMobileMenu(false)" class="flex items-center gap-3 px-3.5 h-12 rounded-sm text-text-secondary hover:bg-surface-alt font-medium text-body-md">
+        <span class="material-symbols-outlined text-xl">home</span>
+        <span>Inicio</span>
+      </a>
+      <a href="../compunex-catalog/CompunexCatalog.html" onclick="toggleMobileMenu(false)" class="flex items-center gap-3 px-3.5 h-12 rounded-sm bg-accent-soft text-primary font-bold text-body-md border border-accent-soft-border">
+        <span class="material-symbols-outlined text-xl">grid_view</span>
+        <span>Catálogo</span>
+      </a>
+      <a href="../compunex-categories/CompunexCategories.html" onclick="toggleMobileMenu(false)" class="flex items-center gap-3 px-3.5 h-12 rounded-sm text-text-secondary hover:bg-surface-alt font-medium text-body-md">
+        <span class="material-symbols-outlined text-xl">category</span>
+        <span>Categorías</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- BACKDROP COMPARTIDO -->
+  <div id="shared-backdrop" onclick="closeAllDrawers()" class="fixed inset-0 bg-slate-900/60 z-40 hidden transition-opacity duration-200" aria-hidden="true"></div>
+
+  <!-- CONTENIDO PRINCIPAL: DETALLE DE PRODUCTO SSD NVME -->
+  <main id="contenido-principal" class="flex-1 max-w-[1280px] w-full mx-auto px-4 sm:px-6 py-6 sm:py-10">
+    
+    <!-- RUTA DE NAVEGACIÓN COMPLETA (BREADCRUMB) -->
+    <nav aria-label="Ruta de navegación" class="mb-6">
+      <ol class="flex flex-wrap items-center gap-2 text-label-md font-medium text-text-secondary">
+        <li>
+          <a href="../compunex-marketplace/CompunexMarketplace.html#inicio" class="hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary rounded-xs px-1 py-0.5">
+            Inicio
+          </a>
+        </li>
+        <li class="text-surface-border text-base" aria-hidden="true">/</li>
+        <li>
+          <a href="../compunex-categories/CompunexCategories.html" class="hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary rounded-xs px-1 py-0.5">
+            Categorías
+          </a>
+        </li>
+        <li class="text-surface-border text-base" aria-hidden="true">/</li>
+        <li>
+          <a href="../compunex-categories/CompunexCategories.html#panel-subcategorias-almacenamiento" class="hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary rounded-xs px-1 py-0.5">
+            Almacenamiento
+          </a>
+        </li>
+        <li class="text-surface-border text-base" aria-hidden="true">/</li>
+        <li>
+          <span class="text-text-primary font-bold px-1 py-0.5" aria-current="page">
+            SSD NVMe 1TB PCIe 4.0 Gen4x4 M.2 2280
+          </span>
+        </li>
+      </ol>
+    </nav>
+
+    <!-- FICHA PRINCIPAL DEL PRODUCTO (2 COLUMNAS: GALERÍA Y COMPRA/INFORMACIÓN) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start mb-14">
+      
+      <!-- COLUMNA IZQUIERDA: GALERÍA DE SSD NVMe (6 COLS) -->
+      <section aria-label="Galería fotográfica del SSD NVMe" class="lg:col-span-6 space-y-4">
+        
+        <!-- FOTOGRAFÍA PRINCIPAL AMPLIADA -->
+        <div class="bg-surface rounded-md border border-surface-border overflow-hidden p-6 sm:p-8 flex items-center justify-center shadow-xs relative">
+          <img id="main-product-gallery" src="https://lh3.googleusercontent.com/aida/ALJJyrA0CNiXS7u92qvu2QEJancYDf4tNGjog2opR3hEbwCYXtGFDNpipS4TANAxE_0KdFHlqAUyq1F2I3ViQnARXB1bWIWfZhJyGCDwom2aj6d5xIKnrH1YFBbJXhbawXainJQeCs7IXUAgu03lWUUQjv51FvqlcYisYvjGDK0WWJVH3hA48Rvk2IJPj1sHNPC418Cq-NmUueRlcTy3DYqbk4EL-azcxLiQef1SSvClv4TpLxelOCRY1rHEG4_IXQ" alt="Fotografía principal macro del SSD NVMe 1TB PCIe 4.0 con disipador térmico de grafeno" class="w-full max-h-[420px] object-contain transition-all duration-300">
+          <span class="absolute top-4 left-4 px-3 py-1 rounded-full bg-accent-soft text-primary border border-accent-soft-border text-label-sm font-bold">
+            PCIe 4.0 NVMe M.2
+          </span>
+          <span class="absolute top-4 right-4 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-label-sm font-bold">
+            Stock: 150 und.
+          </span>
+        </div>
+
+        <!-- MINIATURAS ACCESIBLES DE LA GALERÍA (MÍNIMO 44px TÁCTILES) -->
+        <div class="grid grid-cols-4 gap-3 sm:gap-4" role="tablist" aria-label="Imágenes de detalle del SSD NVMe">
+          <button type="button" onclick="switchGalleryImage(&#39;../../images/hardware_nvme_ssd.jpg&#39;, this)" class="gallery-thumb-btn h-20 sm:h-24 bg-surface rounded-sm border-2 border-primary overflow-hidden p-1.5 focus:outline-none focus:ring-2 focus:ring-primary" aria-selected="true" aria-label="Vista frontal completa con disipador">
+            <img src="https://lh3.googleusercontent.com/aida/ALJJyrA0CNiXS7u92qvu2QEJancYDf4tNGjog2opR3hEbwCYXtGFDNpipS4TANAxE_0KdFHlqAUyq1F2I3ViQnARXB1bWIWfZhJyGCDwom2aj6d5xIKnrH1YFBbJXhbawXainJQeCs7IXUAgu03lWUUQjv51FvqlcYisYvjGDK0WWJVH3hA48Rvk2IJPj1sHNPC418Cq-NmUueRlcTy3DYqbk4EL-azcxLiQef1SSvClv4TpLxelOCRY1rHEG4_IXQ" alt="Miniatura frontal con disipador" class="w-full h-full object-contain">
+          </button>
+          <button type="button" onclick="switchGalleryImage(&#39;../../images/ssd_detail_angle1.jpg&#39;, this)" class="gallery-thumb-btn h-20 sm:h-24 bg-surface rounded-sm border border-surface-border hover:border-primary overflow-hidden p-1.5 focus:outline-none focus:ring-2 focus:ring-primary" aria-selected="false" aria-label="Vista en perspectiva de pines M.2 dorados">
+            <img src="https://lh3.googleusercontent.com/aida/ALJJyrB3LU72ShKBI11bErZJ-JjgXLJxTt7BB-xIPwFD92wqXtE3OhKnJz9pDthgev-GATtFalueaCHjBtOYNCWKGWNr1F2JLG3v0PYMO072Fc62ciu276CewwJFOtGdZw_X_taPTbeI343nyQiiAwrJ0STiOMH-QKwg8zr4jti7KKmJpg_ekTDevfDOjZD0MxXJL64YzOZ5HQFfDxtQCUjgU1Cmu1JupDHPgJm1NVhkf7CorbUaR3y_uYuYZ_gl" alt="Miniatura pines dorados M.2" class="w-full h-full object-contain">
+          </button>
+          <button type="button" onclick="switchGalleryImage(&#39;../../images/ssd_detail_pcb.jpg&#39;, this)" class="gallery-thumb-btn h-20 sm:h-24 bg-surface rounded-sm border border-surface-border hover:border-primary overflow-hidden p-1.5 focus:outline-none focus:ring-2 focus:ring-primary" aria-selected="false" aria-label="Vista del circuito PCB y memorias flash">
+            <img src="https://lh3.googleusercontent.com/aida/ALJJyrCXqGyH50GXs6Xkn4AtGGv_jRcuj_fXjbPCmclxEiR-H9FlyMJZfqbzIbwYXH0Fg4mp0fciTxPvdGCms6039qAo63mUh0A2bTIgYXwKo1cbJauagXW42bTa3mt8JSyw1KZ71ys7daVAeII_PUkvOO6YDgepmU05OqEIf9_qtlqdk4eCnL3jDWBY22-0C7FsVOGCajI1PAIOtAARV962LDiBBh-eoq1SRrSY7PMJA5FOZpnbhRdu_4S43A" alt="Miniatura PCB y controlador" class="w-full h-full object-contain">
+          </button>
+          <button type="button" onclick="switchGalleryImage(&#39;../../images/ssd_detail_packaging.jpg&#39;, this)" class="gallery-thumb-btn h-20 sm:h-24 bg-surface rounded-sm border border-surface-border hover:border-primary overflow-hidden p-1.5 focus:outline-none focus:ring-2 focus:ring-primary" aria-selected="false" aria-label="Empaque mayorista de 10 unidades por bandeja">
+            <img src="https://lh3.googleusercontent.com/aida/ALJJyrDNtJvJm0T3tI_xuXrtKWFqvXNt0x_A3UgypuAZYMU0hXidwBqFBs8-T_k44FVuVrGQZzgPqGrj3sPkSrR8YUMwa-Ng-qkj5DgM5UhBcvCttOn1lMPR4CWyNO1sA2BWIbEgbumIa-V1W76tT-9aj4NNx--T9iz2dIeB7lBQYLAaeE2-5ELkSNhMixUQotgaY-oiaV_NfUhpwNWOonvZMeDx1-RpxkIhdybsb3pIj-IvOYf3cUMLZ9L9ao6rC0uPAg" alt="Miniatura empaque en bandeja" class="w-full h-full object-contain">
+          </button>
+        </div>
+
+      </section>
+
+      <!-- COLUMNA DERECHA: FICHA TÉCNICA, PRECIO, VALIDACIÓN MOQ Y BOTONES (6 COLS) -->
+      <section aria-label="Información comercial y cotización" class="lg:col-span-6 space-y-6">
+        
+        <!-- ENCABEZADO Y TÍTULO EDITORIAL CON SOURCE SERIF 4 -->
+        <div>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="inline-flex items-center gap-1 text-label-sm font-bold text-primary bg-accent-soft px-2.5 py-0.5 rounded-full border border-accent-soft-border">
+              SKU: NVME-1TB-GEN4X4
+            </span>
+            <span class="text-label-sm text-text-muted">Garantía Directa: 5 Años Oficial</span>
+          </div>
+
+          <h1 class="font-display text-3xl sm:text-4xl font-bold text-text-primary tracking-tight leading-snug">
+            SSD NVMe 1TB PCIe 4.0 M.2 2280 Gen4x4
+          </h1>
+
+          <p class="text-body-md text-text-secondary mt-2 leading-relaxed">
+            Unidad de estado sólido empresarial para estaciones de trabajo y servidores de alta concurrencia. Lectura secuencial de hasta 7,000 MB/s, resistencia de 800 TBW y disipador de aleación de grafeno.
+          </p>
+        </div>
+
+        <!-- CAJA DE PROVEEDOR EMISOR CON BOTÓN VER CONTACTO -->
+        <div class="p-5 bg-surface rounded-md border border-surface-border shadow-xs">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="flex items-center gap-3.5">
+              <div class="w-12 h-12 rounded-sm bg-primary text-white flex items-center justify-center font-bold text-lg flex-shrink-0">
+                TN
+              </div>
+              <div>
+                <span class="text-label-sm font-bold text-text-muted uppercase block">Proveedor Emisor</span>
+                <span class="font-headline font-bold text-lg text-text-primary block">
+                  TechNova Mayorista SAC
+                </span>
+                <div class="flex items-center gap-2 text-label-sm text-text-secondary font-mono mt-0.5">
+                  <span>RUC: 20551234567</span>
+                  <span>•</span>
+                  <span class="text-emerald-700 font-sans font-bold flex items-center gap-0.5">
+                    <span class="material-symbols-outlined text-xs">verified</span> Acreditado
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- BOTÓN: VER CONTACTO (Con lógica de estado: acceso para visitantes aún por decidir) -->
+            <button type="button" onclick="handleViewContact()" class="inline-flex items-center justify-center gap-2 px-4 h-11 bg-surface text-primary border border-primary hover:bg-accent-soft font-label text-label-md font-bold rounded-sm focus:outline-none focus:ring-2 focus:ring-primary whitespace-nowrap min-h-[44px]">
+              <span class="material-symbols-outlined text-lg">contact_mail</span>
+              <span>Ver contacto</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- CAJA DE PRECIO REFERENCIAL EN USD, PEDIDO MÍNIMO Y VALIDACIÓN -->
+        <div class="p-6 bg-surface rounded-md border border-surface-border shadow-xs space-y-5">
+          
+          <!-- PRECIO Y MOQ -->
+          <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 pb-4 border-b border-surface-border">
+            <div>
+              <span class="text-label-sm text-text-muted font-bold block mb-1">Precio Referencial Unitario:</span>
+              <div class="flex items-baseline gap-2">
+                <span class="font-headline font-bold text-3xl sm:text-4xl text-text-primary tabular-nums">
+                  $62.50
+                </span>
+                <span class="font-bold text-base text-text-secondary">USD + IGV</span>
+              </div>
+              <span class="text-[12px] text-text-muted mt-1 block">
+                Valor estimado por lote mayorista para clientes con RUC activo
+              </span>
+            </div>
+
+            <div class="sm:text-right">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-amber-50 text-amber-900 border border-amber-200 text-label-md font-bold">
+                <span class="material-symbols-outlined text-base text-amber-700">info</span>
+                Pedido mínimo: 10 unidades
+              </span>
+              <span class="block text-[12px] text-text-muted mt-1">Lote mínimo exigido por distribuidor</span>
+            </div>
+          </div>
+
+          <!-- SELECTOR DE CANTIDAD CON VALIDACIÓN DE MÍNIMO VISIBLE -->
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <label for="detail-qty-input" class="text-label-md font-bold text-text-primary">
+                Cantidad a cotizar (Unidades):
+              </label>
+              <span id="qty-validation-status" class="text-label-sm font-bold text-emerald-700 flex items-center gap-1">
+                <span class="material-symbols-outlined text-xs">check_circle</span> Pedido mínimo cubierto
+              </span>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <div class="relative w-36">
+                <input id="detail-qty-input" type="number" min="1" step="1" value="15" oninput="validateMOQ(this.value)" class="w-full text-center h-12 px-3 border border-surface-border rounded-sm font-headline font-bold tabular-nums text-xl text-text-primary focus:ring-2 focus:ring-primary focus:border-primary min-h-[48px]" aria-describedby="moq-hint-text">
+              </div>
+
+              <!-- CONTROLES RÁPIDOS DE VOLUMEN (48px TÁCTILES) -->
+              <div class="flex items-center gap-1.5">
+                <button type="button" onclick="setDirectQty(10)" class="h-12 px-3 bg-surface-alt hover:bg-surface border border-surface-border text-label-sm font-bold text-text-secondary rounded-sm focus:ring-2 focus:ring-primary">
+                  10 und. (Mínimo)
+                </button>
+                <button type="button" onclick="setDirectQty(25)" class="h-12 px-3 bg-surface-alt hover:bg-surface border border-surface-border text-label-sm font-bold text-text-secondary rounded-sm focus:ring-2 focus:ring-primary">
+                  25 und.
+                </button>
+                <button type="button" onclick="setDirectQty(50)" class="h-12 px-3 bg-surface-alt hover:bg-surface border border-surface-border text-label-sm font-bold text-text-secondary rounded-sm focus:ring-2 focus:ring-primary">
+                  50 und.
+                </button>
+              </div>
+            </div>
+
+            <!-- MENSAJE DE VALIDACIÓN DE MÍNIMO CON TEXTO CLARO -->
+            <p id="moq-hint-text" class="text-label-sm text-text-muted mt-2">
+              Ingrese 10 unidades o más para habilitar la orden proforma de este proveedor.
+            </p>
+          </div>
+
+          <!-- ALERTA DINÁMICA: PRODUCTO PROPIO NO SE PUEDE COMPRAR (RESTRICCIÓN B2B) -->
+          <div id="self-purchase-alert" class="p-4 bg-amber-50/80 rounded-sm border border-amber-300 text-amber-950 text-label-md space-y-1">
+            <div class="flex items-center gap-2 font-bold text-amber-900">
+              <span class="material-symbols-outlined text-amber-700 text-lg">block</span>
+              <span>Restricción Operativa: Producto de su propia empresa</span>
+            </div>
+            <p class="text-sm text-amber-900 leading-relaxed">
+              Su cuenta actual está autenticada como <strong>TechNova SAC</strong> (mismo proveedor de este lote). Las reglas del marketplace impiden que un proveedor se auto-compre productos.
+            </p>
+          </div>
+
+          <!-- BOTONES DE COMPRA Y SIMULADOR DE ALTERNANCIA (48px TÁCTILES) -->
+          <div class="space-y-3 pt-2">
+            <!-- BOTÓN PRINCIPAL: AGREGAR AL CARRITO (DESHABILITADO POR DEFECTO PARA PRODUCTO PROPIO) -->
+            <button id="btn-add-to-cart" type="button" disabled onclick="handleProductAddToCart()" class="w-full inline-flex items-center justify-center gap-2.5 h-12 px-6 bg-surface-border text-text-muted font-label text-label-md font-bold rounded-sm cursor-not-allowed opacity-80 shadow-xs transition-all min-h-[48px]">
+              <span class="material-symbols-outlined text-xl">remove_shopping_cart</span>
+              <span id="btn-add-text">No puede comprar su propio producto</span>
+            </button>
+
+            <!-- TOGGLE DE DEMOSTRACIÓN B2B: SIMULAR VISITA DE OTRO CLIENTE COMPRADOR -->
+            <div class="p-3 bg-surface-alt rounded-sm border border-surface-border flex items-center justify-between text-label-sm">
+              <span class="text-text-secondary">Simulación de perfil de usuario:</span>
+              <button type="button" id="btn-toggle-demo-buyer" onclick="toggleDemoBuyerMode()" class="px-3 py-1.5 bg-surface text-primary border border-surface-border rounded-xs font-bold hover:bg-accent-soft focus:ring-2 focus:ring-primary">
+                Cambiar a comprador externo (Inversiones del Sur SAC)
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+    </div>
+
+    <!-- SECCIÓN: ESPECIFICACIONES TÉCNICAS DETALLADAS (TABLA TABULAR ACCESIBLE) -->
+    <section aria-labelledby="specs-heading" class="bg-surface rounded-md border border-surface-border p-6 sm:p-8 mb-14 shadow-xs">
+      <div class="pb-4 border-b border-surface-border mb-6">
+        <h2 id="specs-heading" class="font-display text-2xl font-bold text-text-primary tracking-tight">
+          Especificaciones Técnicas del Hardware
+        </h2>
+        <p class="text-body-md text-text-secondary mt-1">
+          Parámetros técnicos verificados bajo estándar de laboratorio y pruebas de lectura IOmeter.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        
+        <!-- TABLA GRUPO 1: RENDIMIENTO Y ARQUITECTURA -->
+        <div>
+          <h3 class="font-headline font-bold text-label-lg text-text-primary mb-3 flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary text-xl">speed</span>
+            Rendimiento y Bus de Datos
+          </h3>
+          <dl class="divide-y divide-surface-border border border-surface-border rounded-sm text-body-md">
+            <div class="p-3.5 bg-surface-alt flex justify-between gap-4">
+              <dt class="font-semibold text-text-secondary text-sm">Factor de Forma</dt>
+              <dd class="font-bold text-text-primary text-sm font-mono">M.2 2280 (80mm × 22mm)</dd>
+            </div>
+            <div class="p-3.5 bg-surface flex justify-between gap-4">
+              <dt class="font-semibold text-text-secondary text-sm">Interfaz y Protocolo</dt>
+              <dd class="font-bold text-text-primary text-sm">PCIe 4.0 ×4 / NVMe 1.4</dd>
+            </div>
+            <div class="p-3.5 bg-surface-alt flex justify-between gap-4">
+              <dt class="font-semibold text-text-secondary text-sm">Velocidad Lectura Secuencial</dt>
+              <dd class="font-bold text-text-primary text-sm tabular-nums">Hasta 7,000 MB/s</dd>
+            </div>
+            <div class="p-3.5 bg-surface flex justify-between gap-4">
+              <dt class="font-semibold text-text-secondary text-sm">Velocidad Escritura Secuencial</dt>
+              <dd class="font-bold text-text-primary text-sm tabular-nums">Hasta 6,000 MB/s</dd>
+            </div>
+            <div class="p-3.5 bg-surface-alt flex justify-between gap-4">
+              <dt class="font-semibold text-text-secondary text-sm">IOPS Lectura / Escritura Aleatoria</dt>
+              <dd class="font-bold text-text-primary text-sm tabular-nums">Hasta 1,000,000 IOPS</dd>
+            </div>
+          </dl>
+        </div>
+
+        <!-- TABLA GRUPO 2: CONFIABILIDAD Y EMPAQUE POR LOTE -->
+        <div>
+          <h3 class="font-headline font-bold text-label-lg text-text-primary mb-3 flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary text-xl">verified</span>
+            Confiabilidad &amp; Logística Mayorista
+          </h3>
+          <dl class="divide-y divide-surface-border border border-surface-border rounded-sm text-body-md">
+            <div class="p-3.5 bg-surface-alt flex justify-between gap-4">
+              <dt class="font-semibold text-text-secondary text-sm">Resistencia (TBW)</dt>
+              <dd class="font-bold text-text-primary text-sm tabular-nums">800 Terabytes Escritos</dd>
+            </div>
+            <div class="p-3.5 bg-surface flex justify-between gap-4">
+              <dt class="font-semibold text-text-secondary text-sm">Tiempo Medio Entre Fallas (MTBF)</dt>
+              <dd class="font-bold text-text-primary text-sm tabular-nums">1,800,000 Horas</dd>
+            </div>
+            <div class="p-3.5 bg-surface-alt flex justify-between gap-4">
+              <dt class="font-semibold text-text-secondary text-sm">Presentación por Lote</dt>
+              <dd class="font-bold text-text-primary text-sm">Bandeja antiestática (Tray 10 und.)</dd>
+            </div>
+            <div class="p-3.5 bg-surface flex justify-between gap-4">
+              <dt class="font-semibold text-text-secondary text-sm">Disipación Térmica</dt>
+              <dd class="font-bold text-text-primary text-sm">Lámina de aleación de grafeno incluida</dd>
+            </div>
+            <div class="p-3.5 bg-surface-alt flex justify-between gap-4">
+              <dt class="font-semibold text-text-secondary text-sm">Garantía RMA Mayorista</dt>
+              <dd class="font-bold text-emerald-800 text-sm">5 Años de reemplazo directo</dd>
+            </div>
+          </dl>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- DIÁLOGO ACCESIBLE: CONTACTO DIRECTO DEL PROVEEDOR (WCAG 2.1 AA) -->
+  <div id="contact-modal" role="dialog" aria-modal="true" aria-labelledby="contact-modal-title" aria-describedby="contact-modal-desc" class="fixed inset-0 z-50 bg-slate-900/60 p-4 sm:p-6 flex items-center justify-center">
+    <div class="bg-surface rounded-md border border-surface-border max-w-lg w-full p-6 sm:p-8 shadow-2xl transition-all">
+      
+      <!-- CABECERA DEL DIÁLOGO -->
+      <div class="flex items-start justify-between pb-4 border-b border-surface-border mb-4">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-sm bg-primary text-white flex items-center justify-center font-bold text-lg shadow-xs flex-shrink-0">
+            TN
+          </div>
+          <div>
+            <h2 id="contact-modal-title" class="font-headline font-bold text-xl text-text-primary">
+              TechNova Mayorista SAC
+            </h2>
+            <p class="text-label-sm text-text-muted font-mono mt-0.5">RUC: 20551234567 • Proveedor Acreditado</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeContactModal()" class="w-12 h-12 inline-flex items-center justify-center text-text-muted hover:text-text-primary rounded-sm focus:outline-none focus:ring-2 focus:ring-primary" aria-label="Cerrar diálogo de contacto">
+          <span class="material-symbols-outlined text-2xl">close</span>
+        </button>
+      </div>
+
+      <!-- EXPLICACIÓN DE CONTACTO DIRECTO Y ADVERTENCIA DE POLÍTICA/CONSENTIMIENTO PENDIENTE -->
+      <div id="contact-modal-desc" class="p-4 bg-accent-soft rounded-sm border border-accent-soft-border mb-5 text-label-md text-text-secondary space-y-2">
+        <div class="flex items-center gap-2 font-bold text-text-primary">
+          <span class="material-symbols-outlined text-primary text-xl" aria-hidden="true">info</span>
+          <span>Canales de Contacto Directo B2B</span>
+        </div>
+        <p class="text-sm leading-relaxed">
+          Estos datos permiten coordinar especificaciones técnicas y despachos de volumen directamente con el equipo comercial del proveedor emisor.
+        </p>
+        <div class="pt-2 border-t border-accent-soft-border text-xs text-text-muted flex items-start gap-1.5">
+          <span class="material-symbols-outlined text-sm text-amber-700 flex-shrink-0 mt-0.5">warning</span>
+          <span>
+            <strong>Nota de gobernanza:</strong> El alcance definitivo de visibilidad pública y las políticas de consentimiento para visitantes anónimos se encuentran actualmente en definición por la administración. No se incluye mensajería instantánea ni chat interno.
+          </span>
+        </div>
+      </div>
+
+      <!-- DATOS DE EJEMPLO: CORREO Y TELÉFONO -->
+      <div class="space-y-3 mb-6">
+        
+        <!-- CORREO ELECTRÓNICO -->
+        <div class="p-4 bg-surface-alt rounded-sm border border-surface-border flex items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <span class="w-10 h-10 rounded-xs bg-surface border border-surface-border flex items-center justify-center text-primary">
+              <span class="material-symbols-outlined text-xl">mail</span>
+            </span>
+            <div>
+              <span class="text-text-muted text-xs block font-bold uppercase tracking-wider">Correo Mayorista (Ejemplo)</span>
+              <span class="font-mono text-text-primary font-bold text-sm sm:text-base">ventas.mayoristas@technova.pe</span>
+            </div>
+          </div>
+          <!-- ACCIÓN DE CORREO (MÍNIMO 44px TÁCTIL) -->
+          <a href="mailto:ventas.mayoristas@technova.pe?subject=Consulta%20Lote%20SSD%20NVMe%201TB%20-%20COMPUNEX" class="inline-flex items-center justify-center gap-1.5 px-3.5 h-11 bg-primary text-on-primary font-label text-label-md font-bold rounded-xs hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary whitespace-nowrap" aria-label="Enviar correo a TechNova Mayorista">
+            <span class="material-symbols-outlined text-lg">send</span>
+            <span class="hidden sm:inline">Escribir</span>
+          </a>
+        </div>
+
+        <!-- TELÉFONO CORPORATIVO -->
+        <div class="p-4 bg-surface-alt rounded-sm border border-surface-border flex items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <span class="w-10 h-10 rounded-xs bg-surface border border-surface-border flex items-center justify-center text-primary">
+              <span class="material-symbols-outlined text-xl">call</span>
+            </span>
+            <div>
+              <span class="text-text-muted text-xs block font-bold uppercase tracking-wider">Teléfono de Ventas B2B (Ejemplo)</span>
+              <span class="font-mono text-text-primary font-bold text-sm sm:text-base">+51 (1) 614-8900 Anx. 204</span>
+            </div>
+          </div>
+          <!-- ACCIÓN DE LLAMADA (MÍNIMO 44px TÁCTIL) -->
+          <a href="tel:+5116148900" class="inline-flex items-center justify-center gap-1.5 px-3.5 h-11 bg-surface text-primary border border-primary hover:bg-accent-soft font-label text-label-md font-bold rounded-xs focus:outline-none focus:ring-2 focus:ring-primary whitespace-nowrap" aria-label="Llamar a la central telefónica de TechNova Mayorista">
+            <span class="material-symbols-outlined text-lg">phone_in_talk</span>
+            <span class="hidden sm:inline">Llamar</span>
+          </a>
+        </div>
+
+      </div>
+
+      <!-- BOTÓN DE CERRAR DIÁLOGO (MÍNIMO 48px TÁCTIL) -->
+      <div class="pt-4 border-t border-surface-border flex items-center justify-end">
+        <button type="button" onclick="closeContactModal()" class="w-full sm:w-auto px-6 h-12 bg-surface text-text-primary border border-surface-border hover:bg-surface-alt font-label text-label-md font-bold rounded-sm focus:outline-none focus:ring-2 focus:ring-primary min-h-[48px]">
+          Cerrar ventana
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PANEL / DRAWER DEL CARRITO MULTI-PROVEEDOR -->
+  <aside id="cart-drawer-panel" aria-label="Panel del carrito multi-proveedor" class="fixed inset-y-0 right-0 w-full max-w-lg bg-surface z-50 shadow-2xl border-l border-surface-border transform translate-x-full transition-transform duration-200 ease-in-out flex flex-col hidden">
+    <div class="p-5 border-b border-surface-border flex items-center justify-between bg-surface-alt">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-sm bg-primary text-white flex items-center justify-center">
+          <span class="material-symbols-outlined text-xl">shopping_cart_checkout</span>
+        </div>
+        <div>
+          <h2 class="font-headline font-bold text-headline-sm text-text-primary">Carrito Multi-Proveedor</h2>
+          <p class="text-label-sm text-text-secondary">Facturación proforma separada por RUC emisor</p>
+        </div>
+      </div>
+      <button type="button" onclick="toggleCartDrawer(false)" class="w-12 h-12 inline-flex items-center justify-center text-text-muted hover:text-text-primary rounded-sm focus:outline-none focus:ring-2 focus:ring-primary" aria-label="Cerrar panel del carrito">
+        <span class="material-symbols-outlined text-2xl">close</span>
+      </button>
+    </div>
+
+    <div class="flex-1 overflow-y-auto p-5 space-y-6">
+      <div class="border border-surface-border rounded-md p-4 bg-surface shadow-xs">
+        <div class="flex items-center justify-between pb-3 border-b border-surface-border mb-3">
+          <div>
+            <h3 class="font-headline font-bold text-text-primary text-label-lg">TechNova Mayorista SAC</h3>
+            <p class="text-label-sm text-text-muted font-mono">RUC: 20551234567 • Almacén Lima Este</p>
+          </div>
+          <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-label-sm font-semibold">
+            MOQ Cumplido
+          </span>
+        </div>
+        <ul class="space-y-3 text-body-md">
+          <li class="flex items-start justify-between gap-3 text-sm">
+            <div>
+              <span class="font-bold text-text-primary block">SSD NVMe 1TB PCIe 4.0 (15 und.)</span>
+              <span class="text-label-sm text-text-muted">Unitario: $62.50 USD • MOQ: 10</span>
+            </div>
+            <span class="font-bold text-text-primary tabular-nums whitespace-nowrap">$937.50 USD</span>
+          </li>
+        </ul>
+        <div class="mt-3 pt-2.5 border-t border-surface-border flex justify-between font-bold text-label-md text-text-primary bg-surface-alt p-2 rounded-xs">
+          <span>Subtotal Proforma:</span>
+          <span class="tabular-nums text-primary">$937.50 USD</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-5 bg-surface-alt border-t border-surface-border space-y-3">
+      <a href="../compunex-marketplace/CompunexMarketplace.html#mis-pedidos" class="w-full inline-flex items-center justify-center gap-2 h-12 px-4 bg-primary text-on-primary font-label text-label-md font-bold rounded-sm hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary shadow-sm">
+        <span>Ver Pedido Proforma Completo</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- TOAST DE NOTIFICACIÓN ACCESIBLE (ARIA-LIVE) -->
+  <div id="toast-notification" role="status" aria-live="polite" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+    <div class="bg-text-primary text-white px-5 py-3.5 rounded-sm shadow-xl flex items-center gap-3 border border-slate-700 text-label-md">
+      <span class="material-symbols-outlined text-emerald-400 text-xl" aria-hidden="true">check_circle</span>
+      <span id="toast-message" class="font-medium">Producto actualizado</span>
+    </div>
+  </div>
+
+  <!-- FOOTER CORPORATIVO ACCESIBLE -->
+  <footer class="bg-surface border-t border-surface-border py-12 mt-auto">
+    <div class="max-w-[1280px] mx-auto px-4 sm:px-6">
+      
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8 text-label-md">
+        <div>
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-8 h-8 rounded-sm bg-primary text-white flex items-center justify-center">
+              <span class="material-symbols-outlined text-lg">memory</span>
+            </div>
+            <span class="font-display font-bold text-xl text-text-primary">COMPUNEX</span>
+          </div>
+          <p class="text-text-secondary text-body-md leading-relaxed">
+            Plataforma B2B para adquisición y venta de hardware mayorista con verificación de identidades fiscales y rigor técnico.
+          </p>
+        </div>
+
+        <div>
+          <h3 class="font-headline font-bold text-text-primary mb-3">Almacenamiento Enterprise</h3>
+          <ul class="space-y-2 text-text-secondary">
+            <li><a href="../compunex-categories/CompunexCategories.html#panel-subcategorias-almacenamiento" class="hover:text-primary">SSDs NVMe Gen4 / Gen5</a></li>
+            <li><a href="../compunex-categories/CompunexCategories.html#panel-subcategorias-almacenamiento" class="hover:text-primary">Unidades U.2 / U.3 Hot-Swap</a></li>
+            <li><a href="../compunex-categories/CompunexCategories.html#panel-subcategorias-almacenamiento" class="hover:text-primary">Discos SAS de Servidor</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="font-headline font-bold text-text-primary mb-3">Marco B2B</h3>
+          <ul class="space-y-2 text-text-secondary">
+            <li><a href="../compunex-marketplace/CompunexMarketplace.html#como-funciona" class="hover:text-primary">Cómo funciona el Marketplace</a></li>
+            <li><a href="../compunex-marketplace/CompunexMarketplace.html#como-funciona" class="hover:text-primary">Términos de Cotización Proforma</a></li>
+            <li><a href="../compunex-categories/CompunexCategories.html" class="hover:text-primary">Explorar Categorías Visuales</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="font-headline font-bold text-text-primary mb-3">Soporte Institucional</h3>
+          <p class="text-text-secondary text-body-md mb-2">
+            Mesa de ayuda comercial para empresas: lunes a viernes 8:30 - 18:00 (UTC-5).
+          </p>
+          <p class="font-mono text-text-primary font-bold">contacto@compunexb2b.com</p>
+          <p class="text-label-sm text-text-muted mt-2">Lima, Perú • Cobertura Nacional</p>
+        </div>
+      </div>
+
+      <div class="pt-8 border-t border-surface-border flex flex-col sm:flex-row items-center justify-between gap-3 text-label-sm text-text-muted">
+        <p>© 2026 COMPUNEX B2B. Todos los derechos reservados. Diseñado conforme a WCAG 2.1 AA.</p>
+        <p>Entorno de cotización y pedidos simulados para empresas de hardware.</p>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- SCRIPT CLIENTE: VALIDACIÓN MOQ, GALERÍA, MODAL CONTACTO Y COMPRA PROPIA -->
+  <script>
+    let isExternalBuyer = false; // Por defecto: TechNova SAC (producto propio)
+
+    function switchGalleryImage(imgSrc, btnEl) {
+      const mainImg = document.getElementById('main-product-gallery');
+      if (mainImg) {
+        mainImg.src = imgSrc;
+      }
+      document.querySelectorAll('.gallery-thumb-btn').forEach(btn => {
+        btn.classList.remove('border-2', 'border-primary');
+        btn.classList.add('border', 'border-surface-border');
+        btn.setAttribute('aria-selected', 'false');
+      });
+      btnEl.classList.remove('border-surface-border');
+      btnEl.classList.add('border-2', 'border-primary');
+      btnEl.setAttribute('aria-selected', 'true');
+    }
+
+    function setDirectQty(val) {
+      const input = document.getElementById('detail-qty-input');
+      if (input) {
+        input.value = val;
+        validateMOQ(val);
+      }
+    }
+
+    function validateMOQ(val) {
+      const qty = parseInt(val, 10) || 0;
+      const statusEl = document.getElementById('qty-validation-status');
+      const hintEl = document.getElementById('moq-hint-text');
+      const btn = document.getElementById('btn-add-to-cart');
+
+      if (qty < 10) {
+        statusEl.innerHTML = '<span class="material-symbols-outlined text-xs text-error">cancel</span> <span class="text-error">Inferior al pedido mínimo (10 und.)</span>';
+        hintEl.innerHTML = '<strong class="text-error">Alerta de validación:</strong> Debe solicitar al menos 10 unidades de este lote para cotizar.';
+        if (isExternalBuyer) {
+          btn.disabled = true;
+          btn.classList.add('cursor-not-allowed', 'opacity-60', 'bg-surface-border', 'text-text-muted');
+          btn.classList.remove('bg-primary', 'text-on-primary', 'hover:bg-primary-hover');
+        }
+      } else {
+        statusEl.innerHTML = '<span class="material-symbols-outlined text-xs text-emerald-700">check_circle</span> <span class="text-emerald-700">Pedido mínimo cubierto</span>';
+        hintEl.innerHTML = 'Cantidad conforme a las reglas del proveedor mayorista.';
+        if (isExternalBuyer) {
+          btn.disabled = false;
+          btn.classList.remove('cursor-not-allowed', 'opacity-60', 'bg-surface-border', 'text-text-muted');
+          btn.classList.add('bg-primary', 'text-on-primary', 'hover:bg-primary-hover');
+        }
+      }
+    }
+
+    function toggleDemoBuyerMode() {
+      isExternalBuyer = !isExternalBuyer;
+      const alertBox = document.getElementById('self-purchase-alert');
+      const btn = document.getElementById('btn-add-to-cart');
+      const btnText = document.getElementById('btn-add-text');
+      const toggleDemoBtn = document.getElementById('btn-toggle-demo-buyer');
+
+      if (isExternalBuyer) {
+        alertBox.classList.add('hidden');
+        btnText.textContent = 'Agregar al carrito';
+        btn.querySelector('.material-symbols-outlined').textContent = 'add_shopping_cart';
+        toggleDemoBtn.textContent = 'Volver al usuario autenticado (TechNova SAC)';
+        validateMOQ(document.getElementById('detail-qty-input').value);
+        showToast('Perfil cambiado: Ahora está navegando como comprador externo (Inversiones del Sur SAC).');
+      } else {
+        alertBox.classList.remove('hidden');
+        btnText.textContent = 'No puede comprar su propio producto';
+        btn.querySelector('.material-symbols-outlined').textContent = 'remove_shopping_cart';
+        btn.disabled = true;
+        btn.classList.add('cursor-not-allowed', 'opacity-80', 'bg-surface-border', 'text-text-muted');
+        btn.classList.remove('bg-primary', 'text-on-primary', 'hover:bg-primary-hover');
+        toggleDemoBtn.textContent = 'Cambiar a comprador externo (Inversiones del Sur SAC)';
+        showToast('Perfil restablecido: TechNova SAC (dueño del producto).');
+      }
+    }
+
+    function handleProductAddToCart() {
+      if (!isExternalBuyer) {
+        showToast('Acción no permitida: No puede comprar productos publicados por su propia empresa.');
+        return;
+      }
+      const qty = document.getElementById('detail-qty-input').value;
+      const badge = document.getElementById('cart-badge-count');
+      if (badge) {
+        const count = parseInt(badge.textContent, 10) || 0;
+        badge.textContent = count + 1;
+      }
+      showToast(`Añadido: ${qty} und. de SSD NVMe 1TB PCIe 4.0 al pedido mayorista.`);
+      toggleCartDrawer(true);
+    }
+
+    function handleViewContact() {
+      document.getElementById('contact-modal').classList.remove('hidden');
+    }
+
+    function closeContactModal() {
+      document.getElementById('contact-modal').classList.add('hidden');
+    }
+
+    function toggleMobileMenu(force) {
+      const drawer = document.getElementById('nav-drawer');
+      const backdrop = document.getElementById('shared-backdrop');
+      const shouldOpen = typeof force === 'boolean' ? force : drawer.classList.contains('hidden');
+      
+      if (shouldOpen) {
+        drawer.classList.remove('hidden');
+        drawer.classList.remove('-translate-x-full');
+        backdrop.classList.remove('hidden');
+      } else {
+        drawer.classList.add('-translate-x-full');
+        setTimeout(() => drawer.classList.add('hidden'), 200);
+        backdrop.classList.add('hidden');
+      }
+    }
+
+    function toggleCartDrawer(force) {
+      const cart = document.getElementById('cart-drawer-panel');
+      const backdrop = document.getElementById('shared-backdrop');
+      const shouldOpen = typeof force === 'boolean' ? force : cart.classList.contains('hidden');
+      
+      if (shouldOpen) {
+        cart.classList.remove('hidden');
+        cart.classList.remove('translate-x-full');
+        backdrop.classList.remove('hidden');
+      } else {
+        cart.classList.add('translate-x-full');
+        setTimeout(() => cart.classList.add('hidden'), 200);
+        backdrop.classList.add('hidden');
+      }
+    }
+
+    function toggleAccountMenu() {
+      const menu = document.getElementById('account-dropdown');
+      menu.classList.toggle('hidden');
+    }
+
+    function closeAllDrawers() {
+      toggleMobileMenu(false);
+      toggleCartDrawer(false);
+      document.getElementById('account-dropdown').classList.add('hidden');
+      document.getElementById('shared-backdrop').classList.add('hidden');
+      closeContactModal();
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast-notification');
+      const text = document.getElementById('toast-message');
+      if (!toast || !text) return;
+      text.textContent = message;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 3500);
+    }
+  </script>
+
+
+</body></html>

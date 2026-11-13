@@ -65,6 +65,8 @@ public class JwtTokenProvider {
 
         if (rol != null && !rol.isBlank()) {
             builder.claim("rol", rol);
+            builder.claim("roles", java.util.List.of(rol));
+            builder.claim("tienePerfilProveedor", "PROVEEDOR".equalsIgnoreCase(rol));
         }
 
         return builder.signWith(getSigningKey()).compact();

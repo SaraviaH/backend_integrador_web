@@ -4,7 +4,7 @@ import com.compunex.b2b.config.SecurityConfig;
 import com.compunex.b2b.modules.catalogo.dto.request.CambiarEstadoProductoDTO;
 import com.compunex.b2b.modules.catalogo.dto.response.CambioEstadoResponseDTO;
 import com.compunex.b2b.modules.catalogo.dto.response.ProductoPaginadoResponseDTO;
-import com.compunex.b2b.modules.catalogo.service.ProductoService;
+import com.compunex.b2b.modules.catalogo.service.AdminProductoService;
 import com.compunex.b2b.security.JwtAuthenticationFilter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,7 +43,7 @@ class AdminProductoControllerTest {
     private MockMvc mockMvc;
 
     @MockitoBean
-    private ProductoService productoService;
+    private AdminProductoService productoService;
 
     @Test
     @DisplayName("[Admin A] GET /api/v1/admin/products debe retornar 200 con paginación")

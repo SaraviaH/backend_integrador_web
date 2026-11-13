@@ -1,15 +1,15 @@
-# 03. Arquitectura y Estructura del Backend (Spring Boot 3)
+# 03. Arquitectura y Estructura del Backend (Spring Boot 3.5.16)
 
 > **Plataforma:** COMPUNEX B2B — Ecosistema Mayorista de Componentes de Computación  
-> **Framework:** Java 17 / 21 + Spring Boot 3.3+ + Spring Security 6 + Spring Data JPA + Hibernate  
-> **Persistencia:** PostgreSQL 15+  
-> **Patrón:** Monolito Modular por Dominios (*Vertical Slicing* + *Clean Architecture*)  
+> **Framework:** Java 21 + Spring Boot 3.5.16 + Spring Security 6 + Spring Data JPA + Hibernate + Springdoc OpenAPI 2.8.9  
+> **Persistencia:** PostgreSQL 15+ (y H2 en modo PostgreSQL para pruebas TDD)  
+> **Patrón:** Monolito Modular por Dominios (*Vertical Slicing* + *SRP / Opción B*)  
 > **Estándar DTO:** Segregación estricta de responsabilidades en paquetes `dto/request/` y `dto/response/`  
-> **Metodología de Calidad:** TDD Estricto (Pruebas de Repositorio `@DataJpaTest`, Pruebas de Servicio Mockito, Pruebas de Controlador `@WebMvcTest`)
+> **Metodología de Calidad:** Pruebas `@DataJpaTest`, unitarias con Mockito, `@WebMvcTest` y pruebas integradas `@SpringBootTest`
 
 ---
 
-## 1. Estructura Completa del Proyecto Maven
+## 1. Estructura Real del Proyecto Maven
 
 ```text
 compunex-backend/
@@ -17,228 +17,133 @@ compunex-backend/
 └── src/
     ├── main/
     │   ├── java/com/compunex/b2b/
-    │   │   ├── CompunexApplication.java
+    │   │   ├── CompunexBackendApplication.java
     │   │   │
-    │   │   ├── config/                          # Configuraciones de Infraestructura Spring
-    │   │   │   ├── SecurityConfig.java          # Spring Security 6 + Filtros JWT sin estado
-    │   │   │   ├── OpenApiConfig.java           # Documentación Swagger / OpenAPI 3.0
-    │   │   │   ├── CorsConfig.java              # Políticas de orígenes cruzados para React SPA
-    │   │   │   └── JpaAuditingConfig.java       # Auditoría JPA (@CreatedDate, @LastModifiedDate)
+    │   │   ├── config/                          # Infraestructura Spring y AOP
+    │   │   │   ├── SecurityConfig.java          # Spring Security 6 + CORS + JWT stateless RBAC
+    │   │   │   ├── OpenApiConfig.java           # Documentación Swagger / OpenAPI 3
+    │   │   │   ├── DataInitializer.java         # Datos semilla iniciales
+    │   │   │   └── audit/                       # Auditoría transversal AOP
+    │   │   │       ├── Auditable.java
+    │   │   │       └── AuditAspect.java
     │   │   │
-    │   │   ├── security/                        # Componentes Transversales de Seguridad
-    │   │   │   ├── JwtTokenProvider.java        # Firma, emisión y validación de tokens JWT
-    │   │   │   ├── JwtAuthenticationFilter.java # Interceptor de Authorization: Bearer <TOKEN>
-    │   │   │   ├── CustomUserDetails.java       # Implementación UserDetails de Spring Security
-    │   │   │   └── SecurityUtils.java           # Acceso estático al usuario en SecurityContext
+    │   │   ├── exception/                       # Manejo centralizado de errores
+    │   │   │   ├── GlobalExceptionHandler.java  # @RestControllerAdvice
+    │   │   │   ├── ErrorResponseDTO.java        # status, error, mensaje, timestamp
+    │   │   │   ├── BusinessException.java
+    │   │   │   ├── ResourceNotFoundException.java
+    │   │   │   └── DuplicateResourceException.java
     │   │   │
-    │   │   ├── modules/                         # Módulos de Negocio (Vertical Slices)
-    │   │   │   │
-    │   │   │   ├── auth/                        # 🔐 Módulo 0: Autenticación y Credenciales
-    │   │   │   │   ├── controller/              # AuthController (/api/v1/auth)
-    │   │   │   │   ├── dto/
-    │   │   │   │   │   ├── request/             # 📥 DTOs de Entrada con @Valid
-    │   │   │   │   │   │   ├── LoginRequestDTO.java
-    │   │   │   │   │   │   └── CambiarPasswordDTO.java
-    │   │   │   │   │   └── response/            # 📤 DTOs de Salida (Records inmutables)
-    │   │   │   │   │       ├── AuthResponseDTO.java (Solo token JWT, cero ID)
-    │   │   │   │   │       └── UsuarioSesionDTO.java
-    │   │   │   │   ├── service/
-    │   │   │   │   │   ├── AuthService.java     # Interfaz
-    │   │   │   │   │   └── impl/
-    │   │   │   │   │       └── AuthServiceImpl.java
-    │   │   │   │   └── repository/              # UsuarioRepository
-    │   │   │   │
-    │   │   │   ├── catalogo/                    # 📦 Módulo 1 & 3: Categorías, Productos, Specs, Fotos
-    │   │   │   │   ├── controller/              # ProductoProveedorController, CategoriaController
-    │   │   │   │   ├── dto/
-    │   │   │   │   │   ├── request/             # 📥 DTOs de Entrada
-    │   │   │   │   │   │   ├── CrearProductoRequestDTO.java
-    │   │   │   │   │   │   ├── ActualizarProductoRequestDTO.java
-    │   │   │   │   │   │   └── CambiarEstadoProductoDTO.java
-    │   │   │   │   │   └── response/            # 📤 DTOs de Salida
-    │   │   │   │   │       ├── ProductoDetalleResponseDTO.java
-    │   │   │   │   │       ├── ProductoResumenResponseDTO.java
-    │   │   │   │   │       ├── CategoriaResponseDTO.java
-    │   │   │   │   │       └── CambioEstadoResponseDTO.java
-    │   │   │   │   ├── entity/                  # Entidades JPA (@Entity)
-    │   │   │   │   │   ├── Categoria.java
-    │   │   │   │   │   ├── Subcategoria.java
-    │   │   │   │   │   ├── Producto.java
-    │   │   │   │   │   ├── ProductoEspecificacion.java
-    │   │   │   │   │   └── ImagenProducto.java
-    │   │   │   │   ├── mapper/                  # Conversores Entity ⇄ DTO
-    │   │   │   │   │   ├── ProductoMapper.java
-    │   │   │   │   │   └── CategoriaMapper.java
-    │   │   │   │   ├── repository/              # Spring Data JPA
-    │   │   │   │   │   ├── ProductoRepository.java
-    │   │   │   │   │   └── CategoriaRepository.java
-    │   │   │   │   └── service/                 # Lógica transaccional
-    │   │   │   │       ├── ProductoService.java
-    │   │   │   │       ├── CategoriaService.java
-    │   │   │   │       └── impl/
-    │   │   │   │           ├── ProductoServiceImpl.java
-    │   │   │   │           └── CategoriaServiceImpl.java
-    │   │   │   │
-    │   │   │   ├── ofertas/                     # 🏷️ Módulo 4: Ofertas y Descuentos Mayoristas
-    │   │   │   │   ├── controller/              # OfertaProveedorController
-    │   │   │   │   ├── dto/
-    │   │   │   │   │   ├── request/             # 📥 DTOs de Entrada
-    │   │   │   │   │   │   ├── CrearOfertaRequestDTO.java
-    │   │   │   │   │   │   └── ActualizarOfertaRequestDTO.java
-    │   │   │   │   │   └── response/            # 📤 DTOs de Salida
-    │   │   │   │   │       └── OfertaResponseDTO.java
-    │   │   │   │   ├── entity/                  # Entidad JPA
-    │   │   │   │   │   └── Oferta.java
-    │   │   │   │   ├── mapper/
-    │   │   │   │   │   └── OfertaMapper.java
-    │   │   │   │   ├── repository/              # OfertaRepository
-    │   │   │   │   └── service/
-    │   │   │   │       ├── OfertaService.java
-    │   │   │   │       └── impl/
-    │   │   │   │           └── OfertaServiceImpl.java
-    │   │   │   │
-    │   │   │   ├── perfiles/                    # 🏢 Módulo 2: Perfiles Corporativos Mayoristas
-    │   │   │   │   ├── controller/              # PerfilProveedorController
-    │   │   │   │   ├── dto/
-    │   │   │   │   │   ├── request/
-    │   │   │   │   │   │   └── ActualizarPerfilRequestDTO.java
-    │   │   │   │   │   └── response/
-    │   │   │   │   │       └── PerfilProveedorResponseDTO.java
-    │   │   │   │   ├── entity/
-    │   │   │   │   │   ├── PerfilProveedor.java
-    │   │   │   │   │   ├── ProveedorMarca.java
-    │   │   │   │   │   └── ProveedorEspecialidad.java
-    │   │   │   │   ├── mapper/
-    │   │   │   │   │   └── PerfilProveedorMapper.java
-    │   │   │   │   ├── repository/              # PerfilProveedorRepository
-    │   │   │   │   └── service/
-    │   │   │   │       ├── ProveedorService.java
-    │   │   │   │       └── impl/
-    │   │   │   │           └── ProveedorServiceImpl.java
-    │   │   │   │
-    │   │   │   └── auditoria/                   # 🛡️ Historial de Bajas Lógicas (Audit Log)
-    │   │   │       ├── entity/
-    │   │   │       │   └── RegistroAuditoria.java
-    │   │   │       ├── repository/
-    │   │   │       │   └── RegistroAuditoriaRepository.java
-    │   │   │       └── service/
-    │   │   │           ├── AuditoriaService.java
-    │   │   │           └── impl/
-    │   │   │               └── AuditoriaServiceImpl.java
+    │   │   ├── security/                        # Seguridad JWT
+    │   │   │   ├── JwtTokenProvider.java
+    │   │   │   ├── JwtAuthenticationFilter.java
+    │   │   │   └── CustomUserDetailsService.java
     │   │   │
-    │   │   └── shared/                          # Componentes Transversales Compartidos
-    │   │       ├── exception/                   # Manejo centralizado RFC-7807
-    │   │       │   ├── GlobalExceptionHandler.java # @RestControllerAdvice
-    │   │       │   ├── ResourceNotFoundException.java
-    │   │       │   ├── BusinessRuleException.java
-    │   │       │   └── UnauthorizedException.java
-    │   │       ├── dto/
-    │   │       │   ├── MensajeRespuestaDTO.java # Mensajes simples de confirmación
-    │   │       │   ├── ErrorResponseDTO.java    # Formato RFC-7807 de error
-    │   │       │   └── PageResponse.java        # Envoltorio desacoplado de paginación
-    │   │       └── entity/
-    │   │           └── BaseAuditableEntity.java # @MappedSuperclass (fechaCreacion, etc.)
+    │   │   └── modules/                         # Módulos de Negocio (Vertical Slices)
+    │   │       ├── auth/                        # Módulo Auth & Onboarding Corporativo
+    │   │       │   ├── controller/              # AuthController (/api/v1/auth)
+    │   │       │   ├── dto/request|response/    # Login, RegistroProveedor, RegistroEmpresa, Password, Sesion
+    │   │       │   ├── entity/                  # Usuario, RolUsuario, EstadoUsuario
+    │   │       │   ├── exception/               # ContrasenaActualIncorrectaException
+    │   │       │   ├── repository/              # UsuarioRepository
+    │   │       │   └── service/                 # AuthService, RegistroCorporativoService + impl/
+    │   │       │
+    │   │       ├── perfiles/                    # Módulo Perfil Comercial del Proveedor
+    │   │       │   ├── controller/              # ProviderProfileController (/api/v1/providers/me/*)
+    │   │       │   ├── dto/request|response/    # ActivarProveedorRequest/Response, ProveedorPerfilResponse
+    │   │       │   ├── entity/                  # PerfilProveedor
+    │   │       │   ├── repository/              # PerfilProveedorRepository
+    │   │       │   └── service/                 # ProviderProfileService + impl/
+    │   │       │
+    │   │       ├── catalogo/                    # Módulo Categorías, Productos y Moderación Admin
+    │   │       │   ├── controller/              # CategoriaController, ProductoProveedorController, ProductoPublicoController, AdminProductoController
+    │   │       │   ├── dto/request|response/    # DTOs por caso de uso + ProductoPaginadoResponseDTO.from
+    │   │       │   ├── entity/                  # Categoria, Subcategoria, Producto, ProductoEspecificacion, ImagenProducto, enums
+    │   │       │   ├── repository/              # CategoriaRepository, ProductoRepository, ProductoSpecification
+    │   │       │   └── service/                 # CategoriaService, ProductoProveedorService, ProductoPublicoService, AdminProductoService + impl/ + support/
+    │   │       │
+    │   │       ├── ordenes/                     # Módulo Checkout Split Order, Historial y Ventas Proveedor
+    │   │       │   ├── controller/              # OrderController, ProviderSalesController
+    │   │       │   ├── dto/request|response/    # CheckoutRequest/Response, OrdenPaginada, VentaPaginada, SubordenDetalleProveedor
+    │   │       │   ├── entity/                  # Orden, SubordenFactura, OrdenItem, EstadoOrden, EstadoSuborden
+    │   │       │   ├── exception/               # AutoCompraException, StockInsuficienteException
+    │   │       │   ├── repository/              # OrdenRepository, SubordenFacturaRepository, OrdenItemRepository
+    │   │       │   └── service/                 # OrderService, ProviderSalesService + impl/ + support/ (SplitOrderCalculator, OrderResponseMapper)
+    │   │       │
+    │   │       └── media/                       # Módulo Carga y Entrega de Imágenes (Sprint-B09)
+    │   │           ├── controller/              # MediaController (/api/v1/media)
+    │   │           ├── dto/response/            # MediaUploadResponseDTO
+    │   │           └── service/                 # MediaStorageService + impl/LocalMediaStorageServiceImpl
     │   │
     │   └── resources/
-    │       ├── application.yml                  # Configuración base de Spring Boot
-    │       ├── application-dev.yml              # Conexión local PostgreSQL (puerto 5432)
-    │       └── application-prod.yml             # Perfil cloud / variables de entorno
+    │       ├── application.properties           # Configuración base PostgreSQL, JPA, JWT, Swagger, Multipart
+    │       ├── application-dev.yml              # Perfil desarrollo local
+    │       └── application-prod.yml             # Perfil producción (ddl-auto: validate + env vars obligatorias)
     │
-    └── test/                                    # 🧪 Batería de Pruebas TDD (Fases 1, 2 y 3)
-        └── java/com/compunex/b2b/
-            ├── modules/
-            │   ├── auth/
-            │   │   ├── controller/
-            │   │   │   └── AuthControllerTest.java           # Fase 3: @WebMvcTest
-            │   │   └── service/
-            │   │       └── AuthServiceTest.java              # Fases 1 & 2: Mockito
-            │   ├── catalogo/
-            │   │   ├── controller/
-            │   │   │   └── ProductoProveedorControllerTest.java # Fase 3: @WebMvcTest
-            │   │   ├── repository/
-            │   │   │   └── ProductoRepositoryTest.java       # Fase 1: @DataJpaTest
-            │   │   └── service/
-            │   │       └── ProductoServiceTest.java          # Fases 1 & 2: Mockito
-            │   ├── ofertas/
-            │   │   ├── controller/
-            │   │   │   └── OfertaProveedorControllerTest.java # Fase 3: @WebMvcTest
-            │   │   ├── repository/
-            │   │   │   └── OfertaRepositoryTest.java         # Fase 1: @DataJpaTest
-            │   │   └── service/
-            │   │       └── OfertaServiceTest.java            # Fases 1 & 2: Mockito
-            │   └── perfiles/
-            │       ├── controller/
-            │       │   └── PerfilProveedorControllerTest.java# Fase 3: @WebMvcTest
-            │       └── service/
-            │           └── ProveedorServiceTest.java         # Fases 1 & 2: Mockito
-            └── shared/
-                └── GlobalExceptionHandlerTest.java
+    └── test/java/com/compunex/b2b/              # 25 clases de prueba (83 tests pasando)
+        ├── CompunexBackendApplicationTests.java
+        ├── config/audit/AuditAspectTest.java
+        ├── security/SecurityAuthorizationTest.java
+        └── modules/
+            ├── auth/ (AuthControllerTest, CompanyRegistrationTest, AuthServiceTest, RegistroCorporativoServiceTest)
+            ├── catalogo/ (AdminProductControllerTest, AdminProductoControllerTest, CategoriaControllerTest, ProductoProveedorControllerTest, ProductoPublicoControllerTest, ProductoRepositoryTest, AdminProductoServiceTest, CategoriaServiceTest, ProductoProveedorServiceTest)
+            ├── media/ (MediaControllerTest)
+            ├── ordenes/ (OrderControllerTest, OrderHistoryTest, OrderSecurityTest, ProviderSalesControllerTest, OrderRepositoryTest, SubordenRepositoryTest, OrderServiceSplitOrderTest)
+            └── perfiles/ (ProviderProfileControllerTest)
 ```
 
 ---
 
 ## 2. Convenciones de Segregación de DTOs (`request/` vs `response/`)
 
-Para evitar que los programadores reutilicen el mismo DTO para entrada y salida, se aplican las siguientes reglas:
-
 | Paquete | Rol Arquitectónico | Anotaciones Permitidas | Convención de Nombre | Ejemplo |
 |---|---|---|---|---|
 | **`dto/request/`** | Parsear el `@RequestBody` del cliente HTTP | `@Valid`, `@NotBlank`, `@NotNull`, `@Size`, `@Min`, `@Pattern`, `@Email` | `*RequestDTO.java` | `CrearProductoRequestDTO.java` |
-| **`dto/response/`** | Serializar datos limpios hacia la UI React | `@JsonProperty`, `record` inmutables de Java 17+, proyecciones de vista | `*ResponseDTO.java` | `ProductoDetalleResponseDTO.java` |
+| **`dto/response/`** | Serializar datos limpios hacia Angular SPA | `record` inmutables Java 21 o DTOs con `@Builder` | `*ResponseDTO.java` | `ProductoDetalleResponseDTO.java` |
 
 > [!IMPORTANT]
-> **Regla de Cero Exposición:** Ningún DTO en `dto/response/` debe incluir el `hashContrasena`, IDs internos de usuario o atributos de auditoría interna que no pertenezcan al contrato de la vista.
+> **Regla de Cero Exposición:** Ningún DTO en `dto/response/` expone credenciales (`hashContrasena`) ni campos internos ajenos al contrato en `CONTRATOS_JSON.md`.
 
 ---
 
 ## 3. Responsabilidades por Capa Arquitectónica
 
 ### 🎮 1. Capa de Controladores (`controller/`) — *Thin Controllers*
-- **Responsabilidad:** Exposición de endpoints REST, parsing de parámetros HTTP (`@PathVariable`, `@RequestParam`, `@RequestBody`).
-- **Controlador Delgado:** Cero lógica de negocio. Solo valida el DTO de entrada con `@Valid` y delega la ejecución al método del servicio.
-- **Seguridad:** Decorado con `@PreAuthorize("hasRole('PROVEEDOR')")` a nivel de clase o método.
+- Exposición de rutas `/api/v1/*`, validación `@Valid` de entrada y códigos HTTP (`200`, `201`, `204`).
+- Delegación directa en interfaces de servicio especializadas por actor.
 
-### ⚙️ 2. Capa de Servicios (`service/` y `service/impl/`)
-- **Interfaz (`service/`):** Define el contrato del caso de uso. El líder técnico la crea primero junto con los DTOs.
-- **Implementación (`service/impl/`):** El programador implementa la lógica transaccional guiado por el ciclo TDD.
-- **Transaccionalidad:** Todo método modificador de estado (`save`, `update`, `deleteLogico`) lleva `@Transactional(rollbackFor = Exception.class)`. Las consultas de solo lectura llevan `@Transactional(readOnly = true)`.
+### ⚙️ 2. Capa de Servicios (`service/`, `service/impl/` y `service/support/`)
+- Segregación por responsabilidad única (SRP): cada servicio cubre un caso de uso o actor específico (`ProductoProveedorService`, `ProductoPublicoService`, `AdminProductoService`, `AuthService`, `RegistroCorporativoService`).
+- Colaboradores cohesivos en `support/` encapsulan lógica pura o mapeos compartidos (`SplitOrderCalculator`, `OrderResponseMapper`, `ProveedorContextHelper`, `ProductoEstadoHelper`).
+- `@Transactional` delimita operaciones multi-entidad y rollback atómico (por ejemplo, `@Transactional(rollbackFor = Exception.class)` en checkout Split Order).
 
-### 🔄 3. Capa de Mapeo (`mapper/`)
-- **Responsabilidad:** Desacoplar las entidades de base de datos (`@Entity`) de los contratos HTTP (`DTO`).
-- **Mecanismo:** Clases dedicadas con métodos estáticos o interfaces MapStruct (`toEntity()`, `toResponse()`).
-
-### 🗄️ 4. Capa de Persistencia (`repository/` y `entity/`)
-- **Entidades (`entity/`):** Modelos JPA que mapean fielmente al `01_DICCIONARIO_DE_DATOS.md`. Uso de cascadas `@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)` para persistencia atómica de tablas hijas.
-- **Repositorios (`repository/`):** Interfaces que extienden `JpaRepository<T, ID>` para operaciones CRUD y consultas derivadas automáticas.
+### 🗄️ 3. Capa de Persistencia (`repository/` y `entity/`)
+- `JpaRepository` y `JpaSpecificationExecutor` (`ProductoSpecification`) sobre PostgreSQL 15+ (`ddl-auto=update` en `dev` / `validate` en `prod`).
+- Secuencias lógicas persistentes mediante consultas `MAX(id)` en `OrdenRepository` y `SubordenFacturaRepository`.
 
 ---
 
-## 4. Formato Canónico de Errores (RFC-7807)
+## 4. Formato Uniforme de Errores (`ErrorResponseDTO`)
 
-Todos los errores y violaciones de reglas de negocio capturados por `GlobalExceptionHandler` emiten la estructura RFC-7807:
+`GlobalExceptionHandler` captura excepciones de dominio (`BusinessException`, `ResourceNotFoundException`, `DuplicateResourceException`, `StockInsuficienteException`, `AutoCompraException`) y devuelve JSON estructurado con `status`, `error`, `mensaje` y `timestamp`:
 
 ```json
 {
-  "timestamp": "2026-09-02T15:30:00Z",
   "status": 400,
-  "error": "BAD_REQUEST",
-  "codigo": "RN-PRECIO-OFERTA",
-  "mensaje": "El precio promocional ($98.00) debe ser estrictamente menor al precio regular ($112.00).",
-  "path": "/api/v1/providers/me/offers"
+  "error": "Bad Request",
+  "mensaje": "No puedes comprar tus propios productos: Memoria RAM ...",
+  "timestamp": "2026-11-13T04:15:00"
 }
 ```
 
 ---
 
-## 5. Alineación con las Rúbricas de Evaluación (20/20 Puntos)
+## 5. Resumen Técnico Verificado
 
-| Criterio de la Rúbrica | Paquete / Componente que lo Satisface |
+| Aspecto | Implementación Real Verificada |
 |---|---|
-| **Ítem 1: Framework Spring Boot (2 pts)** | `pom.xml` con `spring-boot-starter-web`, `spring-boot-starter-data-jpa` |
-| **Ítem 2: Conexión a Base de Datos (2 pts)** | `application.yml` con driver PostgreSQL y datasource HikariCP |
-| **Ítem 3: Modelado de Datos >= 6 tablas (3 pts)** | Paquetes `entity/` con 8 entidades relacionadas (`Producto`, `Categoria`, `Oferta`, etc.) |
-| **Ítem 4: Repositorios y Servicios (2 pts)** | `repository/` (`JpaRepository`) y `service/impl/` (`@Transactional`) |
-| **Ítem 5: RestControllers para CRUD (4 pts)** | `controller/` con los 18 endpoints REST documentados en el contrato |
-| **Ítem 9: TDD Repositorio @DataJpaTest (2 pts)** | Carpeta `src/test/.../repository/` con tests de persistencia y soft delete |
-| **Ítem 10: TDD Servicio / Mockito (1 pt)** | Carpeta `src/test/.../service/` con tests unitarios aislados |
-| **Ítem 11: Informe y Capturas (4 pts)** | Capturas de JUnit (Rojo, Verde) y Postman para el informe Word |
+| **Framework y Java** | Spring Boot `3.5.16` + Java `21` + Springdoc OpenAPI `2.8.9` |
+| **Base de Datos** | PostgreSQL (`localhost:5432/compunex_b2b`) + H2 modo PostgreSQL en tests |
+| **Entidades JPA** | 10 tablas (`usuarios`, `perfiles_proveedor`, `categorias`, `subcategorias`, `productos`, `producto_especificaciones`, `imagenes_producto`, `ordenes`, `subordenes_factura`, `orden_items`) |
+| **Cobertura API** | 27 endpoints implementados (24 Core + `PATCH /providers/me/sales/{subordenId}/status` + 2 Media) |
+| **Suite Automatizada** | `.\mvnw.cmd clean test` → `83` tests ejecutados, `0` fallos, `0` errores |
