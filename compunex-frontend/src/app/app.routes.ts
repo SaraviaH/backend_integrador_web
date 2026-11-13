@@ -15,6 +15,9 @@ import { ChangePasswordComponent } from './features/account/security/change-pass
 import { ActivateProviderComponent } from './features/account/activate-provider/activate-provider.component';
 import { ProviderDashboardComponent } from './features/provider/dashboard/provider-dashboard.component';
 import { ProviderCompanyProfileComponent } from './features/provider/company-profile/provider-company-profile.component';
+import { ProviderProductsListComponent } from './features/provider/products/products-list/provider-products-list.component';
+import { ProviderProductFormComponent } from './features/provider/products/product-form/provider-product-form.component';
+import { ProviderProductDetailComponent } from './features/provider/products/product-detail/provider-product-detail.component';
 import { LoginComponent } from './features/auth/login/login.component';
 import { RegisterCompanyComponent } from './features/auth/register-company/register-company.component';
 import { ForbiddenViewComponent } from './features/forbidden/forbidden-view.component';
@@ -174,6 +177,46 @@ export const routes: Routes = [
       {
         path: 'perfil-comercial',
         redirectTo: 'profile',
+        pathMatch: 'full'
+      },
+      {
+        path: 'products',
+        component: ProviderProductsListComponent,
+        title: 'Mis Productos B2B · COMPUNEX B2B'
+      },
+      {
+        path: 'productos',
+        redirectTo: 'products',
+        pathMatch: 'full'
+      },
+      {
+        path: 'products/new',
+        component: ProviderProductFormComponent,
+        title: 'Publicar Nuevo Producto · COMPUNEX B2B'
+      },
+      {
+        path: 'productos/nuevo',
+        redirectTo: 'products/new',
+        pathMatch: 'full'
+      },
+      {
+        path: 'products/:id',
+        component: ProviderProductDetailComponent,
+        title: 'Ficha de Producto · COMPUNEX B2B'
+      },
+      {
+        path: 'productos/:id',
+        redirectTo: 'products/:id',
+        pathMatch: 'full'
+      },
+      {
+        path: 'products/:id/edit',
+        component: ProviderProductFormComponent,
+        title: 'Editar Producto · COMPUNEX B2B'
+      },
+      {
+        path: 'productos/:id/editar',
+        redirectTo: 'products/:id/edit',
         pathMatch: 'full'
       }
     ]

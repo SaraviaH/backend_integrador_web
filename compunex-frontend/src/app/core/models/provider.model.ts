@@ -13,9 +13,12 @@ export interface ProviderProductItem {
   nombre: string;
   categoriaNombre: string;
   precioUnitario: number;
+  precioMayorista?: number;
+  cantidadMinimaMayorista?: number;
   stock: number;
   activo: boolean;
   ultimaActualizacion: string;
+  imagenUrl?: string;
 }
 
 export interface ProviderProfile {

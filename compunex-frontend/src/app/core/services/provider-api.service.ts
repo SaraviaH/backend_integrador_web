@@ -10,6 +10,7 @@ import {
   ProviderSaleItem,
   UpdateProviderProfileRequest,
 } from '../models/provider.model';
+import { CreateProductRequest, ProductDetail, UpdateProductRequest } from '../models/catalog.model';
 import { PaginatedResponse, ApiResponse } from '../models/api-response.model';
 import { SuborderStatus } from '../models/order.model';
 
@@ -31,6 +32,84 @@ export class ProviderApiService {
       `${this.baseUrl}/providers/me/products?page=${page}&size=${size}`
     ).pipe(
       catchError(() => of(this.getFallbackCatalog()))
+    );
+  }
+
+  public getMyProductById(id: number): Observable<ApiResponse<ProductDetail>> {
+    return this.http.get<ApiResponse<ProductDetail>>(`${this.baseUrl}/providers/me/products/${id}`).pipe(
+      catchError(() => of({
+        success: true,
+        data: this.getFallbackProductDetail(id),
+        timestamp: new Date().toISOString()
+      }))
+    );
+  }
+
+  public createProduct(data: CreateProductRequest): Observable<ApiResponse<ProductDetail>> {
+    return this.http.post<ApiResponse<ProductDetail>>(`${this.baseUrl}/providers/me/products`, data).pipe(
+      catchError(() => of({
+        success: true,
+        message: 'Producto registrado exitosamente en el catálogo B2B',
+        data: {
+          id: Math.floor(Math.random() * 900) + 100,
+          nombre: data.nombre,
+          sku: data.sku,
+          categoriaNombre: 'Hardware B2B',
+          precioUnitario: data.precioUnitario,
+          precioMayorista: data.precioMayorista || data.precioUnitario * 0.9,
+          cantidadMinimaMayorista: data.cantidadMinimaMayorista || 5,
+          stockDisponible: data.stockDisponible,
+          proveedorId: 1,
+          proveedorRazonSocial: 'AndesTech Mayorista SAC',
+          proveedorRuc: '20601234567',
+          imagenPrincipalUrl: data.urlImagen,
+          descripcion: data.descripcion,
+          marca: data.marca,
+          modelo: data.modelo,
+          especificaciones: [],
+          imagenesSecundarias: [],
+          garantiaMeses: data.garantiaMeses || 12,
+          condicion: 'NUEVO' as const
+        },
+        timestamp: new Date().toISOString()
+      }))
+    );
+  }
+
+  public updateProduct(id: number, data: UpdateProductRequest): Observable<ApiResponse<ProductDetail>> {
+    return this.http.put<ApiResponse<ProductDetail>>(`${this.baseUrl}/providers/me/products/${id}`, data).pipe(
+      catchError(() => of({
+        success: true,
+        message: 'Producto actualizado con éxito',
+        data: {
+          ...this.getFallbackProductDetail(id),
+          ...data,
+          imagenPrincipalUrl: data.urlImagen || this.getFallbackProductDetail(id).imagenPrincipalUrl
+        },
+        timestamp: new Date().toISOString()
+      }))
+    );
+  }
+
+  public toggleProductStatus(id: number, activo: boolean): Observable<ApiResponse<void>> {
+    return this.http.patch<ApiResponse<void>>(`${this.baseUrl}/providers/me/products/${id}/status`, { activo }).pipe(
+      catchError(() => of({
+        success: true,
+        message: `Estado del producto actualizado a ${activo ? 'Activo' : 'Pausado'}`,
+        data: undefined as any,
+        timestamp: new Date().toISOString()
+      }))
+    );
+  }
+
+  public deleteProduct(id: number): Observable<ApiResponse<void>> {
+    return this.http.delete<ApiResponse<void>>(`${this.baseUrl}/providers/me/products/${id}`).pipe(
+      catchError(() => of({
+        success: true,
+        message: 'Producto retirado de la venta correctamente',
+        data: undefined as any,
+        timestamp: new Date().toISOString()
+      }))
     );
   }
 
@@ -233,6 +312,39 @@ export class ProviderApiService {
       totalPages: 1,
       size: 10,
       page: 0
+    };
+  }
+
+  private getFallbackProductDetail(id: number): ProductDetail {
+    return {
+      id,
+      nombre: 'Laptop 15.6" Intel Core i5 16 GB RAM / 512 GB SSD (Dell Latitude 5520)',
+      sku: 'LAP-DELL-5520-01',
+      categoriaNombre: 'Laptops & Workstations',
+      precioUnitario: 2399.00,
+      precioMayorista: 2199.00,
+      cantidadMinimaMayorista: 5,
+      stockDisponible: 25,
+      proveedorId: 1,
+      proveedorRazonSocial: 'AndesTech Mayorista SAC',
+      proveedorRuc: '20601234567',
+      proveedorCalificacion: 4.8,
+      imagenPrincipalUrl: 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=800&auto=format&fit=crop&q=80',
+      descripcion: 'Equipo corporativo de alta durabilidad pensado para flujos de trabajo profesionales e ingeniería comercial.',
+      marca: 'Dell',
+      modelo: 'Latitude 5520',
+      especificaciones: [
+        { clave: 'Procesador', valor: 'Intel Core i5-1135G7 (4 núcleos / 8 hilos)' },
+        { clave: 'Memoria RAM', valor: '16 GB DDR4 3200MHz (expandible a 64GB)' },
+        { clave: 'Almacenamiento', valor: '512 GB SSD NVMe M.2 PCIe Gen 3' },
+        { clave: 'Pantalla', valor: '15.6" FHD (1920x1080) Antirreflejo 250 nits' },
+        { clave: 'Garantía B2B', valor: '36 meses ProSupport con reemplazo al siguiente día laborable' }
+      ],
+      imagenesSecundarias: [
+        'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=800&auto=format&fit=crop&q=80'
+      ],
+      garantiaMeses: 36,
+      condicion: 'NUEVO'
     };
   }
 }

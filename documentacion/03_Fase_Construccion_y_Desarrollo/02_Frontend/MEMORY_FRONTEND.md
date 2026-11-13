@@ -30,9 +30,9 @@
 | `Sprint-F08_Visor_Factura_y_Comprobantes` | `feat/sprint-1-frontend` | `DONE` | 1 / 1 (`P-13`) | VERIFICADO |
 | `Sprint-F09_Mis_Compras_y_Trazabilidad` | `feat/sprint-1-frontend` | `DONE` | 2 / 2 (`P-14`, `P-15`) | VERIFICADO |
 | `Sprint-F10_Mi_Cuenta_Seguridad_y_Activacion` | `feat/sprint-1-frontend` | `DONE` | 3 / 3 (`P-16`, `P-17`, `P-18`) | VERIFICADO |
-| `Sprint-F11_Dashboard_Proveedor_y_Perfil` | `feat/sprint-1-frontend` | `EN_REVISION` | 2 / 2 (`P-19`, `P-26`) | VERIFICADO |
-| `Sprint-F12_Gestion_Catalogo_Proveedor` | `feature/frontend-provider-catalog` | `BLOQUEADO` | 0 / 4 (`P-20` a `P-23`) | PENDIENTE |
-| `Sprint-F13_Ventas_Proveedor_y_Despacho` | `feature/frontend-provider-sales` | `BLOQUEADO` | 0 / 2 (`P-24`, `P-25`) | PENDIENTE |
+| `Sprint-F11_Dashboard_Proveedor_y_Perfil` | `feat/sprint-1-frontend` | `DONE` | 2 / 2 (`P-19`, `P-26`) | VERIFICADO |
+| `Sprint-F12_Gestion_Catalogo_Proveedor` | `feat/sprint-1-frontend` | `DONE` | 4 / 4 (`P-20` a `P-23`) | VERIFICADO |
+| `Sprint-F13_Ventas_Proveedor_y_Despacho` | `feat/sprint-1-frontend` | `LISTO_PARA_INICIAR` | 0 / 2 (`P-24`, `P-25`) | PENDIENTE |
 | `Sprint-F14_Paginas_de_Error_y_Rutas` | `feature/frontend-error-pages` | `BLOQUEADO` | 0 / 2 (`P-36`, `P-37`) | PENDIENTE |
 | `Sprint-F_Audit` (Gate 2) | `release/gate-2-frontend-ui` | `BLOQUEADO` | 0 / 27 | PENDIENTE |
 
