@@ -31,29 +31,42 @@ export class ProviderApiService {
 
   public getMySales(page: number = 0, size: number = 10): Observable<PaginatedResponse<ProviderSaleItem>> {
     return this.http.get<PaginatedResponse<ProviderSaleItem>>(
-      `${this.baseUrl}/proveedor/ventas?page=${page}&size=${size}`
+      `${this.baseUrl}/providers/me/sales?page=${page}&size=${size}`
+    );
+  }
+
+  public getSaleDetail(subordenId: number): Observable<ApiResponse<ProviderSaleItem>> {
+    return this.http.get<ApiResponse<ProviderSaleItem>>(
+      `${this.baseUrl}/providers/me/sales/${subordenId}`
     );
   }
 
   public updateSuborderStatus(suborderId: number, nuevoEstado: SuborderStatus): Observable<ApiResponse<void>> {
-    return this.http.put<ApiResponse<void>>(
-      `${this.baseUrl}/proveedor/ventas/${suborderId}/estado`,
-      { estado: nuevoEstado }
+    return this.http.patch<ApiResponse<void>>(
+      `${this.baseUrl}/providers/me/sales/${subordenId}/status`,
+      { nuevoEstado }
     );
   }
 
   /**
-   * Obtiene el perfil corporativo del proveedor
+   * Obtiene el perfil corporativo del proveedor (requiere ROLE_PROVEEDOR)
    */
   public getProfile(): Observable<ApiResponse<ProviderProfile>> {
-    return this.http.get<ApiResponse<ProviderProfile>>(`${this.baseUrl}/proveedor/perfil`);
+    return this.http.get<ApiResponse<ProviderProfile>>(`${this.baseUrl}/providers/me/profile`);
+  }
+
+  /**
+   * Activa el rol de PROVEEDOR para una empresa autenticada
+   */
+  public activateProvider(data: { descripcion?: string; nombreComercial?: string } = {}): Observable<ApiResponse<void>> {
+    return this.http.post<ApiResponse<void>>(`${this.baseUrl}/providers/me/activate`, data);
   }
 
   /**
    * Actualiza el perfil del proveedor enviando urlLogo y/o urlBanner obtenidas previamente de /api/v1/media/upload
    */
   public updateProfile(data: UpdateProviderProfileRequest): Observable<ApiResponse<ProviderProfile>> {
-    return this.http.put<ApiResponse<ProviderProfile>>(`${this.baseUrl}/proveedor/perfil`, data);
+    return this.http.put<ApiResponse<ProviderProfile>>(`${this.baseUrl}/providers/me/profile`, data);
   }
 }
 
