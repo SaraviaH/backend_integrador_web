@@ -9,10 +9,10 @@
 
 ## 1. Estado Actual de Ejecución
 
-* **Sprint Activo:** Ninguno (En espera de `Sprint-G01` de Setup).
-* **Pantallas Construidas:** 0 / 27 MVP certificadas.
+* **Sprint Activo:** Finalizados todos los 14 sprints de Frontend (`Sprint-F01` a `Sprint-F14`).
+* **Pantallas Construidas:** 27 / 27 MVP certificadas (Quality Gate 2 APROBADO).
 * **Total Sprints Frontend:** 14 sprints técnicos + `Sprint-F_Audit` (Gate 2).
-* **Modo de Conexión:** Mock Server Prism (`http://localhost:4010`).
+* **Modo de Conexión:** Mock Server Prism / Local Fallback resiliente (Listo para `http://localhost:8080/api/v1`).
 
 ---
 
@@ -32,9 +32,9 @@
 | `Sprint-F10_Mi_Cuenta_Seguridad_y_Activacion` | `feat/sprint-1-frontend` | `DONE` | 3 / 3 (`P-16`, `P-17`, `P-18`) | VERIFICADO |
 | `Sprint-F11_Dashboard_Proveedor_y_Perfil` | `feat/sprint-1-frontend` | `DONE` | 2 / 2 (`P-19`, `P-26`) | VERIFICADO |
 | `Sprint-F12_Gestion_Catalogo_Proveedor` | `feat/sprint-1-frontend` | `DONE` | 4 / 4 (`P-20` a `P-23`) | VERIFICADO |
-| `Sprint-F13_Ventas_Proveedor_y_Despacho` | `feat/sprint-1-frontend` | `EN_REVISION` | 2 / 2 (`P-24`, `P-25`) | VERIFICADO |
-| `Sprint-F14_Paginas_de_Error_y_Rutas` | `feat/sprint-1-frontend` | `LISTO_PARA_INICIAR` | 0 / 2 (`P-36`, `P-37`) | PENDIENTE |
-| `Sprint-F_Audit` (Gate 2) | `release/gate-2-frontend-ui` | `BLOQUEADO` | 0 / 27 | PENDIENTE |
+| `Sprint-F13_Ventas_Proveedor_y_Despacho` | `feat/sprint-1-frontend` | `DONE` | 2 / 2 (`P-24`, `P-25`) | VERIFICADO |
+| `Sprint-F14_Paginas_de_Error_y_Rutas` | `feat/sprint-1-frontend` | `DONE` | 2 / 2 (`P-36`, `P-37`) | VERIFICADO |
+| `Sprint-F_Audit` (Gate 2) | `feat/sprint-1-frontend` | `DONE` | 27 / 27 | APROBADO |
 
 ---
 

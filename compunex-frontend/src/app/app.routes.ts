@@ -151,6 +151,16 @@ export const routes: Routes = [
         path: 'forbidden',
         component: ForbiddenViewComponent,
         title: 'Acceso Denegado · COMPUNEX B2B'
+      },
+      {
+        path: '403',
+        redirectTo: 'forbidden',
+        pathMatch: 'full'
+      },
+      {
+        path: '404',
+        component: NotFoundViewComponent,
+        title: '404 No Encontrado · COMPUNEX B2B'
       }
     ]
   },
