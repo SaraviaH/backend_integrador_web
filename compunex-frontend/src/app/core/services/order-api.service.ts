@@ -18,16 +18,16 @@ export class OrderApiService {
   private readonly baseUrl = environment.useMock ? environment.mockApiUrl : environment.apiUrl;
 
   public checkout(orderData: CheckoutRequest): Observable<CheckoutResponse> {
-    return this.http.post<CheckoutResponse>(`${this.baseUrl}/ordenes/checkout`, orderData);
+    return this.http.post<CheckoutResponse>(`${this.baseUrl}/orders/checkout`, orderData);
   }
 
   public getMyOrders(page: number = 0, size: number = 10): Observable<PaginatedResponse<OrderSummary>> {
     return this.http.get<PaginatedResponse<OrderSummary>>(
-      `${this.baseUrl}/ordenes/mis-compras?page=${page}&size=${size}`
+      `${this.baseUrl}/orders/me?page=${page}&size=${size}`
     );
   }
 
-  public getOrderDetail(id: number): Observable<OrderDetail> {
-    return this.http.get<OrderDetail>(`${this.baseUrl}/ordenes/${id}`);
+  public getOrderDetail(ordenId: number): Observable<OrderDetail> {
+    return this.http.get<OrderDetail>(`${this.baseUrl}/orders/me/${ordenId}`);
   }
 }

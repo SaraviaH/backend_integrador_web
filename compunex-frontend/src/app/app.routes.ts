@@ -3,6 +3,7 @@ import { PublicLayoutComponent } from './layout/public-layout/public-layout.comp
 import { PanelLayoutComponent } from './layout/panel-layout/panel-layout.component';
 import { HomeViewComponent } from './features/home/home-view.component';
 import { CategoriesComponent } from './features/categories/categories.component';
+import { CatalogComponent } from './features/catalog/catalog.component';
 import { LoginComponent } from './features/auth/login/login.component';
 import { RegisterCompanyComponent } from './features/auth/register-company/register-company.component';
 import { ForbiddenViewComponent } from './features/forbidden/forbidden-view.component';
@@ -28,6 +29,16 @@ export const routes: Routes = [
       {
         path: 'categorias',
         redirectTo: 'categories',
+        pathMatch: 'full'
+      },
+      {
+        path: 'catalog',
+        component: CatalogComponent,
+        title: 'Catálogo de Hardware B2B · COMPUNEX'
+      },
+      {
+        path: 'catalogo',
+        redirectTo: 'catalog',
         pathMatch: 'full'
       },
       {

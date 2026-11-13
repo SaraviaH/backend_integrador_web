@@ -25,8 +25,8 @@ export class CatalogApiService {
 
   public getProducts(filter: CatalogFilterParams = {}): Observable<PaginatedResponse<ProductCard>> {
     let params = new HttpParams();
-    if (filter.busqueda) params = params.set('q', filter.busqueda);
-    if (filter.categoriaId) params = params.set('categoriaId', filter.categoriaId.toString());
+    if (filter.busqueda) params = params.set('search', filter.busqueda);
+    if (filter.categoriaId) params = params.set('categoryId', filter.categoriaId.toString());
     if (filter.precioMin != null) params = params.set('precioMin', filter.precioMin.toString());
     if (filter.precioMax != null) params = params.set('precioMax', filter.precioMax.toString());
     if (filter.proveedorId) params = params.set('proveedorId', filter.proveedorId.toString());
@@ -35,29 +35,43 @@ export class CatalogApiService {
     if (filter.size != null) params = params.set('size', filter.size.toString());
     if (filter.sort) params = params.set('sort', filter.sort);
 
-    return this.http.get<PaginatedResponse<ProductCard>>(`${this.baseUrl}/productos`, { params });
+    return this.http.get<PaginatedResponse<ProductCard>>(`${this.baseUrl}/products`, { params });
   }
 
   public getFeaturedProducts(): Observable<ProductCard[]> {
-    return this.http.get<ProductCard[]>(`${this.baseUrl}/productos/destacados`);
+    return this.http.get<ProductCard[]>(`${this.baseUrl}/products/destacados`);
   }
 
   public getProductDetail(id: number): Observable<ProductDetail> {
-    return this.http.get<ProductDetail>(`${this.baseUrl}/productos/${id}`);
+    return this.http.get<ProductDetail>(`${this.baseUrl}/products/${id}`);
   }
 
   /**
    * Crea un nuevo producto enviando la URL de imagen obtenida previamente desde /api/v1/media/upload
    */
   public createProduct(data: CreateProductRequest): Observable<ApiResponse<ProductDetail>> {
-    return this.http.post<ApiResponse<ProductDetail>>(`${this.baseUrl}/productos`, data);
+    return this.http.post<ApiResponse<ProductDetail>>(`${this.baseUrl}/products`, data);
   }
 
   /**
    * Actualiza un producto existente
    */
   public updateProduct(id: number, data: UpdateProductRequest): Observable<ApiResponse<ProductDetail>> {
-    return this.http.put<ApiResponse<ProductDetail>>(`${this.baseUrl}/productos/${id}`, data);
+    return this.http.put<ApiResponse<ProductDetail>>(`${this.baseUrl}/products/${id}`, data);
+  }
+
+  /**
+   * Endpoints de Moderación Admin (ROLE_ADMIN)
+   */
+  public getAdminProducts(search: string = '', page: number = 0, size: number = 10): Observable<PaginatedResponse<ProductCard>> {
+    let params = new HttpParams().set('page', page.toString()).set('size', size.toString());
+    if (search) params = params.set('search', search);
+    return this.http.get<PaginatedResponse<ProductCard>>(`${this.baseUrl}/admin/products`, { params });
+  }
+
+  public updateProductStatus(id: number, status: string): Observable<ApiResponse<void>> {
+    return this.http.patch<ApiResponse<void>>(`${this.baseUrl}/admin/products/${id}/status`, { status });
   }
 }
+
 
