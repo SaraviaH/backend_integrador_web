@@ -1,0 +1,32 @@
+package com.compunex.b2b.modules.perfiles.dto.response;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
+
+/**
+ * DTO de salida con la información comercial pública y fiscal del proveedor.
+ */
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class ProveedorPerfilResponseDTO {
+    private Long id;
+    private Long usuarioId;
+    private String correo;
+    private String ruc;
+    private String razonSocial;
+    private String nombreComercial;
+    private String telefonoContacto;
+    private String direccion;
+    private String ciudad;
+    private String descripcion;
+    private String politicaComercial;
+    private BigDecimal calificacion;
+    private Boolean verificado;
+    private Boolean destacado;
+}

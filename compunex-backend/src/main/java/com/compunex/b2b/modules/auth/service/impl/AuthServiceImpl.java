@@ -145,4 +145,55 @@ public class AuthServiceImpl implements AuthService {
                 "Proveedor registrado exitosamente en la plataforma COMPUNEX."
         );
     }
+
+    @Override
+    @org.springframework.transaction.annotation.Transactional
+    public RegistroProveedorResponseDTO registrarEmpresa(com.compunex.b2b.modules.auth.dto.request.RegistroEmpresaRequestDTO request) {
+        if (usuarioRepository.existsByCorreo(request.getCorreo())) {
+            throw new com.compunex.b2b.exception.DuplicateResourceException("El correo ya se encuentra registrado");
+        }
+        if (perfilProveedorRepository.existsByIdentificacionFiscal(request.getRuc())) {
+            throw new com.compunex.b2b.exception.DuplicateResourceException("El RUC ya se encuentra registrado");
+        }
+
+        Usuario usuario = new Usuario(
+                request.getRazonSocial(),
+                request.getCorreo(),
+                passwordEncoder.encode(request.getContrasena()),
+                RolUsuario.CLIENTE,
+                EstadoUsuario.ACTIVO
+        );
+        usuario = usuarioRepository.save(usuario);
+
+        PerfilProveedor perfil = new PerfilProveedor();
+        perfil.setUsuario(usuario);
+        perfil.setIdentificacionFiscal(request.getRuc());
+        perfil.setRazonSocial(request.getRazonSocial());
+        perfil.setNombreComercial(request.getNombreComercial() != null && !request.getNombreComercial().isBlank()
+                ? request.getNombreComercial()
+                : request.getRazonSocial());
+        perfil.setTelefonoContacto(request.getTelefono());
+        perfil.setDireccion(request.getDireccionFiscal());
+        perfil.setCiudad(request.getCiudad() != null && !request.getCiudad().isBlank() ? request.getCiudad() : "Lima");
+        perfil.setVerificado(false);
+        perfil.setDestacado(false);
+        perfil = perfilProveedorRepository.save(perfil);
+
+        String token = jwtTokenProvider.generarTokenConRol(usuario.getCorreo(), RolUsuario.CLIENTE.name());
+
+        return new RegistroProveedorResponseDTO(
+                usuario.getId(),
+                perfil.getId(),
+                usuario.getUuid(),
+                usuario.getNombre(),
+                usuario.getCorreo(),
+                usuario.getRol().name(),
+                perfil.getIdentificacionFiscal(),
+                perfil.getRazonSocial(),
+                token,
+                "Bearer",
+                86400L,
+                "Empresa compradora registrada exitosamente en la plataforma COMPUNEX."
+        );
+    }
 }

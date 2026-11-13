@@ -66,7 +66,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                     // 1. Endpoints públicos (sin token)
-                    .requestMatchers(HttpMethod.POST, "/api/v1/auth/login", "/api/v1/auth/register", "/api/v1/auth/registro-proveedor").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/api/v1/auth/login", "/api/v1/auth/register", "/api/v1/auth/registro-proveedor", "/api/v1/auth/register-company").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/v1/categories", "/api/v1/categories/**").permitAll()
                     .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/api-docs", "/api-docs/**", "/v3/api-docs/**").permitAll()
                     .requestMatchers("/h2-console/**").permitAll()
@@ -75,7 +75,10 @@ public class SecurityConfig {
                     // 2. Endpoints exclusivos de Administrador
                     .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
 
-                    // 3. Endpoints exclusivos de Proveedor (Gestión de productos propios)
+                    // 3. Activación de perfil proveedor (cualquier usuario autenticado)
+                    .requestMatchers(HttpMethod.POST, "/api/v1/providers/me/activate").authenticated()
+
+                    // 4. Endpoints exclusivos de Proveedor (Gestión de productos propios y perfil)
                     .requestMatchers(
                             "/api/v1/providers/me/products/**",
                             "/api/v1/providers/**",
