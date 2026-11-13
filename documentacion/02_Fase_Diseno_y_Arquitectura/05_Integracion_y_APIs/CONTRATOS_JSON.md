@@ -568,3 +568,27 @@
 * **Acceso:** `ROLE_ADMIN`
 * **Entrada (`CambiarEstadoProductoDTO`):** `{"estado": "INACTIVO"}`
 * **Salida `200 OK`:** `CambioEstadoResponseDTO` (misma estructura del endpoint 11).
+
+---
+
+## 6. Módulo Media / Imágenes (Sprint-B09)
+
+### 28. `POST /api/v1/media/upload` *(Aditivo - Sprint-B09)*
+* **Acceso:** `ROLE_PROVEEDOR`, `ROLE_ADMIN`
+* **Content-Type:** `multipart/form-data`
+* **Entrada:**
+  * `file` (obligatorio): archivo de imagen (`image/jpeg`, `image/png`, `image/webp`, máx. 5MB)
+  * `folder` (opcional): `"products"` o `"profiles"`
+* **Salida `201 Created`:**
+  ```json
+  {
+    "url": "http://localhost:8080/api/v1/media/files/products/550e8400-e29b-41d4-a716-446655440000.png",
+    "nombreArchivo": "550e8400-e29b-41d4-a716-446655440000.png",
+    "contentType": "image/png",
+    "tamanoBytes": 245120
+  }
+  ```
+
+### 29. `GET /api/v1/media/files/{folder}/{filename}` *(Aditivo - Sprint-B09)*
+* **Acceso:** Público
+* **Salida `200 OK`:** Binario de la imagen con `Content-Type` correspondiente.
