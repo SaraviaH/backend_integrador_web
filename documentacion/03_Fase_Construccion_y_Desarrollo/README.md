@@ -1,124 +1,77 @@
-# 03. Construcción y Desarrollo Local (SDD + TDD + Multi-Agente)
+# 03. Construcción y Desarrollo Local (SDD + TDD + Multi-Agente en Paralelo)
 
 > **Fase del SDLC:** Fase 03 · Construcción y Desarrollo  
-> **Propósito:** Transformar los requisitos validados de la Fase 01 y los diseños/contratos congelados de la Fase 02 en código de producción probado, limpio y mantenible mediante Desarrollo Guiado por Especificaciones (SDD) y Desarrollo Guiado por Pruebas (TDD).  
-> **Regla de Oro:** Respetar el SPEC y las políticas de pruebas que el proyecto haya adoptado; adaptar la evidencia al riesgo.
+> **Proyecto:** COMPUNEX — Plataforma E-Commerce B2B con Split Order y Facturación Simulada  
+> **Arquitectura Operativa:** **Multi-Agente Concurrente Desacoplada**  
+> **Stack Congelado:** Java 17 + Spring Boot 3.2.0 + MySQL 8.0 (XAMPP 3306) · Angular 18 (Standalone, Signals) + SASS + Tailwind CSS  
+> **Regla de Oro:** **Cero líneas de código sin un SPEC aprobado.** El Frontend y el Backend avanzan en paralelo de forma 100% desacoplada gracias a los contratos congelados de Fase 02 (`CONTRATOS_JSON.md`).
 
 ---
 
-## 🏛️ 1. Arquitectura de Construcción Multi-Agente y Descentralizada
+## 🎯 1. ¿Cuál es el Objetivo Central de esta Organización por Áreas?
 
-Para evitar cuellos de botella y permitir trabajo coordinado por agentes o desarrolladores cuando las dependencias lo permitan:
+El objetivo primordial de dividir los sprints en áreas especializadas (`.sprints_generales/`, `01_Backend/.sprints/`, `02_Frontend/.sprints/`) es permitir el **TRABAJO PARALELO CON MÚLTIPLES AGENTES DE IA (O DESARROLLADORES) SIN CUELLOS DE BOTELLA**:
 
-* **Sprints Generales (`.sprints_generales/`):** Tareas transversales del sistema (Setup del entorno, base de datos DDL inicial, integración E2E).
-* **Sprints Especializados de Backend (`01_Backend/.sprints/`):** Construcción autónoma de lógica de negocio, servicios puros desacoplados y endpoints contra contratos congelados.
-* **Sprints Especializados de Frontend (`02_Frontend/.sprints/`):** Construcción autónoma de interfaces visuales, estado reactivo y navegación contra el Mock Server de la API.
-* **Contrato compartido:** Frontend y backend respetan el contrato acordado y registran sus cambios. Las siguientes rutas son ejemplos de plantillas: [`CONTRATOS_JSON.md`](../02_Fase_Diseno_y_Arquitectura/05_Integracion_y_APIs/CONTRATOS_JSON.md) y [`openapi_template.yaml`](../02_Fase_Diseno_y_Arquitectura/05_Integracion_y_APIs/openapi_template.yaml).
+1. **Desacoplamiento Absoluto (Contract-First):**  
+   Al culminar la Fase 02, los contratos de API ([`CONTRATOS_JSON.md`](../02_Fase_Diseno_y_Arquitectura/05_Integracion_y_APIs/CONTRATOS_JSON.md)) y el modelo de BD ya están **100% formalizados y congelados**.  
+   Por tanto, **EL AGENTE DE FRONTEND NO TIENE QUE ESPERAR A QUE EL BACKEND ESTÉ TERMINADO**: trabaja contra el Mock Server de la API con los mismos contratos.
+2. **Pistas de Trabajo Autónomas:**  
+   * **Agente de Backend:** Opera en [`01_Backend/`](01_Backend/README.md), guiado por su propio backlog ([`BACKLOG_BACKEND.md`](01_Backend/BACKLOG_BACKEND.md)), su bitácora ([`MEMORY_BACKEND.md`](01_Backend/MEMORY_BACKEND.md)), y sus sprints en `01_Backend/.sprints/` (`Sprint-B01` a `Sprint-B05` + `Sprint-B_Audit`). Construye lógica pura y endpoints contra MySQL en XAMPP.
+   * **Agente de Frontend:** Opera simultáneamente en [`02_Frontend/`](02_Frontend/README.md), guiado por su propio backlog ([`BACKLOG_FRONTEND.md`](02_Frontend/BACKLOG_FRONTEND.md)), su bitácora ([`MEMORY_FRONTEND.md`](02_Frontend/MEMORY_FRONTEND.md)), y sus sprints en `02_Frontend/.sprints/` (`Sprint-F01` a `Sprint-F05` + `Sprint-F_Audit`). Construye vistas, signals y componentes contra el mock server.
+   * **Sprints Generales Transversales (`.sprints_generales/`):**
+     - `Sprint-G01_Setup_y_Entorno`: Arranque común de herramientas y variables.
+     - `Sprint-G02_Base_de_Datos_DDL`: Persistencia física y semillas iniciales.
+     - `Sprint-G_Final_Integracion_E2E`: Punto de convergencia donde se apaga el mock, se conecta el Frontend al Backend real, se ejecutan smoke tests de punta a punta y se audita el release.
+3. **Orquestación Macro sin Conflictos:**  
+   [`BACKLOG_GENERAL.md`](BACKLOG_GENERAL.md) y [`MEMORY_GENERAL.md`](MEMORY_GENERAL.md) coordinan a los agentes desde la raíz de la fase sin colisiones de Git.
 
 ---
 
-## 🗺️ 2. Flujo Cronológico de Construcción
+## 🗺️ 2. Flujo Cronológico de Construcción Multi-Agente
 
 ```mermaid
 flowchart TD
-    G1["🏁 SPRINT GENERAL 01: Setup del Ecosistema<br/><i>(Docker local, variables .env, linters y repositorios)</i>"] --> DB["🗄️ SPRINT GENERAL 02: Base de Datos y Persistencia<br/><i>(DDL puro, migraciones versionadas V1 y contenedor local)</i>"]
+    G1["🏁 SPRINT GENERAL 01: Setup del Ecosistema<br/><i>(Spring Boot + Angular + MySQL XAMPP + GET /api/v1/salud)</i>"] --> DB["🗄️ SPRINT GENERAL 02: Base de Datos DDL Físico<br/><i>(10 tablas en MySQL, V1__init_schema.sql y seeds iniciales)</i>"]
     
-    DB --> PARALELO["⚡ DESACOPLAMIENTO Y TRABAJO EN PARALELO"]
+    DB --> BIFURCACION{"⚡ BIFURCACIÓN: TRABAJO PARALELO MULTI-AGENTE"}
     
-    PARALELO --> BACK["⚙️ Sprints Especializados de BACKEND<br/><i>(Sprint-B01, B02... TDD puro sobre la BD local)</i>"]
-    PARALELO --> FRONT["🎨 Sprints Especializados de FRONTEND<br/><i>(Sprint-F01, F02... UI sobre el Mock Server Prism)</i>"]
+    BIFURCACION -->|Agente Backend| BACK["⚙️ PISTA BACKEND (01_Backend/.sprints/)<br/>• Sprint-B01: Auth, JWT JJWT y RBAC (Endpoints 1..4)<br/>• Sprint-B02: Catálogo B2B y Productos (Endpoints 5..10)<br/>• Sprint-B03: Carrito y Split Order ACID (Endpoints 11..16)<br/>• Sprint-B04: Panel Proveedor y Despacho (Endpoints 17..21)<br/>• Sprint-B05: Auditoría Admin y Usuarios (Endpoints 23..24)<br/>• Sprint-B_Audit: Auditoría Técnica Backend (0 rojos)"]
     
-    BACK --> E2E["🔌 SPRINT GENERAL FINAL: Integración E2E<br/><i>(Pruebas de punta a punta, smoke tests cruzados y release)</i>"]
+    BIFURCACION -->|Agente Frontend| FRONT["🎨 PISTA FRONTEND (02_Frontend/.sprints/)<br/>• Sprint-F01: Setup Angular 18, Tailwind y Auth UI (P-01..P-03)<br/>• Sprint-F02: Catálogo B2B, Búsqueda y Detalle (P-04..P-09)<br/>• Sprint-F03: Carrito Reactivo con Signals (P-10..P-14)<br/>• Sprint-F04: Checkout B2B y Factura Simulada (P-15..P-21)<br/>• Sprint-F05: Paneles Proveedor y Admin (P-22..P-27)<br/>• Sprint-F_Audit: Auditoría Accesibilidad WCAG (0 rojos)"]
+    
+    BACK --> E2E["🔌 SPRINT GENERAL FINAL: Integración E2E (.sprints_generales/)<br/><i>(Frontend real conectado a Backend real, flujo completo y build)</i>"]
     FRONT --> E2E
     
-    E2E --> GATE["🔍 QUALITY GATE FINAL: Auditoría de Cierre<br/><i>(Semáforo Rojo/Ámbar/Verde previo a QA y Despliegue)</i>"]
+    E2E --> GATE["🏆 QUALITY GATE FINAL: Auditoría de Cierre<br/><i>(Semáforo 0 Rojos previo a Fase 04 QA y Fase 05 Despliegue)</i>"]
 ```
 
 ---
 
-## 🔄 3. Ciclo de Ejecución de un Sprint (Micro-Ciclo TDD)
+## 🚫 3. Regla de Oro Anti-Placeholder
 
-Cuando el proyecto adopte sprints y SPEC, adapta este ciclo al riesgo y al incremento:
-
-1. **Lectura y Contexto:** Leer la bitácora (`MEMORY.md` del área) y el contrato del sprint (`SPEC.md`).
-2. **Planificación (`/plan` - Modelo Alto Razonamiento):** Detectar dependencias o posibles incoherencias con `DOMAIN.md` antes de tocar código.
-3. **Rojo (TDD - Modelo Estándar):** Escribir primero las pruebas automatizadas basadas en los escenarios `Given-When-Then` del SPEC. Demostrar que fallan en local.
-4. **Verde (TDD - Modelo Estándar):** Escribir el código mínimo de producción necesario para pasar las pruebas. Prohibido añadir lógica fuera del SPEC.
-5. **Refactorización y Validación:** Limpiar el código manteniendo la suite de pruebas al 100% en verde. Verificar reglas de capas y linters.
-6. **Cierre del Sprint:** Actualizar la bitácora del área, marcar el sprint como `Done` en el backlog y hacer commit en Git.
-7. **Reporte al PO:** Presentar evidencia demostrable y continuar según las autorizaciones vigentes y las reglas del proyecto.
+> [!CAUTION]
+> **PROHIBICIÓN ESTRICTA:**  
+> Ninguna pista contiene carpetas `_Plantilla` ni un solo sprint aislado.  
+> * **Backend:** Cuenta con sus **5 sprints funcionales** + **1 sprint de auditoría** cubriendo los 24 endpoints.
+> * **Frontend:** Cuenta con sus **5 sprints de UI** + **1 sprint de auditoría** cubriendo las 27 pantallas.
+> * **Generales:** Cuenta con los **3 sprints transversales** de inicio y cierre.
 
 ---
 
-## 📁 4. Mapa de Carpetas y Artefactos de la Fase
+## 📁 4. Mapa de Carpetas de la Fase
 
-| Directorio / Archivo | Propósito y Contenido |
+| Directorio / Archivo | Rol en el Proyecto |
 | :--- | :--- |
-| [`BACKLOG_GENERAL.md`](BACKLOG_GENERAL.md) | Tablero macro de control de hitos y sprints para el Product Owner y Tech Leads. |
-| [`MEMORY_GENERAL.md`](MEMORY_GENERAL.md) | Bitácora viva del sistema transversal y registro de Quality Gates generales. |
-| [`SPEC_TEMPLATE.md`](SPEC_TEMPLATE.md) | Plantilla oficial SDD con sintaxis Given-When-Then para cualquier sprint. |
-| [`AUDITORIA_HITO_TEMPLATE.md`](AUDITORIA_HITO_TEMPLATE.md) | Plantilla canónica de Quality Gate con semáforo (Rojo / Ámbar / Verde). |
-| [`.sprints_generales/`](.sprints_generales/README.md) | Sprints transversales: Setup inicial, Persistencia DDL e Integración E2E. |
-| [`01_Backend/`](01_Backend/README.md) | Normas de construcción del backend, bitácora local (`MEMORY_BACKEND.md`) y sus sprints. |
-| [`02_Frontend/`](02_Frontend/README.md) | Normas de construcción del frontend, bitácora local (`MEMORY_FRONTEND.md`) y sus sprints. |
-| [`03_Datos_y_Migraciones/`](03_Datos_y_Migraciones/README.md) | Reglas de esquemas DDL puros, scripts versionados y migraciones. |
-| [`04_Integracion_y_Configuracion/`](04_Integracion_y_Configuracion/README.md) | Docker Compose local, `.env.example`, clientes API y configuración CI. |
+| [`BACKLOG_GENERAL.md`](BACKLOG_GENERAL.md) | **Tablero Macro:** Visión global de hitos, dependencias entre áreas y control de avance. |
+| [`MEMORY_GENERAL.md`](MEMORY_GENERAL.md) | **Bitácora Macro:** Registro del estado del sistema general y resultados de Quality Gates. |
+| [`SPEC_TEMPLATE.md`](SPEC_TEMPLATE.md) | **Plantilla SDD:** Estructura oficial Given-When-Then para instanciar cualquier sprint. |
+| [`AUDITORIA_HITO_TEMPLATE.md`](AUDITORIA_HITO_TEMPLATE.md) | **Plantilla Quality Gate:** Formato oficial con semáforo (Rojos / Ámbares / Verdes). |
+| [`.sprints_generales/`](.sprints_generales/README.md) | **Sprints Transversales:** Setup inicial (`G01`), Persistencia DDL (`G02`) e Integración E2E (`G_Final`). |
+| [`01_Backend/`](01_Backend/README.md) | **Pista Backend:** Normas de ingeniería, [`BACKLOG_BACKEND.md`](01_Backend/BACKLOG_BACKEND.md), [`MEMORY_BACKEND.md`](01_Backend/MEMORY_BACKEND.md) y sus sprints (`.sprints/Sprint-B01..`). |
+| [`02_Frontend/`](02_Frontend/README.md) | **Pista Frontend:** Normas de UI, [`BACKLOG_FRONTEND.md`](02_Frontend/BACKLOG_FRONTEND.md), [`MEMORY_FRONTEND.md`](02_Frontend/MEMORY_FRONTEND.md) y sus sprints (`.sprints/Sprint-F01..`). |
+| [`03_Datos_y_Migraciones/`](03_Datos_y_Migraciones/README.md) | **Persistencia Física:** DDL puro de 10 tablas, migraciones Flyway y datos semilla en MySQL. |
+| [`04_Integracion_y_Configuracion/`](04_Integracion_y_Configuracion/README.md) | **Configuración:** Variables `.env.example`, colección Postman automatizada y proxy local. |
 
 ---
 
-## 🌿 5. Integración con Git Flow
-
-* Cada sprint se desarrolla en su propia rama dedicada:  
-  `feature/<area>-<nombre-tarea>` (ej. `feature/backend-auth`, `feature/frontend-login`, `feature/datos-ddl`).
-* Todas las ramas nacen de `develop` y regresan a `develop` mediante Pull Request tras cumplir el **Definition of Done (DoD)**.
-* Los mensajes de commit se redactan en modo imperativo técnico, describiendo el qué y el porqué, **sin mención de asistentes de IA**.
-
----
-
-## 🤖 6. Protocolo del Agente IA: Cómo Crear un Nuevo Sprint (Paso a Paso)
-
-Todo agente de IA (Antigravity, Claude, Gemini, Cursor) debe seguir este procedimiento exacto para crear un nuevo sprint:
-
-```mermaid
-flowchart TD
-    A["1. Identificar Ámbito<br/>(General, Backend o Frontend)"] --> B["2. Crear Subcarpeta<br/>(.sprints_generales / 01_Backend / 02_Frontend)"]
-    B --> C["3. Copiar SPEC_TEMPLATE.md<br/>como SPEC.md"]
-    C --> D["4. Validar Ruta de CONTRATO JSON<br/>(Verificar con el usuario)"]
-    D --> E["5. Redactar Escenarios Gherkin<br/>(Given-When-Then trazados a RF/RNF)"]
-    E --> F["6. Registrar en Backlog y Pedir Aprobación<br/>💬 '¿Confirmas el SPEC para abrir la rama y programar?'"]
-```
-
-### Paso 1: Determinar el Ámbito y Nomenclatura de la Carpeta
-* Si es transversal (entorno, DDL base, integración E2E):  
-  Crear carpeta en `.sprints_generales/Sprint-G<NN>_<Nombre>/`
-* Si es lógica de servidor, APIs o servicios:  
-  Crear carpeta en `01_Backend/.sprints/Sprint-B<NN>_<Nombre>/`
-* Si es pantalla, interfaz de usuario o navegación:  
-  Crear carpeta en `02_Frontend/.sprints/Sprint-F<NN>_<Nombre>/`
-
-### Paso 2: Instanciar el SPEC.md
-* Copiar el archivo [`SPEC_TEMPLATE.md`](SPEC_TEMPLATE.md) dentro de la carpeta creada y nombrarlo exactamente `SPEC.md`.
-
-### Paso 3: Rellenar la Especificación sin Omitir Campos
-1. **Objetivo:** 1 o 2 frases del valor demostrable del incremento.
-2. **Alcance:** Qué requisitos de la Fase 01 se construyen y cuáles quedan explícitamente fuera.
-3. **Escenarios Given-When-Then (`E1`, `E2`, `E3`...):** Los casos exactos que se probarán en TDD (Happy Path, validaciones y reglas de negocio).
-4. **Tareas:** Diferenciar las manuales (del usuario/PO) de las automáticas (del agente).
-5. **DoD:** Criterios de cierre y tests en verde.
-
-### Paso 4: Registrar en el Backlog
-* Añadir la fila correspondiente en [`BACKLOG_GENERAL.md`](BACKLOG_GENERAL.md) (y en el backlog del área si aplica) con estado `⬜ Pendiente`.
-
-### Paso 5: Revisión y autorización
-Reutiliza decisiones y aprobaciones ya otorgadas. Presenta el SPEC cuando el proyecto lo requiera o una decisión de alcance necesite aprobación. Una vez autorizado el incremento, ejecuta las tareas independientes sin volver a preguntar.
-
-## 7. Contratos de integración
-Busca el contrato vigente del proyecto y verifica su versión y alcance. Si falta o hay varias fuentes incompatibles, documenta la discrepancia y consulta solo lo que impida avanzar. Las plantillas [narrativa](../02_Fase_Diseno_y_Arquitectura/05_Integracion_y_APIs/CONTRATOS_JSON.md) y [OpenAPI](../02_Fase_Diseno_y_Arquitectura/05_Integracion_y_APIs/openapi_template.yaml) son ejemplos, no contratos del producto hasta que se adopten y completen.
-
-Un mock ayuda a desarrollar, pero no garantiza compatibilidad real ni simula necesariamente estado, permisos y errores. Verifica el proveedor real cuando sea viable y deja explícitas las limitaciones.
-
-## 8. Equipo y trabajo paralelo
-Utiliza [EQUIPO_Y_CRONOGRAMA_TEMPLATE.md](EQUIPO_Y_CRONOGRAMA_TEMPLATE.md) cuando aporte valor. Antes de paralelizar, define responsables, archivos, dependencias, contrato y puntos de integración; respeta las restricciones de delegación y permisos vigentes. Resuelve conflictos y ejecuta pruebas cruzadas con frecuencia.
-
-## 9. Integración y revisión
-Adopta el flujo Git y las políticas de revisión del proyecto. Define el momento de integración y despliegue por riesgo y por funcionalidad preparada; no prometas frecuencia fija. La revisión humana se realiza cuando la exige el proyecto o la naturaleza de la decisión; los commits y despliegues respetan las autorizaciones del usuario. Los controles manuales, herramientas y dispositivos dependen del cambio y de la evidencia disponible.
+[← Volver a Fase 02: Diseño y Arquitectura](../02_Fase_Diseno_y_Arquitectura/README.md) · [Ir al Backlog General →](BACKLOG_GENERAL.md)

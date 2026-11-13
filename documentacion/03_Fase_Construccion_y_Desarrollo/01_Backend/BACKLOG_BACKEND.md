@@ -1,56 +1,73 @@
-# BACKLOG_BACKEND.md — Product Backlog Autónomo del Backend
+# BACKLOG_BACKEND.md — Backlog Detallado del Track Backend (Spring Boot 3.2.0)
 
-> **Área Técnica:** Backend & Core de Negocio  
-> **Fase del SDLC:** Fase 03 · Construcción y Desarrollo  
-> **Propósito:** Gestión autónoma, desacoplada y escalable de los sprints de desarrollo del backend. Cada tarea es ejecutable de forma independiente por el Agente de Backend sin generar bloqueos en el frontend ni en otras áreas.
-
----
-
-## 📊 1. Resumen y Parámetros Operativos del Backend
-
-| Parámetro | Definición del Proyecto |
-| :--- | :--- |
-| **Perfil del Subsistema** | `[API REST / Monolito Modular / Microservicio / GraphQL / Servidor de Dominio]` |
-| **Organización de Sprints** | Etapas relativas y modulares (Sprints Iniciales de Núcleo, Sprints de Capacidades, Sprints de Hardening) |
-| **Responsables / Agentes** | `[Agente Backend / Dev / Tech Lead]` |
-| **Quality Gates / Auditorías** | Verificación técnica intermedia y auditoría de hito antes del despliegue |
-| **Criterio de Priorización** | **1º** Dominio e invariantes puras → **2º** Repositorios y DDL → **3º** Contratos OpenAPI/JSON → **4º** Seguridad e Integración |
-| **Requisitos Vinculados** | Requisitos funcionales de servidor (`RF-XXX`) y reglas de negocio (`RN-XXX`) de `DOMAIN.md` |
-| **Dimensionamiento** | **Por entregable y criterios de aceptación (DoD)**, no por horas de reloj |
+> **Área Técnica:** Backend  
+> **Proyecto:** COMPUNEX — Marketplace B2B de Cómputo  
+> **Fase del SDLC:** 03 · Construcción y Desarrollo  
+> **Línea Base:** Spring Boot 3.2.0, Java 17, Spring Data JPA, Spring Security 6.2, JJWT 0.11.5, MySQL 8.0  
+> **Total Endpoints:** 24 endpoints (14 existentes + 10 nuevos)  
+> **Total Tablas:** 10 tablas relacionales (`MODELO_Y_DICCIONARIO_BD.md`)  
+> **Reglas de Negocio:** `RN-001` a `RN-008`
 
 ---
 
-## 🏃 2. Matriz de Sprints del Backend
+## 1. Visión y Estrategia del Track Backend
 
-> [!TIP]
-> Los sprints de backend avanzan de forma desacoplada gracias a los contratos estables de [`05_Integracion_y_APIs/CONTRATOS_JSON.md`](../../02_Fase_Diseno_y_Arquitectura/05_Integracion_y_APIs/CONTRATOS_JSON.md). El backend no necesita que el frontend esté construido para probar y validar sus endpoints con TDD local.
-
-| ID Sprint | Épica / Capacidad de Backend | Agente / Dueño | Estado | Criterios de Aceptación Técnicos (DoD) |
-| :--- | :--- | :--- | :---: | :--- |
-| **Sprint-B01** | Esqueleto de Servicio y Salud de API | `[Agente Backend]` | `[Backlog / Done]` | Endpoint `GET /v1/salud` responde `200 OK`; suite de tests unitarios inicial en verde; configuración de variables de entorno validada (`.env`). |
-| **Sprint-B02** | Autenticación, Sesión y Credenciales | `[Agente Backend]` | `[Backlog]` | Endpoints de login/registro responden según contrato OpenAPI; emisión y validación de tokens seguros; tests unitarios y de integración de auth en verde. |
-| **Sprint-B03** | Módulo Núcleo A: Entidades y Reglas de Negocio | `[Agente Backend]` | `[Backlog]` | Invariantes y reglas de negocio puras (`RN-001..RN-NNN`) implementadas con TDD; operaciones CRUD validadas; repositorios aislados con transacciones seguras. |
-| **Sprint-B04** | Módulo Núcleo B: Procesamiento y Transacciones | `[Agente Backend]` | `[Backlog]` | Casos de uso de procesamiento completados; validación de duplicados con `Idempotency-Key`; respuestas de error en estándar RFC 9457. |
-| **Sprint-B05** | Integraciones Externas / Notificaciones / Colas | `[Agente Backend]` | `[Backlog]` | Adaptadores de salida implementados con mocks locales para testing; manejo de fallos y reintentos exponenciales verificados. |
-| **Sprint-B_Audit** | Auditoría Técnica Intermedia y Hardening | `[Agente QA Backend]` | `[Backlog]` | Ejecución de `AUDITORIA_HITO_TEMPLATE.md`; 100% de la suite de tests en verde; cero vulnerabilidades críticas en dependencias; análisis estático aprobado. |
+El Agente de Backend es responsable de construir la API REST robusta, segura y transaccional que soporta el marketplace COMPUNEX B2B. Su desarrollo se realiza siguiendo la arquitectura en capas estricta (`Controller` -> `Service` -> `Repository` -> `Entity`/`DTO`), asegurando:
+1. **Fidelidad al 100% de los Contratos:** Los payloads de solicitud y respuesta deben coincidir exactamente con `CONTRATOS_JSON.md` y `compunex-openapi.yaml`.
+2. **Atomicidad Transaccional:** Uso de `@Transactional` en operaciones compuestas, con especial énfasis en el patrón **Split Order** (`RN-005`).
+3. **Seguridad Stateless:** Autenticación JWT en cada endpoint no público, validando roles (`ADMIN`, `PROVEEDOR`, `CLIENTE`) mediante `@PreAuthorize`.
+4. **Validación y Manejo Centralizado de Errores:** `@RestControllerAdvice` uniforme que traduce excepciones en códigos HTTP correctos (`400`, `401`, `403`, `404`, `409`, `422`).
 
 ---
 
-## 🚫 3. Fuera de Alcance Explícito del Backend
+## 2. Mapa de Sprints del Track Backend
 
-Los siguientes elementos **NO** pertenecen al backlog de backend y no deben construirse en estos sprints:
-
-* **Interfaces de Usuario y Vistas:** Corresponden exclusivamente al backlog de frontend ([`../02_Frontend/BACKLOG_FRONTEND.md`](../02_Frontend/BACKLOG_FRONTEND.md)).
-* **Requisitos Congelados de Fase 01:** Funciones catalogadas como fuera de alcance en [`01_Fase_Planificacion_y_Analisis/`](../../01_Fase_Planificacion_y_Analisis/README.md).
-* **Mocks de Producción en Base de Datos:** Los esquemas DDL son puros, sin sentencias `INSERT` ficticias.
+| ID Sprint | Título | Endpoints Cubiertos | Tablas Afectadas | Reglas de Negocio | Estado |
+| :--- | :--- | :--- | :--- | :--- | :---: |
+| `Sprint-B01` | Auth, Perfiles y Seguridad JWT | 1, 2, 3, 4, 15, 16, 17 | `usuarios`, `perfiles_proveedor` | `RN-001`, `RN-002` | `PENDIENTE` |
+| `Sprint-B02` | Catálogo B2B y Productos Públicos | 5, 6, 18, 19 | `categorias`, `subcategorias`, `productos`, `imagenes_producto`, `producto_especificaciones` | `RN-003`, `RN-004` | `PENDIENTE` |
+| `Sprint-B03` | Pedidos, Split Order y Facturación | 20, 21, 22 | `ordenes`, `subordenes_factura`, `orden_items`, `productos` | `RN-005`, `RN-006`, `RN-007`, `RN-008` | `PENDIENTE` |
+| `Sprint-B04` | Gestión de Proveedor y Despacho | 7, 8, 9, 10, 11, 12, 23, 24 | `productos`, `subordenes_factura`, `perfiles_proveedor` | `RN-003`, `RN-004` | `PENDIENTE` |
+| `Sprint-B05` | Administración, Moderación y Auditoría | 13, 14 | `productos`, `usuarios` | `RN-001` | `PENDIENTE` |
+| `Sprint-B_Audit` | **Quality Gate 1: Certificación Backend** | Todos (1 al 24) | 10 Tablas | `RN-001` a `RN-008` | `BLOQUEADO` |
 
 ---
 
-## ⚠️ 4. Matriz de Riesgos y Mitigaciones Técnicas
+## 3. Matriz Exhaustiva de Endpoints vs Sprints
 
-| Riesgo Técnico de Backend | Probabilidad / Impacto | Estrategia de Mitigación | Responsable |
-| :--- | :---: | :--- | :--- |
-| **Deriva del Contrato OpenAPI:** Diferencias entre el código implementado y la spec. | Medio / Alto | El contrato OpenAPI manda siempre. Validación automatizada de schemas en las pruebas de integración. | `[Agente Backend]` |
-| **Cuello de Botella en Base de Datos Local:** Consultas N+1 o bloqueos de concurrencia. | Medio / Medio | Uso estricto de transacciones delimitadas e índices acordados en el diseño de base de datos. | `[Agente Backend]` |
-| **Dependencia de Servicios Externos:** Caída o latencia de APIs externas de terceros. | Alto / Alto | Implementación de patrón Circuit Breaker y adaptadores mock en local para no detener los tests. | `[Agente Backend]` |
-| **Pérdida de Contexto entre Sesiones de IA:** Retomar el código sin conocer el estado previo. | Medio / Alto | Actualización obligatoria de [`MEMORY_BACKEND.md`](MEMORY_BACKEND.md) al culminar cada sprint. | `[Agente Backend]` |
+| # | Método | Ruta del Endpoint | Sprint | DTO Entrada | DTO Salida | Código HTTP |
+| :-: | :--- | :--- | :-: | :--- | :--- | :-: |
+| 1 | `POST` | `/api/v1/auth/login` | B01 | `LoginRequestDTO` | `AuthResponseDTO` | 200 |
+| 2 | `POST` | `/api/v1/auth/register` | B01 | `RegistroProveedorRequestDTO` | `AuthResponseDTO` | 201 |
+| 3 | `GET` | `/api/v1/auth/me` | B01 | — | `UsuarioPerfilResponseDTO` | 200 |
+| 4 | `PATCH` | `/api/v1/auth/password` | B01 | `CambioContrasenaRequestDTO` | `MensajeResponseDTO` | 200 |
+| 15 | `POST` | `/api/v1/auth/register-company` | B01 | `RegistroEmpresaRequestDTO` | `AuthResponseDTO` | 201 |
+| 16 | `GET` | `/api/v1/providers/me/profile` | B01 | — | `ProveedorPerfilResponseDTO` | 200 |
+| 17 | `POST` | `/api/v1/providers/me/activate` | B01 | `ActivarProveedorRequestDTO` | `ProveedorPerfilResponseDTO` | 200 |
+| 5 | `GET` | `/api/v1/categories` | B02 | — | `List<CategoriaResponseDTO>` | 200 |
+| 6 | `GET` | `/api/v1/categories/{id}` | B02 | — | `CategoriaDetalleResponseDTO` | 200 |
+| 18 | `GET` | `/api/v1/products` | B02 | Params query (search, cat, page) | `PaginaResponseDTO<ProductoCardDTO>` | 200 |
+| 19 | `GET` | `/api/v1/products/{id}` | B02 | — | `ProductoDetalleResponseDTO` | 200 |
+| 20 | `POST` | `/api/v1/orders/checkout` | B03 | `CheckoutRequestDTO` | `CheckoutResponseDTO` | 201 |
+| 21 | `GET` | `/api/v1/orders/me` | B03 | Params query (page, size) | `PaginaResponseDTO<OrdenResumenDTO>` | 200 |
+| 22 | `GET` | `/api/v1/orders/me/{ordenId}` | B03 | — | `OrdenDetalleResponseDTO` | 200 |
+| 7 | `GET` | `/api/v1/providers/me/products` | B04 | Params query | `PaginaResponseDTO<ProductoProveedorDTO>` | 200 |
+| 8 | `GET` | `/api/v1/providers/me/products/{id}` | B04 | — | `ProductoEdicionDTO` | 200 |
+| 9 | `POST` | `/api/v1/providers/me/products` | B04 | `CrearProductoRequestDTO` | `ProductoEdicionDTO` | 201 |
+| 10 | `PUT` | `/api/v1/providers/me/products/{id}` | B04 | `ActualizarProductoRequestDTO` | `ProductoEdicionDTO` | 200 |
+| 11 | `PATCH` | `/api/v1/providers/me/products/{id}/status` | B04 | `CambiarEstadoProductoDTO` | `MensajeResponseDTO` | 200 |
+| 12 | `DELETE` | `/api/v1/providers/me/products/{id}` | B04 | — | `MensajeResponseDTO` (Soft Delete) | 200 |
+| 23 | `GET` | `/api/v1/providers/me/sales` | B04 | Params query | `PaginaResponseDTO<SubordenResumenDTO>` | 200 |
+| 24 | `GET` | `/api/v1/providers/me/sales/{subordenId}` | B04 | — | `SubordenDetalleProveedorDTO` | 200 |
+| 13 | `GET` | `/api/v1/admin/products` | B05 | Params query | `PaginaResponseDTO<ProductoAdminDTO>` | 200 |
+| 14 | `PATCH` | `/api/v1/admin/products/{id}/status` | B05 | `CambiarEstadoAdminDTO` | `MensajeResponseDTO` | 200 |
+
+---
+
+## 4. Definición de Hecho (Definition of Done) para el Track Backend
+Para considerar un sprint de backend como completado:
+1. El código compila limpiamente sin advertencias críticas (`mvn clean test`).
+2. Todos los endpoints cuentan con pruebas de integración usando `@SpringBootTest` y `MockMvc`.
+3. Los DTOs coinciden campo por campo y tipo por tipo con `CONTRATOS_JSON.md`.
+4. El manejo de errores devuelve `ErrorResponseDTO` con estructura `{ "timestamp", "estado", "error", "mensaje", "ruta" }`.
+5. La memoria de trabajo `MEMORY_BACKEND.md` se actualiza con la evidencia de ejecución.

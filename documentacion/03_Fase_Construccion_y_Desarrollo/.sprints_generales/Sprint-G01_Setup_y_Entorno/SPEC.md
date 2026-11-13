@@ -1,50 +1,98 @@
-# SPEC — Sprint-G01: Setup del Ecosistema y Entorno Local (COMPUNEX B2B)
+# Sprint-G01 — Setup del Entorno y Proyectos Base
 
-> **Ámbito:** Sprint General Transversal  
-> **Objetivo:** Disponer del entorno de desarrollo local reproducible para Backend Spring Boot y Frontend Angular, resolviendo la separación de perfiles y externalización de variables de entorno seguras.
-
----
-
-## 📋 1. Alcance
-
-* **Incluye:**
-  * Configuración de perfiles en Backend: `application.properties` (base con perfil dinámico), `application-dev.properties` y `application-prod.properties`.
-  * Externalización de variables de entorno para variables sensibles (`${DB_URL}`, `${DB_USER}`, `${DB_PASS}`, `${JWT_SECRET}`).
-  * Verificación de exclusión de credenciales en `.gitignore`.
-  * Configuración de variables de entorno en Frontend Angular (`src/environments/environment.ts` y `environment.prod.ts`) con `apiUrl: 'http://localhost:8080/api/v1'`.
-* **NO incluye:**
-  * Lógica de nuevos endpoints de negocio ni pantallas de UI.
+> **Área Técnica:** Transversal / DevOps y Entorno  
+> **Track:** General  
+> **Agente Responsable:** Agente DevOps / Setup  
+> **Estado:** PENDIENTE  
+> **Rama GitFlow:** `chore/setup-entorno-base` hacia `develop`  
+> **Dependencias Previas:** Ninguna (Sprint Inicial)
 
 ---
 
-## 👥 2. Tareas del Sprint
-
-| Tipo | Responsable | Tarea |
-| :---: | :---: | :--- |
-| **Técnica** | Desarrollador + Agente | Crear `application-dev.properties` y `application-prod.properties` en `compunex-backend`. |
-| **Técnica** | Desarrollador + Agente | Parametrizar `application.properties` con `spring.profiles.active=${SPRING_PROFILES_ACTIVE:dev}`. |
-| **Técnica** | Desarrollador + Agente | Configurar `environment.ts` y `environment.prod.ts` en Angular apuntando a `/api/v1`. |
-| **Validación** | Desarrollador + Agente | Ejecutar `.\mvnw.cmd test` en backend para confirmar que las pruebas siguen pasando con perfiles. |
+## 1. Objetivo del Sprint
+Configurar y validar el entorno de desarrollo local completo para COMPUNEX B2B, asegurando que el proyecto backend (Spring Boot 3.2.0 / Java 17) y el frontend (Angular 18 standalone) compilen limpiamente, se conecten al servicio MySQL 8.0 en XAMPP (puerto 3306), y expongan un endpoint de healthcheck operativo (`GET /api/v1/salud`).
 
 ---
 
-## 🧪 3. Escenarios de Comprobación (Given-When-Then)
-
-### E1 — Carga de perfil dev por defecto
-* **Dado** el backend configurado con perfiles
-* **Cuando** se levanta la aplicación sin pasar `SPRING_PROFILES_ACTIVE`
-* **Entonces** el sistema toma el perfil `dev` y se conecta al entorno de desarrollo local.
-
-### E2 — Cero contraseñas expuestas en código base
-* **Dado** el archivo `src/main/resources/application.properties` y los perfiles
-* **Cuando** se inspeccionan las propiedades de base de datos y JWT
-* **Entonces** todos los valores sensibles utilizan sintaxis `${...}` con valores de respaldo para desarrollo local, sin credenciales de producción quemadas.
+## 2. Insumos y Referencias Obligatorias (Línea Base)
+* **Stack Tecnológico:**
+  * Backend: Java 17 LTS, Spring Boot 3.2.0, Spring Data JPA, Spring Security 6.2, JJWT 0.11.5, Lombok, Flyway.
+  * Frontend: Angular 18, TypeScript 5.4, Tailwind CSS, SASS, Angular Signals.
+  * Base de Datos: MySQL 8.0 (XAMPP puerto 3306, base de datos `compunex_db`).
+  * Mock Server: Prism Mock Server (`@stoplight/prism-cli`) sobre `compunex-openapi.yaml`.
+* **Referencias Documentales:**
+  * `02_Fase_Diseno_y_Arquitectura/01_Backend/ARCHITECTURE.md`
+  * `02_Fase_Diseno_y_Arquitectura/02_Frontend/ARCHITECTURE.md`
+  * `03_Fase_Construccion_y_Desarrollo/04_Integracion_y_Configuracion/README.md`
 
 ---
 
-## ✅ 4. Definition of Done (DoD)
+## 3. Tareas Técnicas Detalladas (Paso a Paso)
 
-- [ ] Perfiles `application-dev.properties` y `application-prod.properties` creados y funcionales.
-- [ ] Variables de entorno documentadas para ejecución local.
-- [ ] 59 pruebas JUnit ejecutadas con éxito (`BUILD SUCCESS`).
-- [ ] `environment.ts` del Frontend configurado y alineado con `apiUrl`.
+### 3.1. Configuración del Repositorio y GitFlow
+- [ ] Verificar ramas base `main` y `develop` en el repositorio Git.
+- [ ] Configurar `.gitignore` exhaustivo (excluir `/target`, `/node_modules`, `/.angular`, `*.log`, `.env`).
+- [ ] Crear archivo `.env.example` con las variables de entorno oficiales (puerto 8080, db url, db user, secret JWT).
+
+### 3.2. Proyecto Backend (Spring Boot 3.2.0)
+- [ ] Verificar estructura Maven multi-capa: `controller`, `service`, `repository`, `model`, `dto`, `config`, `exception`.
+- [ ] Configurar `pom.xml` con las dependencias oficiales (Spring Web, Spring Security, Data JPA, MySQL Connector, JJWT, Lombok, MapStruct, Flyway).
+- [ ] Configurar `src/main/resources/application.yml` y `application-dev.yml` con la cadena de conexión MySQL:
+  ```yaml
+  spring:
+    datasource:
+      url: jdbc:mysql://localhost:3306/compunex_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      username: root
+      password: ""
+  ```
+- [ ] Implementar endpoint de salud:
+  * Controlador: `SaludController.java`
+  * Ruta: `GET /api/v1/salud` (Público, sin token)
+  * Respuesta `200 OK`: `{"estado": "UP", "servicio": "COMPUNEX B2B API", "timestamp": "2026-11-13T..."}`.
+
+### 3.3. Proyecto Frontend (Angular 18)
+- [ ] Inicializar workspace Angular 18 con arquitectura standalone (`standalone: true`).
+- [ ] Instalar y configurar Tailwind CSS y preprocesador SASS (`src/styles.scss`).
+- [ ] Configurar `proxy.conf.json` para enrutamiento local a `http://localhost:8080` o Prism `http://localhost:4010`.
+- [ ] Crear componente raíz `Shell` con router outlet y estructura de layouts (`PublicLayout`, `DashboardLayout`).
+
+### 3.4. Servidor Mock (Prism) para Frontend Desacoplado
+- [ ] Configurar script npm en package.json: `"mock:api": "prism mock ../documentacion/02_Fase_Diseno_y_Arquitectura/05_Integracion_y_APIs/compunex-openapi.yaml -p 4010"`.
+- [ ] Probar levantamiento de Prism en puerto 4010.
+
+---
+
+## 4. Criterios de Aceptación (Definition of Done - DoD)
+- [ ] `mvn clean package -DskipTests` genera el JAR ejecutable sin errores.
+- [ ] `GET http://localhost:8080/api/v1/salud` responde `200 OK` con payload JSON válido.
+- [ ] `ng build` en frontend compila sin advertencias ni errores.
+- [ ] `npm run mock:api` levanta el servidor mock respondiendo a las rutas de `compunex-openapi.yaml`.
+- [ ] Base de datos `compunex_db` creada en MySQL local.
+
+---
+
+## 5. Plan de Verificación y Comandos
+```bash
+# 1. Verificar backend
+cd compunex-backend
+mvn spring-boot:run
+curl -i http://localhost:8080/api/v1/salud
+
+# 2. Verificar frontend
+cd compunex-frontend
+npm start
+# Abrir en navegador http://localhost:4200
+
+# 3. Verificar Mock Server
+npm run mock:api
+curl -i http://localhost:4010/api/v1/categories
+```
+
+---
+
+## 6. Matriz de Trazabilidad
+| Requisito Funcional | Regla de Negocio | Endpoint / Recurso | Componente / Archivo |
+| :--- | :--- | :--- | :--- |
+| `RF-Transversal` | N/A | `GET /api/v1/salud` | `SaludController.java` |
+| `RF-Transversal` | N/A | Layout Base | `AppComponent.ts`, `app.routes.ts` |
+| `RF-Transversal` | N/A | Mock API 4010 | `package.json` (Prism Mock) |

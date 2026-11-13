@@ -1,60 +1,56 @@
-# AUDITORIA_HITO_TEMPLATE.md — Plantilla: Quality Gate de Hito de Construcción
+# AUDITORIA_HITO_TEMPLATE.md — Plantilla de Auditoría de Quality Gate
 
-> **Fase del SDLC:** Fase 03 · Construcción y Desarrollo  
-> **Propósito:** Plantilla neutral para ejecutar auditorías de hito técnico (Quality Gates) al cerrar un subsistema (Backend Core, Frontend Base o Integración Final) antes de permitir el inicio de la siguiente etapa.  
-> **Regla de Oro:** **Cero rojos abiertos.** Ningún hito se da por cerrado si existen hallazgos críticos de semáforo rojo sin resolver.
+> **Uso:** Esta plantilla define el informe formal de auditoría para validar el cumplimiento de un Quality Gate antes de autorizar la integración o pase de fase.
 
 ---
 
-## 📋 1. Metadatos del Hito Auditado
+# AUDITORIA_[NUMERO] — [Título del Quality Gate]
 
-* **Hito / Subsistema:** `[Backend Completo | Frontend Base | Integración E2E Final]`
-* **Fecha de Auditoría:** `YYYY-MM-DD`
-* **Rama de Inspección:** `[develop o feature/nombre-hito]`
-* **Auditor / Responsable:** `[Tech Lead / Agente Revisor / PO]`
-* **Veredicto General:** `[APROBADO (0 Rojos) | OBSERVADO CON BLOQUEOS]`
-
----
-
-## 🔴 2. Rojos (Hallazgos Críticos Bloqueantes)
-
-*Los rojos representan fallos que rompen contratos, producen errores 500 no controlados, violan invariantes de negocio o introducen features fantasma. **Deben corregirse inmediatamente con commits dedicados.***
-
-| # | Hallazgo Técnico | Por qué es Rojo (Impacto / Severidad) | Corrección Aplicada | Commit de Arreglo |
-| :-: | :--- | :--- | :--- | :--- |
-| **R1** | *[Descripción del fallo técnico]* | *[Ej. Un tipo erróneo devolvía HTTP 500 y bloqueaba la cola de reintentos]* | *[Manejo adecuado de excepción devolviendo RFC 9457]* | `[hash_commit]` |
-| **R2** | *[Incoherencia con el contrato]* | *[Ej. Campo ausente en la respuesta JSON respecto a OpenAPI]* | *[Alineación exacta del DTO con el contrato]* | `[hash_commit]` |
+> **Área / Track:** [Backend / Frontend / Transversal E2E]  
+> **Auditor Responsable:** [Agente Auditor / Coordinador Macro]  
+> **Fecha de Ejecución:** [YYYY-MM-DD]  
+> **Resultado del Gate:** [APROBADO / RECHAZADO / CONDICIONADO]
 
 ---
 
-## 🟡 3. Ámbar (Deuda Técnica Tolerable - No Bloqueante)
-
-*Los ámbares son observaciones menores, optimizaciones o advertencias de linter que no impiden el funcionamiento del sistema en este hito. **Pasan formalmente a la tabla de Deuda Técnica en `MEMORY.md`.***
-
-| # | Observación | Riesgo Asociado | Plan de Mitigación / En qué Sprint se Resuelve |
-| :-: | :--- | :--- | :--- |
-| **A1** | *[Ej. Falta paginación incremental en endpoint X]* | Posible lentitud con volumen masivo de datos | Resolver en Sprint de optimización previo a release |
-| **A2** | *[Ej. Advertencia de estilo en linter]* | Mantenibilidad de código | Limpiar en sprint de pulido final |
+## 1. Alcance de la Auditoría
+[Descripción de los sprints y entregables evaluados en este hito].
 
 ---
 
-## 🟢 4. Verde (Evidencia Demostrable y Objetiva)
+## 2. Checklist de Validación Estricta
 
-*Comprobaciones objetivas que demuestran que el software funciona con hechos y no con suposiciones:*
+### 2.1. Calidad de Código y Compilación
+- [ ] Compilación 100% limpia sin advertencias críticas.
+- [ ] Cobertura de pruebas unitarias/integración conforme al estándar.
+- [ ] Cero dependencias vulnerables o desactualizadas.
 
-| Eje de Calidad | Criterio de Aprobación | Resultado Obtenido | Evidencia Verificada |
+### 2.2. Fidelidad de Contratos y Base de Datos
+- [ ] Endpoints implementados responden exactamente con los esquemas de `CONTRATOS_JSON.md`.
+- [ ] Códigos de estado HTTP conformes (200, 201, 204, 400, 401, 403, 404, 422).
+- [ ] Integridad referencial en base de datos (claves foráneas, índices, restricciones UNIQUE).
+
+### 2.3. Reglas de Negocio
+- [ ] Reglas aplicadas y verificadas con tests automatizados.
+- [ ] Manejo centralizado de excepciones (respuestas de error uniformes).
+
+---
+
+## 3. Matriz de Resultados por Elemento
+
+| Elemento Auditado | Tipo (Endpoint/Pantalla/Tabla) | Estado Verificación | Observaciones / Hallazgos |
 | :--- | :--- | :---: | :--- |
-| **Suite de Tests Automatizada** | 100% de tests en verde | `[X de X tests]` ✅ | Comando CLI ejecutado sin fallos ni omisiones |
-| **Análisis Estático (Linter)** | 0 errores, 0 advertencias | 0 issues ✅ | Linter ejecutado en limpio |
-| **Cumplimiento de Contratos** | 100% alineado con OpenAPI | Conforme ✅ | Inspección de rutas y esquemas JSON |
-| **Aislamiento de Dominio** | Dominio sin frameworks | Conforme ✅ | Cero imports de infraestructura en capas puras |
-| **¿Corre de punta a punta hoy?** | **Demostrable con datos nuevos** | **SÍ ✅** | Flujo completo probado en local con una entrada nueva |
+| `POST /api/v1/...` | Endpoint | PASS | Respuesta 200/400 conforme |
+| `P-01` | Pantalla Angular | PASS | 4 estados implementados |
 
 ---
 
-## ✍️ 5. Dictamen y Decisiones del Product Owner
+## 4. Hallazgos y Bloqueos Identificados
+* **Críticos (Bloquean Gate):** [Ninguno / Detalle]
+* **Menores (No bloquean):** [Detalle]
 
-1. **Autorización de Pase:** ¿Se autoriza dar por cerrado este hito e iniciar la siguiente etapa?  
-   `[SÍ / NO]`
-2. **Deuda Técnica Asumida:** El PO revisa los ámbares y ratifica que quedan registrados en `MEMORY.md`.
-3. **Firma / Aprobación:** `[Product Owner / Tech Lead - Fecha]`
+---
+
+## 5. Veredicto Final y Pasos Siguientes
+* **Decisión:** [APROBADO para siguiente track / RECHAZADO con correcciones requeridas]
+* **Firma / Autorización:** [Agente Auditor / PO]
