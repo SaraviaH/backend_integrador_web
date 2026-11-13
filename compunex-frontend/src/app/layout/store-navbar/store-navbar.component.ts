@@ -22,7 +22,11 @@ import { HomeSearchService } from '../../core/state/home-search.service';
         </form>
         <div class="header-actions">
           @if (authState.isAuthenticated()) {
-            <a class="header-login" routerLink="/panel">Mi panel</a>
+            @if (authState.isProveedor() || authState.isAdmin()) {
+              <a class="header-login" routerLink="/panel">Mi panel</a>
+            } @else {
+              <span class="header-login">Sesión iniciada</span>
+            }
           } @else {
             <a class="header-login" routerLink="/auth/login">Ingresar</a>
             <a class="header-register" routerLink="/auth/registro-empresa">Registrar empresa</a>
