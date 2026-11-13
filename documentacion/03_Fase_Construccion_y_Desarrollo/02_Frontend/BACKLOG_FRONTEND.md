@@ -34,8 +34,8 @@ El Agente de Frontend construye la interfaz de usuario en 14 sprints granulares 
 | `Sprint-F08` | Visor de Factura y Comprobantes | `P-13` | `InvoiceViewerComponent` (Estilos `@media print`) | `BLOQUEADO` |
 | `Sprint-F09` | Mis Compras y Detalle de Pedido | `P-14`, `P-15` | `MyOrdersComponent`, `OrderDetailComponent` | `BLOQUEADO` |
 | `Sprint-F10` | Mi Cuenta, Seguridad y Activación | `P-16`, `P-17`, `P-18` | `ProfileComponent`, `ChangePasswordComponent`, `ActivateProviderComponent` | `BLOQUEADO` |
-| `Sprint-F11` | Dashboard Proveedor y Perfil | `P-19`, `P-26` | `ProviderDashboardComponent`, `ProviderCompanyProfileComponent` | `BLOQUEADO` |
-| `Sprint-F12` | CRUD de Catálogo del Proveedor | `P-20`, `P-21`, `P-22`, `P-23` | `ProviderProductsComponent`, `ProductFormComponent` (FormArray) | `BLOQUEADO` |
+| `Sprint-F11` | Dashboard Proveedor y Perfil | `P-19`, `P-26` | `ProviderDashboardComponent`, `ProviderCompanyProfileComponent`, subida previa `urlLogo`/`urlBanner` (`POST /api/v1/media/upload` folder: 'profiles') | `BLOQUEADO` |
+| `Sprint-F12` | CRUD de Catálogo del Proveedor | `P-20`, `P-21`, `P-22`, `P-23` | `ProviderProductsComponent`, `ProductFormComponent`, subida previa `urlImagen` (`POST /api/v1/media/upload` folder: 'products') | `BLOQUEADO` |
 | `Sprint-F13` | Ventas Recibidas y Despacho | `P-24`, `P-25` | `ProviderSalesComponent`, `ProviderSaleDetailComponent` | `BLOQUEADO` |
 | `Sprint-F14` | Páginas de Error y Rutas | `P-36`, `P-37` | `AccessDeniedComponent`, `NotFoundComponent` | `BLOQUEADO` |
 | `Sprint-F_Audit` | **Quality Gate 2: Certificación Frontend** | 27 Pantallas MVP | Suite completa UI contra Prism Mock | `BLOQUEADO` |

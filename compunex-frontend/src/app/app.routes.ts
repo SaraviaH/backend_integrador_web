@@ -1,0 +1,53 @@
+import { Routes } from '@angular/router';
+import { PublicLayoutComponent } from './layout/public-layout/public-layout.component';
+import { PanelLayoutComponent } from './layout/panel-layout/panel-layout.component';
+import { HomeViewComponent } from './features/home/home-view.component';
+import { ForbiddenViewComponent } from './features/forbidden/forbidden-view.component';
+import { NotFoundViewComponent } from './features/not-found/not-found-view.component';
+import { roleGuard } from './core/guards/role.guard';
+
+export const routes: Routes = [
+  // Zona Pública / Tienda B2B
+  {
+    path: '',
+    component: PublicLayoutComponent,
+    children: [
+      {
+        path: '',
+        component: HomeViewComponent,
+        title: 'COMPUNEX B2B · Mayorista Tecnológico'
+      },
+      {
+        path: 'forbidden',
+        component: ForbiddenViewComponent,
+        title: 'Acceso Denegado · COMPUNEX B2B'
+      }
+    ]
+  },
+
+  // Zona Privada / Panel Proveedor y Administrador (Protegida por Roles)
+  {
+    path: 'panel',
+    component: PanelLayoutComponent,
+    canActivate: [roleGuard(['ROLE_PROVEEDOR', 'ROLE_ADMIN'])],
+    children: [
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
+      },
+      {
+        path: 'dashboard',
+        component: HomeViewComponent, // temporalmente reutilizado hasta Sprint-F11
+        title: 'Panel Proveedor · COMPUNEX B2B'
+      }
+    ]
+  },
+
+  // Fallback 404
+  {
+    path: '**',
+    component: NotFoundViewComponent,
+    title: '404 No Encontrado · COMPUNEX B2B'
+  }
+];

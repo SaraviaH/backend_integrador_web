@@ -2,6 +2,8 @@
 
 Referencia visual aprobada: [mockup de inicio](mockups-generados/inicio-compunex-propuesta-v1.png). Sistema visual: [DESIGN.md](DESIGN.md). Proyecto: [COMPUNEX en Stitch](https://stitch.google.com/projects/13508621404817753476?pli=1). Los IDs corresponden al [inventario completo](INVENTARIO_PANTALLAS_POR_ROL.md): se omiten P-08 y P-27 a P-35 porque están propuestos para una etapa posterior. El administrador sigue siendo parte de la plataforma; sus pantallas requieren definir alcance y no forman parte de estos 27 prompts MVP.
 
+La [imagen principal de hardware](../../../../compunex-frontend/public/images/compunex-hero.png) y la página local del sprint son referencias de la implementación actual. La portada anterior sigue siendo una referencia de composición; la implementación puede evolucionar.
+
 ## Uso
 
 Genera primero P-01 y conserva el mismo proyecto y sistema de diseño. Para cada pantalla copia el **prompt base** y después su bloque específico. Cada prompt solicita una vista de escritorio; revisa después su adaptación a 375 px. Los nombres, productos e importes son ficticios. Las vistas son diseños propuestos, no evidencia de implementación. Contacto visible, datos exactos y permisos pendientes deben resolverse antes de construir.
@@ -9,7 +11,7 @@ Genera primero P-01 y conserva el mismo proyecto y sistema de diseño. Para cada
 ## Prompt base
 
 ```text
-Diseña UNA pantalla web responsive en español para COMPUNEX, comunidad y marketplace B2B de hardware. Toma como referencia visual la portada aprobada: fotografía realista de componentes, fondo blanco y gris azulado #F5F7FA, tinta azul profundo #142238, azul #2456C6, bordes #D9E1EA. Titulares editoriales con Source Serif 4 en portada; Manrope legible para navegación, formularios y paneles. Interfaz elegante, cálida, útil y con identidad tecnológica, no dashboard genérico. Contenido de máximo 1280 px en escritorio, separación consistente, fotografías de hardware, tarjetas y tablas legibles, bordes suaves y acciones bien jerarquizadas. En móvil adapta a 375 px sin desbordamiento y con controles táctiles de 48 px. Etiquetas visibles, foco y errores claros, contraste AA y estados con texto. No inventes cifras, reseñas ni funcionalidades; usa únicamente datos de ejemplo ficticios. Pedidos y comprobantes son simulados: no mostrar cobro real ni comprobante tributario oficial. La empresa compra sin ser proveedor y puede activar ventas después.
+Diseña UNA pantalla web responsive en español para COMPUNEX B2B, comunidad y marketplace mayorista de hardware. Sigue la identidad aprobada en la rama feat/sprint-1-frontend: diseño editorial tecnológico, profesional y cercano, con fotografía realista de hardware y un encabezado de navegación claro. Paleta: blanco #FFFFFF, fondo gris azulado #F5F7FA, azul claro de portada #EAF2FA, texto azul profundo #142238, texto secundario #475569, acción azul #2456C6 y bordes #D9E1EA. Usa Playfair Display para grandes títulos editoriales de la tienda y Plus Jakarta Sans para contenido, navegación y formularios; en paneles prioriza sans-serif. Aprovecha pantallas anchas con contenido fluido de hasta 1720 px y márgenes adaptables; conserva una jerarquía clara, tarjetas con bordes suaves, radios moderados y contraste suficiente. En móvil adapta a 375 px sin desbordamiento y con controles táctiles de 48 px. Etiquetas visibles, foco y errores claros y estados con texto. No inventes cifras, reseñas ni funcionalidades; usa datos ficticios identificados como ejemplos. Pedidos y comprobantes son simulados: no mostrar cobro real ni comprobante tributario oficial. Una empresa puede comprar sin ser proveedor y activar ventas después.
 ```
 
 ## Pantallas del MVP
@@ -19,7 +21,7 @@ Diseña UNA pantalla web responsive en español para COMPUNEX, comunidad y marke
 **Perfil:** Visitante
 
 ```text
-Cabecera con logo, buscador, Inicio, Catálogo, Cómo funciona, carrito y acceso. Carrusel amplio con imagen realista de hardware, flechas, indicadores y botón de pausa: «Conecta con el mundo del hardware» y acción «Explorar catálogo». Debajo, categorías visuales, sección «Una comunidad para crecer» con proveedores y publicaciones de ejemplo, pasos Explora / Conecta / Compra, productos destacados y llamada a publicar. La sección social es concepto visual pendiente de alcance: sin likes, comentarios o chat como funciones aprobadas.
+Cabecera de dos niveles con logo, buscador amplio y navegación a categorías, comunidad, productos y cómo funciona. Portada amplia con fotografía realista de hardware y texto legible sobre un fondo claro, con flechas, indicadores, transición suave y botón de pausa: «Conecta con el mundo del hardware» y acción «Explorar categorías». Debajo, categorías visuales, sección «Una comunidad para crecer» con proveedores y publicaciones de ejemplo, pasos Explora / Conecta / Compra, productos destacados y llamada a publicar. En el sprint 1 la búsqueda filtra solo los productos de muestra y no está conectada al catálogo real; las funciones futuras se presentan como propuesta. La sección social es concepto visual pendiente de alcance: sin likes, comentarios o chat como funciones aprobadas.
 ```
 
 ### P-02 — Categorías
