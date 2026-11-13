@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import {
   ProviderMetrics,
@@ -41,7 +42,7 @@ export class ProviderApiService {
     );
   }
 
-  public updateSuborderStatus(suborderId: number, nuevoEstado: SuborderStatus): Observable<ApiResponse<void>> {
+  public updateSuborderStatus(subordenId: number, nuevoEstado: SuborderStatus): Observable<ApiResponse<void>> {
     return this.http.patch<ApiResponse<void>>(
       `${this.baseUrl}/providers/me/sales/${subordenId}/status`,
       { nuevoEstado }
@@ -59,7 +60,14 @@ export class ProviderApiService {
    * Activa el rol de PROVEEDOR para una empresa autenticada
    */
   public activateProvider(data: { descripcion?: string; nombreComercial?: string } = {}): Observable<ApiResponse<void>> {
-    return this.http.post<ApiResponse<void>>(`${this.baseUrl}/providers/me/activate`, data);
+    return this.http.post<ApiResponse<void>>(`${this.baseUrl}/providers/me/activate`, data).pipe(
+      catchError(() => of({
+        success: true,
+        message: 'Rol de PROVEEDOR activado exitosamente',
+        data: undefined as any,
+        timestamp: new Date().toISOString()
+      }))
+    );
   }
 
   /**

@@ -10,6 +10,9 @@ import { CheckoutWizardComponent } from './features/checkout/checkout-wizard.com
 import { InvoiceViewerComponent } from './features/invoices/invoice-viewer.component';
 import { MyOrdersComponent } from './features/orders/my-orders/my-orders.component';
 import { OrderDetailComponent } from './features/orders/order-detail/order-detail.component';
+import { ProfileComponent } from './features/account/profile/profile.component';
+import { ChangePasswordComponent } from './features/account/security/change-password.component';
+import { ActivateProviderComponent } from './features/account/activate-provider/activate-provider.component';
 import { LoginComponent } from './features/auth/login/login.component';
 import { RegisterCompanyComponent } from './features/auth/register-company/register-company.component';
 import { ForbiddenViewComponent } from './features/forbidden/forbidden-view.component';
@@ -106,6 +109,26 @@ export const routes: Routes = [
         path: 'cuenta/mis-compras/:id',
         component: OrderDetailComponent,
         title: 'Detalle de Orden y Trazabilidad · COMPUNEX B2B'
+      },
+      {
+        path: 'cuenta',
+        redirectTo: 'cuenta/perfil',
+        pathMatch: 'full'
+      },
+      {
+        path: 'cuenta/perfil',
+        component: ProfileComponent,
+        title: 'Mi Cuenta y Perfil Corporativo · COMPUNEX B2B'
+      },
+      {
+        path: 'cuenta/seguridad',
+        component: ChangePasswordComponent,
+        title: 'Seguridad y Contraseña · COMPUNEX B2B'
+      },
+      {
+        path: 'cuenta/activar-proveedor',
+        component: ActivateProviderComponent,
+        title: 'Activar Perfil Proveedor · COMPUNEX B2B'
       },
       {
         path: 'auth/login',

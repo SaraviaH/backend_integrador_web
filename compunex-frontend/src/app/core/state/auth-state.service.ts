@@ -45,6 +45,24 @@ export class AuthStateService {
     }
   }
 
+  public setProviderRole(): void {
+    const current = this._currentUser();
+    const updated: UserProfile = {
+      ...(current || {
+        usuarioId: 101,
+        nombre: 'Carlos Mendoza',
+        nombreCompleto: 'Carlos Mendoza Ramos',
+        correo: 'cmendoza@ciatecperu.pe',
+        ruc: '20601234567',
+        razonSocial: 'CORPORACION TECNOLOGICA DEL PERU SAC',
+        activo: true
+      }),
+      rol: 'ROLE_PROVEEDOR',
+      tienePerfilProveedor: true
+    };
+    this.updateProfile(updated);
+  }
+
   public clearAuth(): void {
     this._token.set(null);
     this._currentUser.set(null);

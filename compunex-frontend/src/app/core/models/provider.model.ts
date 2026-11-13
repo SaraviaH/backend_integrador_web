@@ -42,3 +42,26 @@ export interface UpdateProviderProfileRequest {
   urlBanner?: string; // URL obtenida previamente desde /api/v1/media/upload (folder 'profiles')
 }
 
+export interface ProviderSaleItem {
+  subordenId: number;
+  ordenId: number;
+  codigoOrden: string;
+  clienteRazonSocial: string;
+  clienteRuc: string;
+  fechaCreacion: string;
+  estado: SuborderStatus;
+  subtotal: number;
+  igv: number;
+  total: number;
+  numeroFacturaSimulada?: string;
+  items: {
+    productoId: number;
+    nombre: string;
+    sku: string;
+    cantidad: number;
+    precioUnitario: number;
+    subtotal: number;
+  }[];
+}
+
+
