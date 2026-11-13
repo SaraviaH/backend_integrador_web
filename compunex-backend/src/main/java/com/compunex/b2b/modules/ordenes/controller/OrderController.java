@@ -41,4 +41,31 @@ public class OrderController {
         CheckoutResponseDTO response = orderService.procesarCheckout(authentication.getName(), request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
+    @org.springframework.web.bind.annotation.GetMapping("/me")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(
+            summary = "[21] Listar historial de compras del comprador",
+            description = "Retorna las órdenes realizadas por el usuario autenticado de forma paginada."
+    )
+    public ResponseEntity<com.compunex.b2b.modules.ordenes.dto.response.OrdenPaginadaResponseDTO> misOrdenes(
+            Authentication authentication,
+            @org.springframework.web.bind.annotation.RequestParam(defaultValue = "0") int page,
+            @org.springframework.web.bind.annotation.RequestParam(defaultValue = "10") int size) {
+        var pageable = org.springframework.data.domain.PageRequest.of(
+                page, size, org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "fechaCreacion"));
+        return ResponseEntity.ok(orderService.obtenerMisOrdenes(authentication.getName(), pageable));
+    }
+
+    @org.springframework.web.bind.annotation.GetMapping("/me/{ordenId}")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(
+            summary = "[22] Consultar detalle de una orden y sus comprobantes",
+            description = "Retorna el desglose completo de subórdenes, ítems y comprobantes simulados de una orden propia."
+    )
+    public ResponseEntity<com.compunex.b2b.modules.ordenes.dto.response.OrdenDetalleResponseDTO> detalleOrden(
+            Authentication authentication,
+            @org.springframework.web.bind.annotation.PathVariable Long ordenId) {
+        return ResponseEntity.ok(orderService.obtenerDetalleOrden(authentication.getName(), ordenId));
+    }
 }
