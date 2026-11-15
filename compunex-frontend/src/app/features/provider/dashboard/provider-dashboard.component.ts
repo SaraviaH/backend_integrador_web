@@ -51,7 +51,7 @@ import { ProviderRecentSalesComponent } from './recent-sales/provider-recent-sal
           
           <a
             routerLink="/panel/productos/nuevo"
-            class="px-5 py-2.5 rounded-full bg-[#1E50C0] hover:bg-[#1842A0] text-white text-xs font-bold transition-colors flex items-center gap-2 shadow-xs"
+            class="px-5 py-2.5 rounded-full bg-[#2456C6] hover:bg-[#1B429B] text-white text-xs font-bold transition-colors flex items-center gap-2 shadow-xs"
           >
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -103,13 +103,13 @@ import { ProviderRecentSalesComponent } from './recent-sales/provider-recent-sal
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
           <a
             routerLink="/panel/productos"
-            class="bg-white rounded-3xl border border-slate-200/80 p-5 flex items-center gap-4 hover:border-[#1E50C0] hover:shadow-xs transition-all group"
+            class="bg-white rounded-3xl border border-slate-200/80 p-5 flex items-center gap-4 hover:border-[#2456C6] hover:shadow-xs transition-all group"
           >
-            <div class="w-12 h-12 rounded-2xl bg-blue-50 text-[#1E50C0] flex items-center justify-center font-bold text-xl group-hover:scale-105 transition-transform">
+            <div class="w-12 h-12 rounded-2xl bg-blue-50 text-[#2456C6] flex items-center justify-center font-bold text-xl group-hover:scale-105 transition-transform">
               🖥️
             </div>
             <div>
-              <h4 class="text-sm font-bold text-[#142238] group-hover:text-[#1E50C0] transition-colors">Mis Productos (P-20)</h4>
+              <h4 class="text-sm font-bold text-[#142238] group-hover:text-[#2456C6] transition-colors">Mis Productos (P-20)</h4>
               <p class="text-[11px] text-slate-500 mt-0.5">Control de catálogo, stock y precios</p>
             </div>
           </a>

@@ -14,7 +14,7 @@ import { ProviderCartGroup, CartItem } from '../../../core/models/order.model';
       <!-- Encabezado del Grupo por Proveedor (Split Order) -->
       <div class="bg-slate-50/80 px-6 py-4 border-b border-slate-200/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-blue-100 text-[#1E50C0] font-bold text-sm flex items-center justify-center shrink-0">
+          <div class="w-10 h-10 rounded-xl bg-blue-100 text-[#2456C6] font-bold text-sm flex items-center justify-center shrink-0">
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
             </svg>
@@ -22,7 +22,7 @@ import { ProviderCartGroup, CartItem } from '../../../core/models/order.model';
           <div>
             <div class="flex items-center gap-2">
               <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Despacho Proveedor</span>
-              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-[#1E50C0] border border-blue-100">
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-[#2456C6] border border-blue-100">
                 Suborden Independiente
               </span>
             </div>
@@ -32,7 +32,7 @@ import { ProviderCartGroup, CartItem } from '../../../core/models/order.model';
 
         <div class="text-left sm:text-right">
           <span class="text-[11px] text-slate-400 block">Subtotal Proveedor (con IGV)</span>
-          <span class="text-sm font-black text-[#1E50C0]">S/ {{ group.total | number:'1.2-2' }}</span>
+          <span class="text-sm font-black text-[#2456C6]">S/ {{ group.total | number:'1.2-2' }}</span>
         </div>
       </div>
 

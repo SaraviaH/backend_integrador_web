@@ -24,7 +24,9 @@ import { LoginComponent } from './features/auth/login/login.component';
 import { RegisterCompanyComponent } from './features/auth/register-company/register-company.component';
 import { ForbiddenViewComponent } from './features/forbidden/forbidden-view.component';
 import { NotFoundViewComponent } from './features/not-found/not-found-view.component';
+import { LegalViewComponent } from './features/legal/legal-view.component';
 import { roleGuard } from './core/guards/role.guard';
+import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   // Zona Pública / Tienda B2B
@@ -85,21 +87,25 @@ export const routes: Routes = [
       {
         path: 'checkout/datos-facturacion',
         component: CheckoutWizardComponent,
+        canActivate: [authGuard],
         title: 'Datos de Facturación · COMPUNEX B2B'
       },
       {
         path: 'checkout/revision',
         component: CheckoutWizardComponent,
+        canActivate: [authGuard],
         title: 'Revisión del Pedido · COMPUNEX B2B'
       },
       {
         path: 'checkout/confirmacion',
         component: CheckoutWizardComponent,
+        canActivate: [authGuard],
         title: 'Confirmación de Compra · COMPUNEX B2B'
       },
       {
         path: 'pedidos/:id/comprobante',
         component: InvoiceViewerComponent,
+        canActivate: [authGuard],
         title: 'Factura Electrónica SUNAT · COMPUNEX B2B'
       },
       {
@@ -110,11 +116,13 @@ export const routes: Routes = [
       {
         path: 'cuenta/mis-compras',
         component: MyOrdersComponent,
+        canActivate: [authGuard],
         title: 'Mis Compras B2B · COMPUNEX'
       },
       {
         path: 'cuenta/mis-compras/:id',
         component: OrderDetailComponent,
+        canActivate: [authGuard],
         title: 'Detalle de Orden y Trazabilidad · COMPUNEX B2B'
       },
       {
@@ -125,16 +133,19 @@ export const routes: Routes = [
       {
         path: 'cuenta/perfil',
         component: ProfileComponent,
+        canActivate: [authGuard],
         title: 'Mi Cuenta y Perfil Corporativo · COMPUNEX B2B'
       },
       {
         path: 'cuenta/seguridad',
         component: ChangePasswordComponent,
+        canActivate: [authGuard],
         title: 'Seguridad y Contraseña · COMPUNEX B2B'
       },
       {
         path: 'cuenta/activar-proveedor',
         component: ActivateProviderComponent,
+        canActivate: [authGuard],
         title: 'Activar Perfil Proveedor · COMPUNEX B2B'
       },
       {
@@ -156,6 +167,18 @@ export const routes: Routes = [
         path: '403',
         redirectTo: 'forbidden',
         pathMatch: 'full'
+      },
+      {
+        path: 'terminos',
+        component: LegalViewComponent,
+        data: { legal: 'terms' },
+        title: 'Términos y Condiciones · COMPUNEX B2B'
+      },
+      {
+        path: 'privacidad',
+        component: LegalViewComponent,
+        data: { legal: 'privacy' },
+        title: 'Política de Privacidad · COMPUNEX B2B'
       },
       {
         path: '404',

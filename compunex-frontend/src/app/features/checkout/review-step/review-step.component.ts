@@ -16,8 +16,8 @@ import { CheckoutRequest, CheckoutItemRequest } from '../../../core/models/order
       
       <!-- Encabezado del Paso P-11 -->
       <div class="bg-white rounded-3xl border border-slate-200/80 p-6 md:p-8 shadow-xs">
-        <div class="flex items-center gap-2 text-xs font-bold text-[#1E50C0] uppercase tracking-wider mb-1">
-          <span class="w-2 h-2 rounded-full bg-[#1E50C0]"></span>
+        <div class="flex items-center gap-2 text-xs font-bold text-[#2456C6] uppercase tracking-wider mb-1">
+          <span class="w-2 h-2 rounded-full bg-[#2456C6]"></span>
           Paso 2 de 3 · Confirmación de Split Order
         </div>
         <h2 class="text-xl sm:text-2xl font-black text-[#142238] tracking-tight font-display">
@@ -40,7 +40,7 @@ import { CheckoutRequest, CheckoutItemRequest } from '../../../core/models/order
             <button
               type="button"
               (click)="prevStep.emit()"
-              class="text-xs font-semibold text-[#1E50C0] hover:underline"
+              class="text-xs font-semibold text-[#2456C6] hover:underline"
             >
               Editar
             </button>
@@ -70,7 +70,7 @@ import { CheckoutRequest, CheckoutItemRequest } from '../../../core/models/order
             <button
               type="button"
               (click)="prevStep.emit()"
-              class="text-xs font-semibold text-[#1E50C0] hover:underline"
+              class="text-xs font-semibold text-[#2456C6] hover:underline"
             >
               Cambiar
             </button>
@@ -110,7 +110,7 @@ import { CheckoutRequest, CheckoutItemRequest } from '../../../core/models/order
               Esta compra se estructurará en {{ cartState.itemsByProvider().length }} subórdenes independientes con trazabilidad individual.
             </p>
           </div>
-          <span class="px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-[#1E50C0] border border-blue-100 self-start sm:self-auto">
+          <span class="px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-[#2456C6] border border-blue-100 self-start sm:self-auto">
             {{ cartState.totalItemsCount() }} unidades en total
           </span>
         </div>
@@ -123,7 +123,7 @@ import { CheckoutRequest, CheckoutItemRequest } from '../../../core/models/order
                   <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
                   <span class="text-xs font-bold text-slate-800">{{ group.proveedorRazonSocial }}</span>
                 </div>
-                <span class="text-xs font-black text-[#1E50C0]">
+                <span class="text-xs font-black text-[#2456C6]">
                   S/ {{ group.total | number:'1.2-2' }} (inc. IGV)
                 </span>
               </div>
@@ -160,7 +160,7 @@ import { CheckoutRequest, CheckoutItemRequest } from '../../../core/models/order
           </div>
           <div class="flex justify-between text-base font-black text-[#142238] pt-3 border-t border-slate-200">
             <span>Importe Total a Pagar:</span>
-            <span class="text-[#1E50C0] text-lg">S/ {{ cartState.total() | number:'1.2-2' }}</span>
+            <span class="text-[#2456C6] text-lg">S/ {{ cartState.total() | number:'1.2-2' }}</span>
           </div>
         </div>
 

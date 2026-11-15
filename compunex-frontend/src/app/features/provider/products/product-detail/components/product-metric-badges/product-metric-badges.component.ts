@@ -39,15 +39,18 @@ import { ProductDetail } from '../../../../../../core/models/catalog.model';
         </p>
       </div>
 
-      <!-- Precio Mayorista -->
+      <!-- Total de caja -->
       <div class="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-xs">
-        <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Precio Escalar (Volumen)</p>
+        <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total de Caja</p>
         <p class="text-xl font-black text-emerald-600 mt-1">
-          S/ {{ (product.precioMayorista || product.precioUnitario) | number:'1.2-2' }}
+          S/ {{ (product.precioTotalCaja || product.precioUnitario) | number:'1.2-2' }}
         </p>
         <p class="mt-2 text-[11px] text-emerald-700 font-medium">
-          A partir de {{ product.cantidadMinimaMayorista || 5 }} unidades
+          {{ product.unidadesPorPaqueteTexto || '1 unidad' }} por paquete
         </p>
+        @if (product.pedidoMinimoTexto) {
+          <p class="mt-0.5 text-[10px] text-slate-500">Pedido mínimo: {{ product.pedidoMinimoTexto }}</p>
+        }
       </div>
 
       <!-- Garantía B2B -->

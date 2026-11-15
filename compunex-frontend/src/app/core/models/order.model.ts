@@ -1,5 +1,5 @@
 export type OrderStatus = 'PENDIENTE' | 'CONFIRMADA' | 'EN_PREPARACION' | 'DESPACHADA' | 'ENTREGADA' | 'CANCELADA';
-export type SuborderStatus = 'PENDIENTE_DESPACHO' | 'EN_PREPARACION' | 'DESPACHADO' | 'ENTREGADO' | 'ANULADO';
+export type SuborderStatus = 'PENDIENTE_DESPACHO' | 'EN_PREPARACION' | 'DESPACHADO' | 'ENTREGADO' | 'CANCELADO';
 
 export interface CartItem {
   productoId: number;
@@ -71,7 +71,7 @@ export interface OrderSummary {
   codigoOrden: string;
   fechaCreacion: string;
   totalGeneral: number;
-  estadoGeneral: OrderStatus;
+  estadoGeneral?: OrderStatus;
   cantidadSubordenes: number;
 }
 

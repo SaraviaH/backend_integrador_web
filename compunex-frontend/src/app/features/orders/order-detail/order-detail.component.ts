@@ -49,7 +49,7 @@ import { OrderDetail, SuborderInvoice, SuborderStatus } from '../../../core/mode
             No encontramos los detalles de esta orden de compra o el enlace ha caducado.
           </p>
           <div class="pt-2">
-            <a routerLink="/cuenta/mis-compras" class="px-6 py-2.5 rounded-full bg-[#1E50C0] text-white text-xs font-semibold">
+            <a routerLink="/cuenta/mis-compras" class="px-6 py-2.5 rounded-full bg-[#2456C6] text-white text-xs font-semibold">
               Volver a Mis Compras
             </a>
           </div>
@@ -64,8 +64,8 @@ import { OrderDetail, SuborderInvoice, SuborderStatus } from '../../../core/mode
         <div class="bg-white rounded-3xl border border-slate-200/80 p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-xs">
           <div>
             <div class="flex items-center gap-2 mb-2">
-              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-[#1E50C0] border border-blue-100">
-                <span class="w-2 h-2 rounded-full bg-[#1E50C0]"></span>
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-[#2456C6] border border-blue-100">
+                <span class="w-2 h-2 rounded-full bg-[#2456C6]"></span>
                 Orden {{ ord.estado }}
               </span>
               <span class="text-xs text-slate-400">Emisión: {{ ord.fechaEmision | date:'dd/MM/yyyy HH:mm' }}</span>
@@ -81,7 +81,7 @@ import { OrderDetail, SuborderInvoice, SuborderStatus } from '../../../core/mode
           <div class="flex items-center gap-3">
             <a
               [routerLink]="['/pedidos', ord.ordenId, 'comprobante']"
-              class="px-5 py-2.5 rounded-full bg-[#1E50C0] hover:bg-[#1842A0] text-white text-xs font-bold transition-colors flex items-center gap-2 shadow-xs"
+              class="px-5 py-2.5 rounded-full bg-[#2456C6] hover:bg-[#1B429B] text-white text-xs font-bold transition-colors flex items-center gap-2 shadow-xs"
             >
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -121,7 +121,7 @@ import { OrderDetail, SuborderInvoice, SuborderStatus } from '../../../core/mode
             </div>
             <div class="flex justify-between text-sm font-extrabold text-[#142238] pt-2 border-t border-slate-100">
               <span>Total Orden:</span>
-              <span class="font-mono text-[#1E50C0] text-base">S/ {{ ord.totalGeneral | number:'1.2-2' }}</span>
+              <span class="font-mono text-[#2456C6] text-base">S/ {{ ord.totalGeneral | number:'1.2-2' }}</span>
             </div>
           </div>
 
@@ -154,7 +154,7 @@ import { OrderDetail, SuborderInvoice, SuborderStatus } from '../../../core/mode
 
                   <div class="text-left sm:text-right">
                     <span class="text-xs text-slate-400 block">Total Suborden (con IGV)</span>
-                    <span class="text-base font-black text-[#1E50C0]">S/ {{ sub.total | number:'1.2-2' }}</span>
+                    <span class="text-base font-black text-[#2456C6]">S/ {{ sub.total | number:'1.2-2' }}</span>
                   </div>
                 </div>
 

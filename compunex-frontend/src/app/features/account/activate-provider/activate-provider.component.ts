@@ -37,7 +37,7 @@ import { ToastStateService } from '../../../core/state/toast-state.service';
           <div class="pt-2">
             <a
               routerLink="/panel"
-              class="px-8 py-3 rounded-full bg-[#1E50C0] hover:bg-[#1842A0] text-white text-xs font-bold transition-colors shadow-xs inline-flex items-center gap-2"
+              class="px-8 py-3 rounded-full bg-[#2456C6] hover:bg-[#1B429B] text-white text-xs font-bold transition-colors shadow-xs inline-flex items-center gap-2"
             >
               <span>Ir al Panel de Proveedor</span>
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -49,7 +49,7 @@ import { ToastStateService } from '../../../core/state/toast-state.service';
       } @else {
         
         <!-- Encabezado de la Pantalla P-18 -->
-        <div class="bg-gradient-to-r from-[#142238] to-[#1E50C0] rounded-3xl p-6 md:p-10 text-white space-y-4 shadow-md">
+        <div class="bg-gradient-to-r from-[#142238] to-[#2456C6] rounded-3xl p-6 md:p-10 text-white space-y-4 shadow-md">
           <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-blue-200 text-xs font-semibold backdrop-blur-xs">
             <span>🚀</span> Expande tu canal mayorista B2B
           </div>
@@ -81,7 +81,7 @@ import { ToastStateService } from '../../../core/state/toast-state.service';
         <form [formGroup]="form" (ngSubmit)="onSubmit()" class="bg-white rounded-3xl border border-slate-200/80 p-6 md:p-8 space-y-6 shadow-xs">
           
           <h2 class="text-sm font-bold text-[#142238] uppercase tracking-wider pb-3 border-b border-slate-100 flex items-center gap-2">
-            <svg class="w-4 h-4 text-[#1E50C0]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg class="w-4 h-4 text-[#2456C6]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
             </svg>
             Datos Comerciales de Distribución
@@ -228,7 +228,7 @@ import { ToastStateService } from '../../../core/state/toast-state.service';
               <input
                 type="checkbox"
                 formControlName="aceptaTerminos"
-                class="w-4 h-4 rounded text-[#1E50C0] border-slate-300 focus:ring-[#1E50C0] mt-0.5"
+                class="w-4 h-4 rounded text-[#2456C6] border-slate-300 focus:ring-[#2456C6] mt-0.5"
               />
               <span class="text-xs text-slate-600 leading-relaxed">
                 Acepto los términos de intermediación mayorista de COMPUNEX B2B, me comprometo a despachar con Guía de Remisión física/electrónica y emitir Facturas Electrónicas SUNAT válidas por cada orden confirmada.

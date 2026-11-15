@@ -7,11 +7,17 @@ import { ToastStateService, ToastMessage } from '../../../core/state/toast-state
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="fixed bottom-4 right-4 z-50 flex flex-col gap-2.5 max-w-sm w-full pointer-events-none">
+    <div
+      class="fixed bottom-4 left-4 right-4 sm:left-auto z-50 flex flex-col gap-2.5 max-w-sm w-auto sm:w-full pointer-events-none"
+      aria-label="Notificaciones"
+    >
       @for (toast of toastService.toasts(); track toast.id) {
         <div
           class="pointer-events-auto p-4 rounded-xl shadow-lg border flex items-start gap-3 transform transition-all duration-300 animate-slide-in"
           [ngClass]="getContainerClasses(toast.tipo)"
+          [attr.role]="toast.tipo === 'error' ? 'alert' : 'status'"
+          [attr.aria-live]="toast.tipo === 'error' ? 'assertive' : 'polite'"
+          aria-atomic="true"
         >
           <div class="shrink-0 mt-0.5">
             @switch (toast.tipo) {
@@ -45,8 +51,9 @@ import { ToastStateService, ToastMessage } from '../../../core/state/toast-state
             type="button"
             (click)="toastService.dismiss(toast.id)"
             class="shrink-0 text-slate-400 hover:text-slate-600 transition-colors p-1"
+            aria-label="Cerrar notificación"
           >
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>

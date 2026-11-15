@@ -27,8 +27,9 @@ export interface ProductCard {
   sku: string;
   categoriaNombre: string;
   precioUnitario: number;
-  precioMayorista?: number;
-  cantidadMinimaMayorista?: number;
+  precioTotalCaja?: number;
+  unidadesPorPaqueteTexto?: string;
+  pedidoMinimoTexto?: string;
   stockDisponible: number;
   proveedorId: number;
   proveedorRazonSocial: string;
@@ -38,6 +39,7 @@ export interface ProductCard {
 
 export interface ProductDetail extends ProductCard {
   categoriaId?: string;
+  unidadesPorPaquete?: number;
   descripcion: string;
   marca: string;
   modelo: string;
@@ -66,8 +68,8 @@ export interface CreateProductRequest {
   sku: string;
   categoriaId: string | number;
   precioUnitario: number;
-  precioMayorista?: number;
-  cantidadMinimaMayorista?: number;
+  precioTotalCaja?: number;
+  unidadesPorPaquete: number;
   stockDisponible: number;
   descripcion: string;
   marca: string;

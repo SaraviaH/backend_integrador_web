@@ -171,7 +171,7 @@ export class ProviderApiService {
           const activeProds = prodList.filter(p => p.activo);
           const ventasMesActual = Math.round(
             salesList
-              .filter(s => s.estado !== 'ANULADO')
+              .filter(s => s.estado !== 'CANCELADO')
               .reduce((acc, s) => acc + s.total, 0) * 100
           ) / 100;
           const pedidosPendientes = salesList.filter(
@@ -207,10 +207,10 @@ export class ProviderApiService {
             nombre: p.titulo,
             categoriaNombre: p.categoriaNombre || p.categoriaId || 'Hardware B2B',
             precioUnitario: Number(p.precioUnitarioRef),
-            precioMayorista: p.precioTotalRef != null && Number(p.precioTotalRef) < Number(p.precioUnitarioRef)
-              ? Number(p.precioTotalRef)
-              : undefined,
-            cantidadMinimaMayorista: parseLeadingInt(p.pedidoMinimo, 1),
+            precioTotalCaja: p.precioTotalRef != null ? Number(p.precioTotalRef) : undefined,
+            unidadesPorPaquete: parseLeadingInt(p.unidadesPorPaquete || p.pedidoMinimo, 1),
+            unidadesPorPaqueteTexto: p.unidadesPorPaquete,
+            pedidoMinimoTexto: p.pedidoMinimo,
             stock: parseLeadingInt(findSpecValue(p.especificaciones, 'Stock Referencial'), 100),
             activo: p.estado === 'ACTIVO',
             ultimaActualizacion: p.fechaActualizacion || p.fechaPublicacion || new Date().toISOString(),
@@ -247,8 +247,10 @@ export class ProviderApiService {
             sku: findSpecValue(specs, 'SKU') || `CMP-${String(d.id).padStart(4, '0')}`,
             categoriaNombre: d.categoriaId || 'Hardware B2B',
             precioUnitario: unitPrice,
-            precioMayorista: totalRef && totalRef < unitPrice ? totalRef : undefined,
-            cantidadMinimaMayorista: parseLeadingInt(d.pedidoMinimo, 1),
+            precioTotalCaja: totalRef,
+            unidadesPorPaquete: parseLeadingInt(d.unidadesPorPaquete || d.pedidoMinimo, 1),
+            unidadesPorPaqueteTexto: d.unidadesPorPaquete,
+            pedidoMinimoTexto: d.pedidoMinimo,
             stockDisponible: parseLeadingInt(findSpecValue(specs, 'Stock Referencial'), 100),
             proveedorId: d.proveedorId,
             proveedorRazonSocial: d.proveedorRazonSocial || 'Mi Empresa B2B',
@@ -302,8 +304,10 @@ export class ProviderApiService {
             sku: data.sku,
             categoriaNombre: res.categoriaId || 'Hardware B2B',
             precioUnitario: Number(res.precioUnitarioRef),
-            precioMayorista: Number(res.precioTotalRef),
-            cantidadMinimaMayorista: data.cantidadMinimaMayorista || 1,
+            precioTotalCaja: Number(res.precioTotalRef),
+            unidadesPorPaquete: data.unidadesPorPaquete,
+            unidadesPorPaqueteTexto: payload.unidadesPorPaquete,
+            pedidoMinimoTexto: payload.pedidoMinimo,
             stockDisponible: data.stockDisponible,
             proveedorId: 0,
             proveedorRazonSocial: '',
@@ -452,7 +456,7 @@ export class ProviderApiService {
               clienteRazonSocial: v.razonSocialComprador,
               clienteRuc: v.rucComprador,
               fechaCreacion: v.fechaEmision,
-              estado: (v.estado === 'CANCELADO' ? 'ANULADO' : v.estado) as SuborderStatus,
+              estado: v.estado as SuborderStatus,
               subtotal,
               igv,
               total,
@@ -487,7 +491,7 @@ export class ProviderApiService {
             clienteRazonSocial: d.receptor?.razonSocial || 'Cliente B2B',
             clienteRuc: d.receptor?.ruc || '—',
             fechaCreacion: d.fechaEmision,
-            estado: (d.estado === 'CANCELADO' ? 'ANULADO' : d.estado) as SuborderStatus,
+            estado: d.estado as SuborderStatus,
             subtotal: Number(d.subtotal),
             igv: Number(d.igv),
             total: Number(d.total),
@@ -523,7 +527,7 @@ export class ProviderApiService {
   }
 
   public updateSuborderStatus(subordenId: number, nuevoEstado: SuborderStatus): Observable<ApiResponse<void>> {
-    const backendEstado = nuevoEstado === 'ANULADO' ? 'CANCELADO' : nuevoEstado;
+    const backendEstado = nuevoEstado;
     const request$ = this.http
       .patch<BackendSubordenDetalleProvDTO>(
         `${this.baseUrl}/providers/me/sales/${subordenId}/status`,
@@ -667,7 +671,11 @@ export class ProviderApiService {
   }
 
   private buildBackendProductPayload(data: CreateProductRequest) {
-    const qtyMin = data.cantidadMinimaMayorista || 1;
+    const unidades = Math.max(1, Number(data.unidadesPorPaquete) || 1);
+    const totalCaja = data.precioTotalCaja && data.precioTotalCaja > 0
+      ? Number(data.precioTotalCaja)
+      : Math.round(Number(data.precioUnitario) * unidades * 100) / 100;
+    const paqueteTexto = `${unidades} ${unidades === 1 ? 'unidad' : 'unidades'}`;
     const specs: { clave: string; valor: string }[] = [
       { clave: 'SKU', valor: data.sku || 'CMP-B2B' },
       { clave: 'Marca', valor: data.marca || 'Enterprise' },
@@ -682,10 +690,10 @@ export class ProviderApiService {
       descripcion: data.descripcion,
       modeloComercial: 'DISTRIBUIDOR_OFICIAL',
       tipoFormato: data.modelo || 'Unidad / Caja Master',
-      unidadesPorPaquete: `${qtyMin} ${qtyMin === 1 ? 'unidad' : 'unidades'}`,
-      pedidoMinimo: `${qtyMin} ${qtyMin === 1 ? 'unidad' : 'unidades'}`,
+      unidadesPorPaquete: paqueteTexto,
+      pedidoMinimo: paqueteTexto,
       precioUnitarioRef: data.precioUnitario,
-      precioTotalRef: data.precioMayorista && data.precioMayorista > 0 ? data.precioMayorista : data.precioUnitario,
+      precioTotalRef: totalCaja,
       moneda: 'PEN',
       terminosComerciales: `Garantía oficial de ${data.garantiaMeses || 12} meses. Emisión de factura electrónica B2B.`,
       especificaciones: specs,
@@ -845,8 +853,9 @@ export class ProviderApiService {
       sku: 'LAP-DELL-5520-01',
       categoriaNombre: 'Laptops & Workstations',
       precioUnitario: 2399.00,
-      precioMayorista: 2199.00,
-      cantidadMinimaMayorista: 5,
+      precioTotalCaja: 10995,
+      unidadesPorPaqueteTexto: '5 unidades',
+      pedidoMinimoTexto: '5 unidades',
       stockDisponible: 25,
       proveedorId: 1,
       proveedorRazonSocial: 'AndesTech Mayorista SAC',

@@ -13,8 +13,10 @@ export interface ProviderProductItem {
   nombre: string;
   categoriaNombre: string;
   precioUnitario: number;
-  precioMayorista?: number;
-  cantidadMinimaMayorista?: number;
+  precioTotalCaja?: number;
+  unidadesPorPaquete?: number;
+  unidadesPorPaqueteTexto?: string;
+  pedidoMinimoTexto?: string;
   stock: number;
   activo: boolean;
   ultimaActualizacion: string;

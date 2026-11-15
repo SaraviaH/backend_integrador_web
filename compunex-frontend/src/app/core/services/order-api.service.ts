@@ -64,7 +64,7 @@ function mapBackendCheckoutToFrontend(res: BackendCheckoutResponseDTO): Checkout
     proveedorRazonSocial: f.emisor?.razonSocial || 'Proveedor B2B',
     proveedorRuc: f.emisor?.ruc || '—',
     numeroFacturaSimulada: f.numeroComprobante,
-    estado: (f.estado === 'CANCELADO' ? 'ANULADO' : f.estado) as SuborderStatus,
+    estado: f.estado as SuborderStatus,
     subtotal: Number(f.subtotal),
     igv: Number(f.igv),
     total: Number(f.total),
@@ -96,7 +96,7 @@ function deriveOrderStatus(subordenes: SuborderInvoice[]): OrderStatus {
   if (subordenes.every(s => s.estado === 'ENTREGADO')) return 'ENTREGADA';
   if (subordenes.some(s => s.estado === 'DESPACHADO')) return 'DESPACHADA';
   if (subordenes.some(s => s.estado === 'EN_PREPARACION')) return 'EN_PREPARACION';
-  if (subordenes.every(s => s.estado === 'ANULADO')) return 'CANCELADA';
+  if (subordenes.every(s => s.estado === 'CANCELADO')) return 'CANCELADA';
   return 'CONFIRMADA';
 }
 
@@ -206,7 +206,6 @@ export class OrderApiService {
             codigoOrden: o.codigoOrden,
             fechaCreacion: o.fechaEmision,
             totalGeneral: Number(o.totalGeneral),
-            estadoGeneral: 'CONFIRMADA' as OrderStatus,
             cantidadSubordenes: o.cantidadProveedores ?? 1
           })),
           page: res.pagina ?? 0,

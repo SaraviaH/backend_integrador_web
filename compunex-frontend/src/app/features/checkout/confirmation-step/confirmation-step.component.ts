@@ -44,7 +44,7 @@ import { CheckoutStateService } from '../../../core/state/checkout-state.service
             </div>
             <div>
               <span class="text-slate-400 block text-[11px]">Importe Total (con IGV):</span>
-              <strong class="text-[#1E50C0] text-sm">S/ {{ order.totalGeneral | number:'1.2-2' }}</strong>
+              <strong class="text-[#2456C6] text-sm">S/ {{ order.totalGeneral | number:'1.2-2' }}</strong>
             </div>
           </div>
 
@@ -72,11 +72,11 @@ import { CheckoutStateService } from '../../../core/state/checkout-state.service
                   <div class="flex items-center justify-between sm:justify-end gap-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100">
                     <div class="text-right">
                       <span class="text-[10px] text-slate-400 block">Total Suborden</span>
-                      <span class="text-xs font-bold text-[#1E50C0]">S/ {{ sub.total | number:'1.2-2' }}</span>
+                      <span class="text-xs font-bold text-[#2456C6]">S/ {{ sub.total | number:'1.2-2' }}</span>
                     </div>
                     <a
                       [routerLink]="['/pedidos', order.ordenId, 'comprobante']"
-                      class="px-3 py-1.5 rounded-xl border border-[#1E50C0] text-[#1E50C0] hover:bg-blue-50 text-xs font-bold transition-colors shrink-0"
+                      class="px-3 py-1.5 rounded-xl border border-[#2456C6] text-[#2456C6] hover:bg-blue-50 text-xs font-bold transition-colors shrink-0"
                     >
                       Ver Factura
                     </a>
@@ -108,7 +108,7 @@ import { CheckoutStateService } from '../../../core/state/checkout-state.service
 
             <a
               routerLink="/cuenta/mis-compras"
-              class="px-8 py-3 rounded-full bg-[#1E50C0] hover:bg-[#1842A0] text-white text-xs font-bold transition-colors shadow-xs"
+              class="px-8 py-3 rounded-full bg-[#2456C6] hover:bg-[#1B429B] text-white text-xs font-bold transition-colors shadow-xs"
             >
               Ver en Mis Compras (P-14)
             </a>
@@ -121,7 +121,7 @@ import { CheckoutStateService } from '../../../core/state/checkout-state.service
           <h2 class="text-base font-bold text-[#142238]">No hay confirmación reciente</h2>
           <p class="text-xs text-slate-500">Puedes consultar tus compras previas o iniciar un nuevo pedido en el catálogo.</p>
           <div class="pt-2">
-            <a routerLink="/catalog" class="px-6 py-2.5 rounded-full bg-[#1E50C0] text-white text-xs font-bold">
+            <a routerLink="/catalog" class="px-6 py-2.5 rounded-full bg-[#2456C6] text-white text-xs font-bold">
               Ir al Catálogo
             </a>
           </div>

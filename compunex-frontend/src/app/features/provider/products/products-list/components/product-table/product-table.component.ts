@@ -60,9 +60,12 @@ import { ProviderProductItem } from '../../../../../../core/models/provider.mode
                 <p class="font-bold text-slate-900 text-sm">
                   S/ {{ prod.precioUnitario | number:'1.2-2' }}
                 </p>
-                @if (prod.precioMayorista) {
+                @if (prod.precioTotalCaja) {
                   <p class="text-[10px] text-emerald-600 font-semibold">
-                    Mayorista: S/ {{ prod.precioMayorista | number:'1.2-2' }} (≥ {{ prod.cantidadMinimaMayorista || 5 }})
+                    Caja: S/ {{ prod.precioTotalCaja | number:'1.2-2' }}
+                  </p>
+                  <p class="text-[10px] text-slate-400">
+                    {{ prod.unidadesPorPaqueteTexto || '1 unidad' }} por paquete
                   </p>
                 }
               </td>

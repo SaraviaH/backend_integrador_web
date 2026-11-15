@@ -13,13 +13,13 @@ import { ProviderMetrics } from '../../../../core/models/provider.model';
       <div class="bg-white rounded-3xl border border-slate-200/80 p-6 flex flex-col justify-between shadow-xs hover:border-slate-300 transition-all">
         <div class="flex items-center justify-between">
           <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Ventas del Mes</span>
-          <div class="w-10 h-10 rounded-2xl bg-blue-50 text-[#1E50C0] flex items-center justify-center font-bold">
+          <div class="w-10 h-10 rounded-2xl bg-blue-50 text-[#2456C6] flex items-center justify-center font-bold">
             💰
           </div>
         </div>
         <div class="mt-4">
           <div class="text-2xl font-black text-[#142238] font-mono">
-            S/ {{ (metrics?.ventasMesActual || 0) | number:'1.2-2' }}
+            USD {{ (metrics?.ventasMesActual || 0) | number:'1.2-2' }}
           </div>
           <span class="text-[11px] font-semibold text-emerald-600 flex items-center gap-1 mt-1">
             <span>↑ 14.8%</span> vs mes anterior

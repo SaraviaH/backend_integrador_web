@@ -75,7 +75,7 @@ import { ProductCardComponent } from '../../shared/components/product-card/produ
             </button>
             <a
               routerLink="/catalog"
-              class="px-6 py-2.5 rounded-full bg-[#1E50C0] text-white text-xs font-semibold hover:bg-[#1842A0] transition-colors shadow-xs"
+              class="px-6 py-2.5 rounded-full bg-[#2456C6] text-white text-xs font-semibold hover:bg-[#1B429B] transition-colors shadow-xs"
             >
               Ir al Catálogo Mayorista
             </a>
@@ -113,7 +113,7 @@ import { ProductCardComponent } from '../../shared/components/product-card/produ
                 class="w-full h-full object-contain hover:scale-105 transition-transform duration-300"
               />
               @if (p.destacado) {
-                <span class="absolute top-4 left-4 px-3 py-1 rounded-full text-[11px] font-bold bg-[#1E50C0] text-white shadow-xs">
+                <span class="absolute top-4 left-4 px-3 py-1 rounded-full text-[11px] font-bold bg-[#2456C6] text-white shadow-xs">
                   Destacado Mayorista
                 </span>
               }
@@ -128,8 +128,8 @@ import { ProductCardComponent } from '../../shared/components/product-card/produ
                 type="button"
                 (click)="activeImage.set(p.imagenPrincipalUrl)"
                 [class.ring-2]="activeImage() === p.imagenPrincipalUrl"
-                [class.ring-[#1E50C0]]="activeImage() === p.imagenPrincipalUrl"
-                class="w-20 h-20 rounded-2xl bg-white border border-slate-200 p-2 shrink-0 overflow-hidden transition-all hover:border-[#1E50C0]"
+                [class.ring-[#2456C6]]="activeImage() === p.imagenPrincipalUrl"
+                class="w-20 h-20 rounded-2xl bg-white border border-slate-200 p-2 shrink-0 overflow-hidden transition-all hover:border-[#2456C6]"
               >
                 <img [src]="p.imagenPrincipalUrl" alt="Miniatura principal" class="w-full h-full object-contain" />
               </button>
@@ -139,8 +139,8 @@ import { ProductCardComponent } from '../../shared/components/product-card/produ
                   type="button"
                   (click)="activeImage.set(img)"
                   [class.ring-2]="activeImage() === img"
-                  [class.ring-[#1E50C0]]="activeImage() === img"
-                  class="w-20 h-20 rounded-2xl bg-white border border-slate-200 p-2 shrink-0 overflow-hidden transition-all hover:border-[#1E50C0]"
+                  [class.ring-[#2456C6]]="activeImage() === img"
+                  class="w-20 h-20 rounded-2xl bg-white border border-slate-200 p-2 shrink-0 overflow-hidden transition-all hover:border-[#2456C6]"
                 >
                   <img [src]="img" alt="Miniatura secundaria" class="w-full h-full object-contain" />
                 </button>
@@ -149,7 +149,7 @@ import { ProductCardComponent } from '../../shared/components/product-card/produ
 
             <!-- Tarjeta Informativa de Garantía Oficial -->
             <div class="bg-slate-50/80 rounded-2xl border border-slate-200/70 p-4 flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-blue-100 text-[#1E50C0] flex items-center justify-center shrink-0">
+              <div class="w-10 h-10 rounded-xl bg-blue-100 text-[#2456C6] flex items-center justify-center shrink-0">
                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                 </svg>
@@ -170,7 +170,7 @@ import { ProductCardComponent } from '../../shared/components/product-card/produ
             <!-- Bloque de Título y Metadatos -->
             <div class="space-y-3">
               <div class="flex flex-wrap items-center gap-2">
-                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-[#1E50C0] border border-blue-100">
+                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-[#2456C6] border border-blue-100">
                   {{ p.categoriaNombre }}
                 </span>
                 <span class="px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700">
@@ -208,7 +208,7 @@ import { ProductCardComponent } from '../../shared/components/product-card/produ
             <!-- Ficha del Proveedor Mayorista con CTA de Contacto P-05 -->
             <div class="bg-white rounded-3xl border border-slate-200/80 p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
               <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-2xl bg-slate-100 border border-slate-200 text-[#1E50C0] flex items-center justify-center font-bold text-lg font-display">
+                <div class="w-12 h-12 rounded-2xl bg-slate-100 border border-slate-200 text-[#2456C6] flex items-center justify-center font-bold text-lg font-display">
                   {{ p.proveedorRazonSocial.substring(0, 2).toUpperCase() }}
                 </div>
                 <div>
@@ -227,7 +227,7 @@ import { ProductCardComponent } from '../../shared/components/product-card/produ
               <button
                 type="button"
                 (click)="isContactModalOpen.set(true)"
-                class="px-4 py-2.5 rounded-full border border-[#1E50C0] text-[#1E50C0] hover:bg-blue-50/60 text-xs font-bold transition-colors flex items-center justify-center gap-1.5 shrink-0"
+                class="px-4 py-2.5 rounded-full border border-[#2456C6] text-[#2456C6] hover:bg-blue-50/60 text-xs font-bold transition-colors flex items-center justify-center gap-1.5 shrink-0"
               >
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
@@ -239,9 +239,9 @@ import { ProductCardComponent } from '../../shared/components/product-card/produ
             <!-- CAJA DE LIQUIDACIÓN Y COMPRA MAYORISTA B2B -->
             <div class="bg-gradient-to-br from-slate-50 to-blue-50/40 rounded-3xl border border-blue-100 p-6 space-y-6 shadow-xs">
               
-              <!-- Comparativa de Precios Unitario vs Mayorista -->
+              <!-- Precio unitario y contenido de caja -->
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <!-- Precio Estándar -->
+                <!-- Precio Unitario -->
                 <div class="bg-white p-4 rounded-2xl border border-slate-200/80">
                   <span class="text-[11px] text-slate-500 uppercase tracking-wider font-semibold block">
                     Precio por Unidad
@@ -251,25 +251,37 @@ import { ProductCardComponent } from '../../shared/components/product-card/produ
                     <span class="text-xs font-normal text-slate-400">sin IGV</span>
                   </div>
                   <span class="text-[10px] text-slate-400 mt-0.5 block">
-                    Para pedidos menores a {{ p.cantidadMinimaMayorista || 3 }} un.
+                    Precio aplicado en el carrito y checkout.
                   </span>
                 </div>
 
-                <!-- Precio Especial por Volumen -->
-                @if (p.precioMayorista) {
+                <!-- Total de caja -->
+                @if (p.precioTotalCaja) {
                   <div class="bg-blue-600 text-white p-4 rounded-2xl border border-blue-700 shadow-xs relative overflow-hidden">
                     <span class="absolute top-2 right-2 text-[10px] bg-white/20 px-2 py-0.5 rounded-full font-bold">
-                      Descuento Mayorista
+                      Caja completa
                     </span>
                     <span class="text-[11px] text-blue-100 uppercase tracking-wider font-semibold block">
-                      Precio Mayorista ({{ p.cantidadMinimaMayorista }}+ un.)
+                      Total de caja
                     </span>
                     <div class="text-2xl font-black text-white mt-1">
-                      S/ {{ p.precioMayorista | number:'1.2-2' }}
+                      S/ {{ p.precioTotalCaja | number:'1.2-2' }}
                       <span class="text-xs font-normal text-blue-200">sin IGV</span>
                     </div>
                     <span class="text-[10px] text-blue-100 mt-0.5 block">
-                      Ahorro de S/ {{ (p.precioUnitario - p.precioMayorista) | number:'1.2-2' }} por unidad
+                      {{ p.unidadesPorPaqueteTexto || 'Paquete completo' }}. Referencial.
+                    </span>
+                  </div>
+                } @else {
+                  <div class="bg-white p-4 rounded-2xl border border-slate-200/80">
+                    <span class="text-[11px] text-slate-500 uppercase tracking-wider font-semibold block">
+                      Pedido mínimo
+                    </span>
+                    <div class="text-lg font-black text-slate-800 mt-1">
+                      {{ p.pedidoMinimoTexto || 'Consultar con el proveedor' }}
+                    </div>
+                    <span class="text-[10px] text-slate-400 mt-0.5 block">
+                      Condición comercial informada por el proveedor.
                     </span>
                   </div>
                 }
@@ -277,12 +289,12 @@ import { ProductCardComponent } from '../../shared/components/product-card/produ
 
               <!-- Selector de Cantidad Dinámico -->
               <div class="space-y-3 pt-2">
-                <div class="flex items-center justify-between">
+                <div class="flex items-center justify-between gap-3">
                   <label class="text-xs font-bold text-slate-700">
                     Cantidad a Pedir:
                   </label>
-                  <span class="text-xs text-slate-500">
-                    Pedido mínimo sugerido: <strong class="text-[#1E50C0]">{{ p.cantidadMinimaMayorista || 1 }} un.</strong>
+                  <span class="text-xs text-slate-500 text-right">
+                    Pedido mínimo: <strong class="text-[#2456C6]">{{ p.pedidoMinimoTexto || 'No especificado' }}</strong>
                   </span>
                 </div>
 
@@ -313,17 +325,6 @@ import { ProductCardComponent } from '../../shared/components/product-card/produ
                       +
                     </button>
                   </div>
-
-                  <!-- Botón de compra rápida por volumen -->
-                  @if (p.cantidadMinimaMayorista && quantity() < p.cantidadMinimaMayorista) {
-                    <button
-                      type="button"
-                      (click)="quantity.set(p.cantidadMinimaMayorista)"
-                      class="text-xs font-semibold text-[#1E50C0] hover:underline"
-                    >
-                      Aplicar volumen mayorista ({{ p.cantidadMinimaMayorista }} un.)
-                    </button>
-                  }
                 </div>
               </div>
 
@@ -339,7 +340,7 @@ import { ProductCardComponent } from '../../shared/components/product-card/produ
                 </div>
                 <div class="flex justify-between text-sm font-extrabold text-[#142238] pt-2 border-t border-slate-100">
                   <span>Total Liquidación Estimado:</span>
-                  <span class="text-[#1E50C0]">S/ {{ calculatedTotal() | number:'1.2-2' }}</span>
+                  <span class="text-[#2456C6]">S/ {{ calculatedTotal() | number:'1.2-2' }}</span>
                 </div>
               </div>
 
@@ -349,7 +350,7 @@ import { ProductCardComponent } from '../../shared/components/product-card/produ
                   type="button"
                   (click)="addToCart()"
                   [disabled]="p.stockDisponible === 0"
-                  class="flex-1 py-3.5 px-6 rounded-full bg-[#1E50C0] hover:bg-[#1842A0] disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-bold text-sm flex items-center justify-center gap-2 transition-colors shadow-xs"
+                  class="flex-1 py-3.5 px-6 rounded-full bg-[#2456C6] hover:bg-[#1B429B] disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-bold text-sm flex items-center justify-center gap-2 transition-colors shadow-xs"
                 >
                   <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
@@ -381,8 +382,8 @@ import { ProductCardComponent } from '../../shared/components/product-card/produ
             <button
               type="button"
               (click)="activeTab.set('specs')"
-              [class.border-[#1E50C0]]="activeTab() === 'specs'"
-              [class.text-[#1E50C0]]="activeTab() === 'specs'"
+              [class.border-[#2456C6]]="activeTab() === 'specs'"
+              [class.text-[#2456C6]]="activeTab() === 'specs'"
               [class.font-bold]="activeTab() === 'specs'"
               class="pb-4 text-sm text-slate-500 hover:text-slate-800 border-b-2 border-transparent transition-all shrink-0"
             >
@@ -391,8 +392,8 @@ import { ProductCardComponent } from '../../shared/components/product-card/produ
             <button
               type="button"
               (click)="activeTab.set('desc')"
-              [class.border-[#1E50C0]]="activeTab() === 'desc'"
-              [class.text-[#1E50C0]]="activeTab() === 'desc'"
+              [class.border-[#2456C6]]="activeTab() === 'desc'"
+              [class.text-[#2456C6]]="activeTab() === 'desc'"
               [class.font-bold]="activeTab() === 'desc'"
               class="pb-4 text-sm text-slate-500 hover:text-slate-800 border-b-2 border-transparent transition-all shrink-0"
             >
@@ -401,8 +402,8 @@ import { ProductCardComponent } from '../../shared/components/product-card/produ
             <button
               type="button"
               (click)="activeTab.set('warranty')"
-              [class.border-[#1E50C0]]="activeTab() === 'warranty'"
-              [class.text-[#1E50C0]]="activeTab() === 'warranty'"
+              [class.border-[#2456C6]]="activeTab() === 'warranty'"
+              [class.text-[#2456C6]]="activeTab() === 'warranty'"
               [class.font-bold]="activeTab() === 'warranty'"
               class="pb-4 text-sm text-slate-500 hover:text-slate-800 border-b-2 border-transparent transition-all shrink-0"
             >
@@ -505,12 +506,7 @@ export class ProductDetailComponent implements OnInit {
 
   // Precios y cálculos computados
   public readonly currentUnitPrice = computed(() => {
-    const p = this.product();
-    if (!p) return 0;
-    if (p.precioMayorista && p.cantidadMinimaMayorista && this.quantity() >= p.cantidadMinimaMayorista) {
-      return p.precioMayorista;
-    }
-    return p.precioUnitario;
+    return this.product()?.precioUnitario ?? 0;
   });
 
   public readonly calculatedSubtotal = computed(() => {
@@ -555,8 +551,7 @@ export class ProductDetailComponent implements OnInit {
         this.isLoading.set(false);
         this.product.set(detail);
         this.activeImage.set(detail.imagenPrincipalUrl);
-        // Inicializar cantidad con el mínimo mayorista o 1
-        this.quantity.set(detail.cantidadMinimaMayorista || 1);
+        this.quantity.set(1);
       },
       error: () => {
         this.isLoading.set(false);

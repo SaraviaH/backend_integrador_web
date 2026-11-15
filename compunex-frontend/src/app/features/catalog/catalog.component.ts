@@ -30,8 +30,8 @@ import { Category, ProductCard } from '../../core/models/catalog.model';
       <div class="bg-white rounded-3xl border border-slate-200/80 p-6 md:p-8 shadow-xs">
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div>
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-[#1E50C0] text-xs font-semibold mb-2">
-              <span class="w-1.5 h-1.5 rounded-full bg-[#1E50C0]"></span>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-[#2456C6] text-xs font-semibold mb-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-[#2456C6]"></span>
               Catálogo Mayorista Certificado
             </div>
             <h1 class="text-2xl sm:text-3xl font-black text-[#142238] tracking-tight font-display">
@@ -86,7 +86,7 @@ import { Category, ProductCard } from '../../core/models/catalog.model';
             }
 
             @if (catalogState.selectedCategory()) {
-              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-[#1E50C0] text-xs font-medium border border-blue-100">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-[#2456C6] text-xs font-medium border border-blue-100">
                 Categoría: {{ getSelectedCategoryName() }}
                 <button type="button" (click)="selectCategory(null)" class="hover:text-rose-600 font-bold">×</button>
               </span>
@@ -128,7 +128,7 @@ import { Category, ProductCard } from '../../core/models/catalog.model';
             
             <div class="flex items-center justify-between pb-3 border-b border-slate-100">
               <h2 class="text-sm font-black text-[#142238] uppercase tracking-wider flex items-center gap-2">
-                <svg class="w-4 h-4 text-[#1E50C0]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg class="w-4 h-4 text-[#2456C6]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
                 </svg>
                 Filtros Facetados
@@ -154,13 +154,13 @@ import { Category, ProductCard } from '../../core/models/catalog.model';
                   type="button"
                   (click)="selectCategory(null)"
                   [class.bg-blue-50]="catalogState.selectedCategory() === null"
-                  [class.text-[#1E50C0]]="catalogState.selectedCategory() === null"
+                  [class.text-[#2456C6]]="catalogState.selectedCategory() === null"
                   [class.font-bold]="catalogState.selectedCategory() === null"
                   class="w-full text-left px-3 py-2 rounded-xl text-xs text-slate-600 hover:bg-slate-50 transition-colors flex items-center justify-between"
                 >
                   <span>Todas las categorías</span>
                   @if (catalogState.selectedCategory() === null) {
-                    <svg class="w-3.5 h-3.5 text-[#1E50C0]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg class="w-3.5 h-3.5 text-[#2456C6]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                     </svg>
                   }
@@ -171,13 +171,13 @@ import { Category, ProductCard } from '../../core/models/catalog.model';
                     type="button"
                     (click)="selectCategory(cat.id)"
                     [class.bg-blue-50]="catalogState.selectedCategory() === cat.id"
-                    [class.text-[#1E50C0]]="catalogState.selectedCategory() === cat.id"
+                    [class.text-[#2456C6]]="catalogState.selectedCategory() === cat.id"
                     [class.font-bold]="catalogState.selectedCategory() === cat.id"
                     class="w-full text-left px-3 py-2 rounded-xl text-xs text-slate-600 hover:bg-slate-50 transition-colors flex items-center justify-between"
                   >
                     <span class="truncate">{{ cat.nombre }}</span>
                     @if (catalogState.selectedCategory() === cat.id) {
-                      <svg class="w-3.5 h-3.5 text-[#1E50C0] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg class="w-3.5 h-3.5 text-[#2456C6] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                       </svg>
                     }
@@ -229,9 +229,9 @@ import { Category, ProductCard } from '../../core/models/catalog.model';
                   type="checkbox"
                   [checked]="catalogState.onlyInStock()"
                   (change)="toggleStockFilter($any($event.target).checked)"
-                  class="w-4 h-4 rounded text-[#1E50C0] border-slate-300 focus:ring-[#1E50C0] transition-colors"
+                  class="w-4 h-4 rounded text-[#2456C6] border-slate-300 focus:ring-[#2456C6] transition-colors"
                 />
-                <span class="text-xs font-semibold text-slate-700 group-hover:text-[#1E50C0] transition-colors">
+                <span class="text-xs font-semibold text-slate-700 group-hover:text-[#2456C6] transition-colors">
                   Solo productos con stock
                 </span>
               </label>
@@ -350,7 +350,7 @@ import { Category, ProductCard } from '../../core/models/catalog.model';
               <button
                 type="button"
                 (click)="resetAllFilters()"
-                class="px-6 py-2.5 bg-[#1E50C0] hover:bg-[#1842A0] text-white rounded-full text-xs font-semibold shadow-xs transition-colors"
+                class="px-6 py-2.5 bg-[#2456C6] hover:bg-[#1B429B] text-white rounded-full text-xs font-semibold shadow-xs transition-colors"
               >
                 Restablecer todos los filtros
               </button>
@@ -530,7 +530,7 @@ export class CatalogComponent implements OnInit, OnDestroy {
   }
 
   public onAddToCart(product: ProductCard): void {
-    const cantidad = product.cantidadMinimaMayorista || 1;
+    const cantidad = 1;
     this.cartState.addItem(product, cantidad);
     this.toastState.success(
       'Producto agregado al pedido',

@@ -25,7 +25,7 @@ export function passwordMatchValidator(control: AbstractControl): ValidationErro
         
         <!-- Encabezado de la Pantalla P-07 -->
         <div class="text-center space-y-2">
-          <div class="inline-flex w-12 h-12 rounded-2xl bg-[#1E50C0] text-white items-center justify-center font-black text-2xl shadow-xs mb-2">
+          <div class="inline-flex w-12 h-12 rounded-2xl bg-[#2456C6] text-white items-center justify-center font-black text-2xl shadow-xs mb-2">
             C
           </div>
           <h1 class="text-2xl sm:text-3xl font-black text-[#142238] tracking-tight font-display">
@@ -216,7 +216,7 @@ export function passwordMatchValidator(control: AbstractControl): ValidationErro
               <input
                 type="checkbox"
                 formControlName="aceptaTerminos"
-                class="w-4 h-4 rounded text-[#1E50C0] focus:ring-[#1E50C0]/20 border-slate-300 mt-0.5"
+                class="w-4 h-4 rounded text-[#2456C6] focus:ring-[#2456C6]/20 border-slate-300 mt-0.5"
               />
               <span>
                 Declaro que los datos de la empresa son fidedignos y acepto los <a routerLink="/terminos" class="text-[#2456C6] underline">términos de uso</a> y la <a routerLink="/privacidad" class="text-[#2456C6] underline">política de privacidad</a> de COMPUNEX B2B.
@@ -233,7 +233,7 @@ export function passwordMatchValidator(control: AbstractControl): ValidationErro
           <button
             type="submit"
             [disabled]="isLoading()"
-            class="w-full mt-4 py-3 px-4 rounded-full bg-[#1E50C0] hover:bg-[#1842A0] text-white text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+            class="w-full mt-4 py-3 px-4 rounded-full bg-[#2456C6] hover:bg-[#1B429B] text-white text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
           >
             @if (isLoading()) {
               <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
@@ -254,7 +254,7 @@ export function passwordMatchValidator(control: AbstractControl): ValidationErro
           </p>
           <a
             routerLink="/auth/login"
-            class="inline-flex items-center gap-1.5 text-xs font-bold text-[#2456C6] hover:text-[#1842A0] transition-colors"
+            class="inline-flex items-center gap-1.5 text-xs font-bold text-[#2456C6] hover:text-[#1B429B] transition-colors"
           >
             Iniciar sesión con mi cuenta
             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

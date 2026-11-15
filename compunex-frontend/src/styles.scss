@@ -56,7 +56,7 @@ html, body {
 
 
 // Portada COMPUNEX: sistema visual de la tienda pública
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; scroll-padding-top: 96px; }
 .wrap { width: min(100% - 48px, 1280px); margin-inline: auto; }
 .store-header { background: #fff; border-bottom: 1px solid #e4eaf2; }
 .header-main { min-height: 82px; display: flex; align-items: center; gap: 44px; }
@@ -80,7 +80,7 @@ html { scroll-behavior: smooth; }
 .home-page h1 em, .home-page h2 em { color: #2456c6; font-style: normal; }
 .hero-copy p { color: #4d5c72; font-size: 15px; line-height: 1.7; max-width: 450px; margin: 0 0 24px; }
 .button-primary { display: inline-flex; align-items: center; gap: 22px; background: #2456c6; color: white; border-radius: 9px; padding: 14px 18px; font-size: 13px; font-weight: 700; text-decoration: none; }
-.button-primary:hover { background: #1d45a5; }
+.button-primary:hover { background: #1b429b; }
 .hero-controls { display: flex; align-items: center; gap: 3px; margin-top: 26px; }
 .hero-controls button { display: inline-grid; place-items: center; min-width: 44px; min-height: 44px; color: #34475e; border: 0; background: transparent; cursor: pointer; }
 .hero-controls .slide-dot { min-width: 20px; }
@@ -187,5 +187,5 @@ html { scroll-behavior: smooth; }
 .header-login { border: 1px solid #cbd8e9; color: #142238; background: #fff; }
 .header-register { border: 1px solid #2456c6; background: #2456c6; color: #fff; }
 .header-login:hover { border-color: #2456c6; color: #2456c6; }
-.header-register:hover { background: #1d45a5; }
+.header-register:hover { background: #1b429b; }
 @media (max-width: 640px) { .header-actions { gap: 6px; } .header-login, .header-register { min-height: 40px; padding: 0 9px; font-size: 10px; } }

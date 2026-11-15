@@ -43,7 +43,7 @@ import { ConfirmationStepComponent } from './confirmation-step/confirmation-step
           >
             <div
               class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs transition-colors shrink-0"
-              [class.bg-[#1E50C0]]="checkoutState.currentStep() >= 1"
+              [class.bg-[#2456C6]]="checkoutState.currentStep() >= 1"
               [class.text-white]="checkoutState.currentStep() >= 1"
               [class.bg-slate-100]="checkoutState.currentStep() < 1"
               [class.text-slate-400]="checkoutState.currentStep() < 1"
@@ -66,7 +66,7 @@ import { ConfirmationStepComponent } from './confirmation-step/confirmation-step
           >
             <div
               class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs transition-colors shrink-0"
-              [class.bg-[#1E50C0]]="checkoutState.currentStep() >= 2"
+              [class.bg-[#2456C6]]="checkoutState.currentStep() >= 2"
               [class.text-white]="checkoutState.currentStep() >= 2"
               [class.bg-slate-100]="checkoutState.currentStep() < 2"
               [class.text-slate-400]="checkoutState.currentStep() < 2"

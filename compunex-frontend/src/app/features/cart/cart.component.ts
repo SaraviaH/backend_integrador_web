@@ -24,8 +24,8 @@ import { CartGroupItemComponent } from './cart-group-item/cart-group-item.compon
       <!-- Encabezado de Pantalla P-09 -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-6">
         <div>
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-[#1E50C0] text-xs font-semibold mb-2">
-            <span class="w-1.5 h-1.5 rounded-full bg-[#1E50C0]"></span>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-[#2456C6] text-xs font-semibold mb-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#2456C6]"></span>
             Split Order Multi-Proveedor
           </div>
           <h1 class="text-2xl sm:text-3xl font-black text-[#142238] tracking-tight font-display">
@@ -73,7 +73,7 @@ import { CartGroupItemComponent } from './cart-group-item/cart-group-item.compon
           <div class="pt-2">
             <a
               routerLink="/catalog"
-              class="px-6 py-3 rounded-full bg-[#1E50C0] hover:bg-[#1842A0] text-white text-xs font-bold transition-colors inline-flex items-center gap-2 shadow-xs"
+              class="px-6 py-3 rounded-full bg-[#2456C6] hover:bg-[#1B429B] text-white text-xs font-bold transition-colors inline-flex items-center gap-2 shadow-xs"
             >
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
@@ -94,7 +94,7 @@ import { CartGroupItemComponent } from './cart-group-item/cart-group-item.compon
             
             <!-- Banner Informativo Split Order B2B -->
             <div class="p-5 rounded-3xl bg-blue-50/70 border border-blue-200/70 text-blue-900 space-y-2">
-              <div class="flex items-center gap-2 text-xs font-bold text-[#1E50C0]">
+              <div class="flex items-center gap-2 text-xs font-bold text-[#2456C6]">
                 <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
@@ -121,7 +121,7 @@ import { CartGroupItemComponent } from './cart-group-item/cart-group-item.compon
             <div class="pt-4">
               <a
                 routerLink="/catalog"
-                class="inline-flex items-center gap-2 text-xs font-bold text-[#1E50C0] hover:text-[#1842A0] hover:underline transition-colors"
+                class="inline-flex items-center gap-2 text-xs font-bold text-[#2456C6] hover:text-[#1B429B] hover:underline transition-colors"
               >
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -173,7 +173,7 @@ import { CartGroupItemComponent } from './cart-group-item/cart-group-item.compon
                 </div>
                 <div class="flex justify-between text-base font-black text-[#142238] pt-3 border-t border-slate-100">
                   <span>Total Liquidación:</span>
-                  <span class="text-[#1E50C0]">S/ {{ cartState.total() | number:'1.2-2' }}</span>
+                  <span class="text-[#2456C6]">S/ {{ cartState.total() | number:'1.2-2' }}</span>
                 </div>
               </div>
 
@@ -193,7 +193,7 @@ import { CartGroupItemComponent } from './cart-group-item/cart-group-item.compon
                 <button
                   type="button"
                   (click)="proceedToCheckout()"
-                  class="w-full py-3.5 px-6 rounded-full bg-[#1E50C0] hover:bg-[#1842A0] text-white font-bold text-sm flex items-center justify-center gap-2 transition-colors shadow-xs"
+                  class="w-full py-3.5 px-6 rounded-full bg-[#2456C6] hover:bg-[#1B429B] text-white font-bold text-sm flex items-center justify-center gap-2 transition-colors shadow-xs"
                 >
                   <span>Continuar al Checkout (P-10)</span>
                   <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

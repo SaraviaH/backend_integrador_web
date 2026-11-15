@@ -1,0 +1,687 @@
+{
+  "info": {
+    "name": "COMPUNEX B2B — Colección Completa de Endpoints",
+    "description": "Colección Postman v2.1 ordenada por carpetas y alineada con los DTOs, enums y usuarios semilla de compunex-backend.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080/api/v1" },
+    { "key": "token", "value": "" },
+    { "key": "buyerToken", "value": "" },
+    { "key": "adminToken", "value": "" },
+    { "key": "categoriaId", "value": "ram" },
+    { "key": "productId", "value": "1" },
+    { "key": "createdProductId", "value": "" },
+    { "key": "ordenId", "value": "1" },
+    { "key": "subordenId", "value": "1" },
+    { "key": "uploadedFilename", "value": "ejemplo.jpg" }
+  ],
+  "item": [
+    {
+      "name": "01. Autenticación",
+      "item": [
+        {
+          "name": "Login Proveedor (guarda {{token}})",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200 OK', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "if (json.token) { pm.collectionVariables.set('token', json.token); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": \"ventas.mayoristas@technova.com\",\n  \"contrasena\": \"PasswordMayorista123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login Administrador (guarda {{adminToken}})",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200 OK', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "if (json.token) { pm.collectionVariables.set('adminToken', json.token); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": \"admin@compunex.com\",\n  \"contrasena\": \"AdminPassword2026!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Registro de Empresa Compradora (guarda {{buyerToken}})",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201 Created', () => pm.response.to.have.status(201));",
+                  "const json = pm.response.json();",
+                  "if (json.token) { pm.collectionVariables.set('buyerToken', json.token); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Ana Torres\",\n  \"ruc\": \"20607776661\",\n  \"razonSocial\": \"Comercial Tech MYPE SAC\",\n  \"nombreComercial\": \"Comercial Tech\",\n  \"direccionFiscal\": \"Jr. Lampa 450\",\n  \"ciudad\": \"Lima\",\n  \"telefono\": \"988777666\",\n  \"correo\": \"compras@comercialtech.pe\",\n  \"contrasena\": \"Password123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register-company",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register-company"]
+            },
+            "description": "Registra la empresa compradora inicial. Si ya fue registrada previamente, usar 'Login Empresa Compradora' para obtener {{buyerToken}}."
+          }
+        },
+        {
+          "name": "Login Empresa Compradora (guarda {{buyerToken}})",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200 OK', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "if (json.token) { pm.collectionVariables.set('buyerToken', json.token); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": \"compras@comercialtech.pe\",\n  \"contrasena\": \"Password123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Obtener Sesión Actual (/me)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "me"]
+            }
+          }
+        },
+        {
+          "name": "Cambiar Contraseña",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+            },
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"contrasenaActual\": \"PasswordMayorista123!\",\n  \"nuevaContrasena\": \"PasswordMayorista123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/password",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "password"]
+            }
+          }
+        },
+        {
+          "name": "Registro de Proveedor",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Carlos Gomez\",\n  \"correo\": \"nuevo.proveedor@compunex.com\",\n  \"contrasena\": \"Password123!\",\n  \"ruc\": \"20609998881\",\n  \"razonSocial\": \"Hardware Peru SAC\",\n  \"nombreComercial\": \"Hardware Peru\",\n  \"telefonoContacto\": \"999888777\",\n  \"direccion\": \"Av. Wilson 123\",\n  \"ciudad\": \"Lima\",\n  \"anosMercado\": \"3 años\",\n  \"descripcion\": \"Importadora mayorista de hardware y componentes.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "02. Categorías",
+      "item": [
+        {
+          "name": "Listar Categorías",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/categories",
+              "host": ["{{baseUrl}}"],
+              "path": ["categories"]
+            }
+          }
+        },
+        {
+          "name": "Detalle de Categoría",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/categories/{{categoriaId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["categories", "{{categoriaId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "03. Catálogo Público",
+      "item": [
+        {
+          "name": "Listar Productos Públicos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/products?page=0&size=12",
+              "host": ["{{baseUrl}}"],
+              "path": ["products"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "12" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Detalle de Producto Público",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/products/{{productId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["products", "{{productId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "04. Productos del Proveedor (CRUD)",
+      "item": [
+        {
+          "name": "Listar Mis Productos",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/providers/me/products?page=0&size=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["providers", "me", "products"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Obtener Ficha Técnica de Mi Producto",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/providers/me/products/{{productId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["providers", "me", "products", "{{productId}}"]
+            }
+          }
+        },
+        {
+          "name": "Crear Producto (guarda {{createdProductId}})",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201 Created', () => pm.response.to.have.status(201));",
+                  "const json = pm.response.json();",
+                  "if (json.id) { pm.collectionVariables.set('createdProductId', String(json.id)); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+            },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoriaId\": \"ram\",\n  \"titulo\": \"Memoria RAM Kingston Fury Beast 16GB DDR4 3200MHz\",\n  \"descripcion\": \"Pack mayorista de memorias RAM DDR4 de alto rendimiento.\",\n  \"modeloComercial\": \"DISTRIBUIDOR_OFICIAL\",\n  \"tipoFormato\": \"Caja x 10 unidades\",\n  \"unidadesPorPaquete\": \"10\",\n  \"pedidoMinimo\": \"1 paquete\",\n  \"precioUnitarioRef\": 34.50,\n  \"precioTotalRef\": 345.00,\n  \"moneda\": \"USD\",\n  \"terminosComerciales\": \"Garantía 24 meses.\",\n  \"especificaciones\": [\n    { \"clave\": \"Capacidad\", \"valor\": \"16GB\" },\n    { \"clave\": \"Frecuencia\", \"valor\": \"3200MHz\" }\n  ],\n  \"imagenes\": [\n    { \"urlImagen\": \"https://img.compunex.com/products/ram-kingston-16gb-front.jpg\", \"orden\": 1 }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/providers/me/products",
+              "host": ["{{baseUrl}}"],
+              "path": ["providers", "me", "products"]
+            },
+            "description": "modeloComercial válidos: MAYORISTA_PURO | DISTRIBUIDOR_OFICIAL | IMPORTADOR_DIRECTO | FABRICANTE. En imagenes usar 'urlImagen'."
+          }
+        },
+        {
+          "name": "Actualizar Producto",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+            },
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoriaId\": \"ram\",\n  \"titulo\": \"Memoria RAM Kingston Fury Beast 16GB DDR4 3200MHz (Actualizado)\",\n  \"descripcion\": \"Pack mayorista actualizado.\",\n  \"modeloComercial\": \"DISTRIBUIDOR_OFICIAL\",\n  \"tipoFormato\": \"Caja x 10 unidades\",\n  \"unidadesPorPaquete\": \"10\",\n  \"pedidoMinimo\": \"1 paquete\",\n  \"precioUnitarioRef\": 33.00,\n  \"precioTotalRef\": 330.00,\n  \"moneda\": \"USD\",\n  \"terminosComerciales\": \"Garantía 24 meses.\",\n  \"especificaciones\": [\n    { \"clave\": \"Capacidad\", \"valor\": \"16GB\" }\n  ],\n  \"imagenes\": [\n    { \"urlImagen\": \"https://img.compunex.com/products/ram-kingston-16gb-front.jpg\", \"orden\": 1 }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/providers/me/products/{{createdProductId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["providers", "me", "products", "{{createdProductId}}"]
+            },
+            "description": "Ejecutar primero 'Crear Producto' para poblar {{createdProductId}} (o reemplazar manualmente por {{productId}})."
+          }
+        },
+        {
+          "name": "Cambiar Estado de Mi Producto",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+            },
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"DESHABILITADO_POR_PROVEEDOR\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/providers/me/products/{{createdProductId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["providers", "me", "products", "{{createdProductId}}", "status"]
+            },
+            "description": "Estados válidos de EstadoProducto: ACTIVO | DESHABILITADO_POR_PROVEEDOR | OCULTO_POR_ADMIN | ELIMINADO_LOGICO."
+          }
+        },
+        {
+          "name": "Eliminar Producto (Soft Delete)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/providers/me/products/{{createdProductId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["providers", "me", "products", "{{createdProductId}}"]
+            },
+            "description": "Elimina lógicamente {{createdProductId}} sin afectar el producto semilla {{productId}}=1."
+          }
+        }
+      ]
+    },
+    {
+      "name": "05. Administración de Productos",
+      "item": [
+        {
+          "name": "Listar Todos los Productos (Admin)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/products?page=0&size=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "products"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Cambiar Estado Global de Producto (Admin)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }]
+            },
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"ACTIVO\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/products/{{productId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "products", "{{productId}}", "status"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "06. Perfil de Proveedor",
+      "item": [
+        {
+          "name": "Obtener Mi Perfil de Proveedor",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/providers/me/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["providers", "me", "profile"]
+            }
+          }
+        },
+        {
+          "name": "Activar Perfil de Proveedor (desde Comprador)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201 Created', () => pm.response.to.have.status(201));",
+                  "const json = pm.response.json();",
+                  "if (json.token) { pm.collectionVariables.set('buyerToken', json.token); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{buyerToken}}", "type": "string" }]
+            },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ruc\": \"20607776661\",\n  \"razonSocial\": \"Comercial Tech MYPE SAC\",\n  \"nombreComercial\": \"Comercial Tech B2B\",\n  \"telefonoContacto\": \"988777666\",\n  \"direccion\": \"Jr. Lampa 450\",\n  \"ciudad\": \"Lima\",\n  \"anosMercado\": \"5 años\",\n  \"descripcion\": \"Importadora mayorista de hardware.\",\n  \"politicaComercial\": \"Entrega en 24h en Lima.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/providers/me/activate",
+              "host": ["{{baseUrl}}"],
+              "path": ["providers", "me", "activate"]
+            },
+            "description": "Usa {{buyerToken}} para promover la empresa compradora a rol PROVEEDOR sin sobrescribir el RUC del proveedor semilla."
+          }
+        }
+      ]
+    },
+    {
+      "name": "07. Órdenes y Checkout",
+      "item": [
+        {
+          "name": "Procesar Checkout Multi-Proveedor (guarda {{ordenId}} y {{subordenId}})",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201 Created', () => pm.response.to.have.status(201));",
+                  "const json = pm.response.json();",
+                  "if (json.ordenId) { pm.collectionVariables.set('ordenId', String(json.ordenId)); }",
+                  "if (json.facturasEmitidas && json.facturasEmitidas.length > 0 && json.facturasEmitidas[0].subordenId) {",
+                  "  pm.collectionVariables.set('subordenId', String(json.facturasEmitidas[0].subordenId));",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{buyerToken}}", "type": "string" }]
+            },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"datosFacturacion\": {\n    \"tipoComprobante\": \"FACTURA\",\n    \"rucReceptor\": \"20607776661\",\n    \"razonSocialReceptor\": \"Comercial Tech MYPE SAC\",\n    \"direccionFiscal\": \"Jr. Lampa 450\",\n    \"metodoPagoSimulado\": \"TRANSFERENCIA_B2B\"\n  },\n  \"items\": [\n    { \"productoId\": 1, \"cantidad\": 2 }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/orders/checkout",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders", "checkout"]
+            },
+            "description": "Usa {{buyerToken}} porque el backend prohíbe auto-compra si se usa {{token}} (dueño del producto 1)."
+          }
+        },
+        {
+          "name": "Listar Mis Órdenes (Historial de Compras)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{buyerToken}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/orders/me?page=0&size=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders", "me"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Consultar Detalle de Orden y Comprobantes",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{buyerToken}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/orders/me/{{ordenId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders", "me", "{{ordenId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "08. Ventas del Proveedor",
+      "item": [
+        {
+          "name": "Listar Mis Ventas Recibidas",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/providers/me/sales?page=0&size=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["providers", "me", "sales"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Detalle de Venta / Suborden",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/providers/me/sales/{{subordenId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["providers", "me", "sales", "{{subordenId}}"]
+            }
+          }
+        },
+        {
+          "name": "Actualizar Estado de Despacho",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+            },
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nuevoEstado\": \"EN_PREPARACION\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/providers/me/sales/{{subordenId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["providers", "me", "sales", "{{subordenId}}", "status"]
+            },
+            "description": "Transiciones válidas desde PENDIENTE_DESPACHO: EN_PREPARACION | CANCELADO; desde EN_PREPARACION: DESPACHADO | CANCELADO; desde DESPACHADO: ENTREGADO."
+          }
+        }
+      ]
+    },
+    {
+      "name": "09. Media y Archivos",
+      "item": [
+        {
+          "name": "Subir Imagen (guarda {{uploadedFilename}})",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201 Created', () => pm.response.to.have.status(201));",
+                  "const json = pm.response.json();",
+                  "if (json.nombreArchivo) { pm.collectionVariables.set('uploadedFilename', json.nombreArchivo); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "file", "type": "file", "src": "" }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/media/upload?folder=products",
+              "host": ["{{baseUrl}}"],
+              "path": ["media", "upload"],
+              "query": [
+                { "key": "folder", "value": "products" }
+              ]
+            },
+            "description": "Seleccionar un archivo JPEG, PNG o WEBP (máx. 5MB) en form-data antes de enviar."
+          }
+        },
+        {
+          "name": "Obtener Archivo Subido",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/media/files/products/{{uploadedFilename}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["media", "files", "products", "{{uploadedFilename}}"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -18,7 +18,7 @@ import { SuborderStatus } from '../../../../core/models/order.model';
         </div>
         <a
           routerLink="/panel/ventas"
-          class="text-xs font-bold text-[#1E50C0] hover:underline"
+          class="text-xs font-bold text-[#2456C6] hover:underline"
         >
           Ver todas las ventas →
         </a>
@@ -44,7 +44,7 @@ import { SuborderStatus } from '../../../../core/models/order.model';
             <tbody class="divide-y divide-slate-100">
               @for (sale of sales; track sale.subordenId) {
                 <tr class="hover:bg-slate-50/60 transition-colors">
-                  <td class="py-3.5 px-6 font-mono font-bold text-[#1E50C0]">
+                  <td class="py-3.5 px-6 font-mono font-bold text-[#2456C6]">
                     {{ sale.codigoOrden }}
                   </td>
                   <td class="py-3.5 px-4 font-medium text-slate-800">
@@ -67,7 +67,7 @@ import { SuborderStatus } from '../../../../core/models/order.model';
                   <td class="py-3.5 px-6 text-right">
                     <a
                       [routerLink]="['/panel/ventas', sale.subordenId]"
-                      class="px-3 py-1 rounded-xl border border-slate-200 hover:border-[#1E50C0] text-slate-700 hover:text-[#1E50C0] font-semibold text-xs transition-colors inline-block"
+                      class="px-3 py-1 rounded-xl border border-slate-200 hover:border-[#2456C6] text-slate-700 hover:text-[#2456C6] font-semibold text-xs transition-colors inline-block"
                     >
                       Gestionar
                     </a>
@@ -94,8 +94,8 @@ export class ProviderRecentSalesComponent {
       case 'EN_PREPARACION':
         return 'bg-amber-50 text-amber-700 border-amber-200';
       case 'PENDIENTE_DESPACHO':
-        return 'bg-blue-50 text-[#1E50C0] border-blue-200';
-      case 'ANULADO':
+        return 'bg-blue-50 text-[#2456C6] border-blue-200';
+      case 'CANCELADO':
         return 'bg-rose-50 text-rose-700 border-rose-200';
       default:
         return 'bg-slate-50 text-slate-700 border-slate-200';

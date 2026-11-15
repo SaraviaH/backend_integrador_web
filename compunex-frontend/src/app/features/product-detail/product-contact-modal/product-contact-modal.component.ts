@@ -19,7 +19,7 @@ import { AuthStateService } from '../../../core/state/auth-state.service';
           <div class="relative transform overflow-hidden rounded-3xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-xl border border-slate-200">
             
             <!-- Encabezado del Modal P-05 -->
-            <div class="bg-gradient-to-r from-[#142238] to-[#1E50C0] p-6 text-white relative">
+            <div class="bg-gradient-to-r from-[#142238] to-[#2456C6] p-6 text-white relative">
               <button
                 type="button"
                 (click)="onClose()"
@@ -78,7 +78,7 @@ import { AuthStateService } from '../../../core/state/auth-state.service';
                   <button
                     type="button"
                     (click)="onClose()"
-                    class="px-6 py-2.5 rounded-full bg-[#1E50C0] text-white text-xs font-semibold hover:bg-[#1842A0] transition-colors shadow-xs"
+                    class="px-6 py-2.5 rounded-full bg-[#2456C6] text-white text-xs font-semibold hover:bg-[#1B429B] transition-colors shadow-xs"
                   >
                     Entendido y Volver
                   </button>
@@ -190,7 +190,7 @@ import { AuthStateService } from '../../../core/state/auth-state.service';
                       <input
                         type="number"
                         formControlName="cantidadEstimada"
-                        [min]="product.cantidadMinimaMayorista || 1"
+                        min="1"
                         class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-[#142238] outline-none"
                       />
                     </div>
@@ -226,7 +226,7 @@ import { AuthStateService } from '../../../core/state/auth-state.service';
                     <button
                       type="submit"
                       [disabled]="form.invalid || isSending()"
-                      class="px-6 py-2 rounded-xl bg-[#1E50C0] hover:bg-[#1842A0] disabled:bg-slate-300 disabled:cursor-not-allowed text-white text-xs font-semibold transition-colors flex items-center gap-2 shadow-xs"
+                      class="px-6 py-2 rounded-xl bg-[#2456C6] hover:bg-[#1B429B] disabled:bg-slate-300 disabled:cursor-not-allowed text-white text-xs font-semibold transition-colors flex items-center gap-2 shadow-xs"
                     >
                       @if (isSending()) {
                         <svg class="animate-spin w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24">

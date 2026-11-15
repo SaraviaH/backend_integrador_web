@@ -5,11 +5,12 @@ import { ProviderApiService } from '../../../../core/services/provider-api.servi
 import { ProviderProductItem } from '../../../../core/models/provider.model';
 import { ProductFilterBarComponent, ProductFilterTab } from './components/product-filter-bar/product-filter-bar.component';
 import { ProductTableComponent } from './components/product-table/product-table.component';
+import { PaginationBarComponent } from '../../../../shared/components/pagination-bar/pagination-bar.component';
 
 @Component({
   selector: 'app-provider-products-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, ProductFilterBarComponent, ProductTableComponent],
+  imports: [CommonModule, RouterModule, ProductFilterBarComponent, ProductTableComponent, PaginationBarComponent],
   template: `
     <div class="space-y-6">
       <!-- Encabezado de la Pantalla P-20 -->
@@ -134,10 +135,16 @@ import { ProductTableComponent } from './components/product-table/product-table.
             </div>
           } @else {
             <app-product-table
-              [products]="filteredProducts()"
+              [products]="paginatedProducts()"
               (toggleStatus)="onToggleProductStatus($event)"
               (deleteProduct)="onDeleteProduct($event)"
             ></app-product-table>
+            <app-pagination-bar
+              [totalItems]="filteredProducts().length"
+              [pageSize]="pageSize"
+              [currentPage]="currentPage()"
+              (pageChange)="currentPage.set($event)"
+            ></app-pagination-bar>
           }
         </div>
       }
@@ -154,6 +161,8 @@ export class ProviderProductsListComponent implements OnInit {
 
   public readonly currentTab = signal<ProductFilterTab>('ALL');
   public readonly searchFilter = signal<string>('');
+  public readonly currentPage = signal<number>(1);
+  public readonly pageSize = 8;
 
   public readonly countActive = computed(() => this.rawProducts().filter(p => p.activo).length);
   public readonly countPaused = computed(() => this.rawProducts().filter(p => !p.activo).length);
@@ -183,6 +192,11 @@ export class ProviderProductsListComponent implements OnInit {
     return list;
   });
 
+  public readonly paginatedProducts = computed(() => {
+    const start = (this.currentPage() - 1) * this.pageSize;
+    return this.filteredProducts().slice(start, start + this.pageSize);
+  });
+
   public ngOnInit(): void {
     this.loadCatalog();
   }
@@ -205,10 +219,12 @@ export class ProviderProductsListComponent implements OnInit {
 
   public onTabChanged(tab: ProductFilterTab): void {
     this.currentTab.set(tab);
+    this.currentPage.set(1);
   }
 
   public onSearchChanged(query: string): void {
     this.searchFilter.set(query);
+    this.currentPage.set(1);
   }
 
   public onToggleProductStatus(item: ProviderProductItem): void {

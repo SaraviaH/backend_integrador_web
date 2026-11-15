@@ -214,10 +214,10 @@ import { ProductPricingCalcComponent } from './components/product-pricing-calc/p
                     </div>
                   </div>
 
-                  <!-- Precio Mayorista -->
+                  <!-- Total de caja -->
                   <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">
-                      Precio Escalar Mayorista (S/)
+                      Total de caja (S/)
                     </label>
                     <div class="relative">
                       <span class="absolute left-3 top-2.5 text-xs font-bold text-slate-400">S/</span>
@@ -225,22 +225,23 @@ import { ProductPricingCalcComponent } from './components/product-pricing-calc/p
                         type="number"
                         step="0.01"
                         min="1"
-                        formControlName="precioMayorista"
-                        placeholder="2199.00"
+                        formControlName="precioTotalCaja"
+                        placeholder="Automǭtico"
                         class="w-full pl-8 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all"
                       />
                     </div>
+                    <p class="text-[10px] text-slate-400 mt-1">Si queda vac��o: precio unitario × unidades.</p>
                   </div>
 
-                  <!-- Cantidad Mínima -->
+                  <!-- Unidades por paquete -->
                   <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">
-                      Mínimo Mayorista (unid)
+                      Unidades por paquete
                     </label>
                     <input
                       type="number"
-                      min="2"
-                      formControlName="cantidadMinimaMayorista"
+                      min="1"
+                      formControlName="unidadesPorPaquete"
                       placeholder="5"
                       class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all"
                     />
@@ -250,8 +251,8 @@ import { ProductPricingCalcComponent } from './components/product-pricing-calc/p
                 <!-- Simulador de precios Dumb Component -->
                 <app-product-pricing-calc
                   [precioUnitario]="form.get('precioUnitario')?.value || 0"
-                  [precioMayorista]="form.get('precioMayorista')?.value"
-                  [cantidadMinima]="form.get('cantidadMinimaMayorista')?.value"
+                  [precioTotalCaja]="form.get('precioTotalCaja')?.value"
+                  [unidadesPorPaquete]="form.get('unidadesPorPaquete')?.value || 1"
                 ></app-product-pricing-calc>
               </div>
             </div>
@@ -364,8 +365,8 @@ export class ProviderProductFormComponent implements OnInit {
     modelo: ['', [Validators.required]],
     descripcion: ['', [Validators.required, Validators.minLength(10)]],
     precioUnitario: [null, [Validators.required, Validators.min(1)]],
-    precioMayorista: [null],
-    cantidadMinimaMayorista: [5],
+    precioTotalCaja: [null],
+    unidadesPorPaquete: [1, [Validators.required, Validators.min(1)]],
     stockDisponible: [0, [Validators.required, Validators.min(0)]],
     garantiaMeses: [12, [Validators.required, Validators.min(1)]],
     urlImagen: ['', [Validators.required]]
@@ -410,8 +411,8 @@ export class ProviderProductFormComponent implements OnInit {
           modelo: p.modelo,
           descripcion: p.descripcion,
           precioUnitario: p.precioUnitario,
-          precioMayorista: p.precioMayorista,
-          cantidadMinimaMayorista: p.cantidadMinimaMayorista || 5,
+          precioTotalCaja: p.precioTotalCaja,
+          unidadesPorPaquete: p.unidadesPorPaquete || 1,
           stockDisponible: p.stockDisponible,
           garantiaMeses: p.garantiaMeses || 12,
           urlImagen: p.imagenPrincipalUrl
@@ -448,8 +449,8 @@ export class ProviderProductFormComponent implements OnInit {
         sku: val.sku,
         categoriaId: String(val.categoriaId || 'ram'),
         precioUnitario: Number(val.precioUnitario),
-        precioMayorista: val.precioMayorista ? Number(val.precioMayorista) : undefined,
-        cantidadMinimaMayorista: val.cantidadMinimaMayorista ? Number(val.cantidadMinimaMayorista) : undefined,
+        precioTotalCaja: val.precioTotalCaja ? Number(val.precioTotalCaja) : undefined,
+        unidadesPorPaquete: Number(val.unidadesPorPaquete) || 1,
         stockDisponible: Number(val.stockDisponible),
         descripcion: val.descripcion,
         marca: val.marca,
@@ -474,8 +475,8 @@ export class ProviderProductFormComponent implements OnInit {
         sku: val.sku,
         categoriaId: String(val.categoriaId || 'ram'),
         precioUnitario: Number(val.precioUnitario),
-        precioMayorista: val.precioMayorista ? Number(val.precioMayorista) : undefined,
-        cantidadMinimaMayorista: val.cantidadMinimaMayorista ? Number(val.cantidadMinimaMayorista) : undefined,
+        precioTotalCaja: val.precioTotalCaja ? Number(val.precioTotalCaja) : undefined,
+        unidadesPorPaquete: Number(val.unidadesPorPaquete) || 1,
         stockDisponible: Number(val.stockDisponible),
         descripcion: val.descripcion,
         marca: val.marca,

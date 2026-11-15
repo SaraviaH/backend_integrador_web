@@ -13,8 +13,8 @@ import { AuthStateService } from '../../../core/state/auth-state.service';
       
       <!-- Encabezado del Paso P-10 -->
       <div class="bg-white rounded-3xl border border-slate-200/80 p-6 md:p-8 shadow-xs">
-        <div class="flex items-center gap-2 text-xs font-bold text-[#1E50C0] uppercase tracking-wider mb-1">
-          <span class="w-2 h-2 rounded-full bg-[#1E50C0]"></span>
+        <div class="flex items-center gap-2 text-xs font-bold text-[#2456C6] uppercase tracking-wider mb-1">
+          <span class="w-2 h-2 rounded-full bg-[#2456C6]"></span>
           Paso 1 de 3 · Facturación Electrónica SUNAT
         </div>
         <h2 class="text-xl sm:text-2xl font-black text-[#142238] tracking-tight font-display">
@@ -31,7 +31,7 @@ import { AuthStateService } from '../../../core/state/auth-state.service';
         <!-- Bloque 1: Identificación Fiscal de la Empresa -->
         <div class="bg-white rounded-3xl border border-slate-200/80 p-6 md:p-8 space-y-5 shadow-xs">
           <h3 class="text-sm font-bold text-[#142238] uppercase tracking-wider pb-3 border-b border-slate-100 flex items-center gap-2">
-            <svg class="w-4 h-4 text-[#1E50C0]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg class="w-4 h-4 text-[#2456C6]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
             </svg>
             1. Razón Social y Domicilio Fiscal
@@ -123,7 +123,7 @@ import { AuthStateService } from '../../../core/state/auth-state.service';
         <!-- Bloque 2: Contacto de Recepción y Despacho -->
         <div class="bg-white rounded-3xl border border-slate-200/80 p-6 md:p-8 space-y-5 shadow-xs">
           <h3 class="text-sm font-bold text-[#142238] uppercase tracking-wider pb-3 border-b border-slate-100 flex items-center gap-2">
-            <svg class="w-4 h-4 text-[#1E50C0]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg class="w-4 h-4 text-[#2456C6]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
             2. Contacto de Recepción en Almacén
@@ -180,7 +180,7 @@ import { AuthStateService } from '../../../core/state/auth-state.service';
         <!-- Bloque 3: Método de Pago B2B -->
         <div class="bg-white rounded-3xl border border-slate-200/80 p-6 md:p-8 space-y-5 shadow-xs">
           <h3 class="text-sm font-bold text-[#142238] uppercase tracking-wider pb-3 border-b border-slate-100 flex items-center gap-2">
-            <svg class="w-4 h-4 text-[#1E50C0]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg class="w-4 h-4 text-[#2456C6]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
             </svg>
             3. Método de Pago Corporativo B2B
@@ -202,7 +202,7 @@ import { AuthStateService } from '../../../core/state/auth-state.service';
                 class="sr-only"
               />
               <div class="space-y-2">
-                <div class="w-9 h-9 rounded-xl bg-blue-100 text-[#1E50C0] flex items-center justify-center font-bold">
+                <div class="w-9 h-9 rounded-xl bg-blue-100 text-[#2456C6] flex items-center justify-center font-bold">
                   🏦
                 </div>
                 <h4 class="text-xs sm:text-sm font-bold text-[#142238]">Transferencia Bancaria</h4>
@@ -210,7 +210,7 @@ import { AuthStateService } from '../../../core/state/auth-state.service';
                   Pago contra orden mediante cuentas corrientes BCP, BBVA o Interbank en Soles.
                 </p>
               </div>
-              <span class="mt-3 text-[10px] font-bold text-[#1E50C0]">Recomendado Mayorista</span>
+              <span class="mt-3 text-[10px] font-bold text-[#2456C6]">Recomendado Mayorista</span>
             </label>
 
             <!-- Opción 2: Línea de Crédito -->
@@ -291,7 +291,7 @@ import { AuthStateService } from '../../../core/state/auth-state.service';
           <button
             type="submit"
             [disabled]="form.invalid"
-            class="px-8 py-3.5 rounded-full bg-[#1E50C0] hover:bg-[#1842A0] disabled:bg-slate-300 disabled:cursor-not-allowed text-white text-xs sm:text-sm font-bold transition-colors flex items-center gap-2 shadow-xs"
+            class="px-8 py-3.5 rounded-full bg-[#2456C6] hover:bg-[#1B429B] disabled:bg-slate-300 disabled:cursor-not-allowed text-white text-xs sm:text-sm font-bold transition-colors flex items-center gap-2 shadow-xs"
           >
             <span>Continuar a Revisión del Pedido</span>
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

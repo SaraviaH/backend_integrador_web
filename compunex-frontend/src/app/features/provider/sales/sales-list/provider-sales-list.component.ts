@@ -6,11 +6,12 @@ import { ProviderSaleItem } from '../../../../core/models/provider.model';
 import { SuborderStatus } from '../../../../core/models/order.model';
 import { SaleFilterStatus, SalesFilterTabsComponent } from './components/sales-filter-tabs/sales-filter-tabs.component';
 import { SalesTableComponent } from './components/sales-table/sales-table.component';
+import { PaginationBarComponent } from '../../../../shared/components/pagination-bar/pagination-bar.component';
 
 @Component({
   selector: 'app-provider-sales-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, SalesFilterTabsComponent, SalesTableComponent],
+  imports: [CommonModule, RouterModule, SalesFilterTabsComponent, SalesTableComponent, PaginationBarComponent],
   template: `
     <div class="space-y-6">
       <!-- Encabezado de la Pantalla P-24 -->
@@ -114,7 +115,13 @@ import { SalesTableComponent } from './components/sales-table/sales-table.compon
               No hay subórdenes que coincidan con el filtro aplicado.
             </div>
           } @else {
-            <app-sales-table [sales]="filteredSales()"></app-sales-table>
+            <app-sales-table [sales]="paginatedSales()"></app-sales-table>
+            <app-pagination-bar
+              [totalItems]="filteredSales().length"
+              [pageSize]="pageSize"
+              [currentPage]="currentPage()"
+              (pageChange)="currentPage.set($event)">
+            </app-pagination-bar>
           }
         </div>
       }
@@ -129,6 +136,8 @@ export class ProviderSalesListComponent implements OnInit {
   public readonly rawSales = signal<ProviderSaleItem[]>([]);
   public readonly currentFilter = signal<SaleFilterStatus>('ALL');
   public readonly searchFilter = signal<string>('');
+  public readonly currentPage = signal<number>(1);
+  public readonly pageSize = 8;
 
   public readonly countPending = computed(() =>
     this.rawSales().filter(s => s.estado === 'PENDIENTE_DESPACHO').length
@@ -161,6 +170,11 @@ export class ProviderSalesListComponent implements OnInit {
     return list;
   });
 
+  public readonly paginatedSales = computed(() => {
+    const start = (this.currentPage() - 1) * this.pageSize;
+    return this.filteredSales().slice(start, start + this.pageSize);
+  });
+
   public ngOnInit(): void {
     this.loadSales();
   }
@@ -183,9 +197,11 @@ export class ProviderSalesListComponent implements OnInit {
 
   public onStatusChanged(status: SaleFilterStatus): void {
     this.currentFilter.set(status);
+    this.currentPage.set(1);
   }
 
   public onSearchChanged(query: string): void {
     this.searchFilter.set(query);
+    this.currentPage.set(1);
   }
 }

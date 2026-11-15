@@ -27,7 +27,7 @@ import { UserProfile } from '../../../core/models/auth.model';
       <div class="flex items-center gap-3 overflow-x-auto pb-2 border-b border-slate-200/80 text-xs font-bold">
         <a
           routerLink="/cuenta/perfil"
-          class="pb-3 border-b-2 border-[#1E50C0] text-[#1E50C0] transition-colors shrink-0"
+          class="pb-3 border-b-2 border-[#2456C6] text-[#2456C6] transition-colors shrink-0"
         >
           Perfil Corporativo
         </a>
@@ -63,7 +63,7 @@ import { UserProfile } from '../../../core/models/auth.model';
       <!-- Encabezado de la Pantalla P-16 -->
       <div class="bg-white rounded-3xl border border-slate-200/80 p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-xs">
         <div class="flex items-center gap-4">
-          <div class="w-16 h-16 rounded-2xl bg-blue-100 text-[#1E50C0] font-black text-xl flex items-center justify-center font-display shrink-0">
+          <div class="w-16 h-16 rounded-2xl bg-blue-100 text-[#2456C6] font-black text-xl flex items-center justify-center font-display shrink-0">
             {{ user()?.nombreCompleto?.substring(0, 2)?.toUpperCase() || 'EM' }}
           </div>
           <div>
@@ -73,7 +73,7 @@ import { UserProfile } from '../../../core/models/auth.model';
                     [class.text-emerald-700]="user()?.rol === 'ROLE_PROVEEDOR'"
                     [class.border-emerald-200]="user()?.rol === 'ROLE_PROVEEDOR'"
                     [class.bg-blue-50]="user()?.rol === 'ROLE_CLIENTE'"
-                    [class.text-[#1E50C0]]="user()?.rol === 'ROLE_CLIENTE'"
+                    [class.text-[#2456C6]]="user()?.rol === 'ROLE_CLIENTE'"
                     [class.border-blue-100]="user()?.rol === 'ROLE_CLIENTE'">
                 {{ user()?.rol === 'ROLE_PROVEEDOR' ? 'Proveedor Autorizado' : 'Cliente Corporativo B2B' }}
               </span>
@@ -129,7 +129,7 @@ import { UserProfile } from '../../../core/models/auth.model';
         <form [formGroup]="form" (ngSubmit)="onSubmit()" class="bg-white rounded-3xl border border-slate-200/80 p-6 md:p-8 space-y-6 shadow-xs">
           
           <h2 class="text-sm font-bold text-[#142238] uppercase tracking-wider pb-3 border-b border-slate-100 flex items-center gap-2">
-            <svg class="w-4 h-4 text-[#1E50C0]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg class="w-4 h-4 text-[#2456C6]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
             </svg>
             Datos Fiscales y de Contacto
@@ -218,7 +218,7 @@ import { UserProfile } from '../../../core/models/auth.model';
             <button
               type="submit"
               [disabled]="form.invalid || isSaving()"
-              class="px-8 py-3 rounded-full bg-[#1E50C0] hover:bg-[#1842A0] disabled:bg-slate-300 disabled:cursor-not-allowed text-white text-xs sm:text-sm font-bold transition-colors flex items-center gap-2 shadow-xs"
+              class="px-8 py-3 rounded-full bg-[#2456C6] hover:bg-[#1B429B] disabled:bg-slate-300 disabled:cursor-not-allowed text-white text-xs sm:text-sm font-bold transition-colors flex items-center gap-2 shadow-xs"
             >
               @if (isSaving()) {
                 <svg class="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24">

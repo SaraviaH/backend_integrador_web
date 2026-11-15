@@ -17,7 +17,7 @@ import { HttpErrorResponse } from '@angular/common/http';
         
         <!-- Encabezado de la Pantalla P-06 -->
         <div class="text-center space-y-2">
-          <div class="inline-flex w-12 h-12 rounded-2xl bg-[#1E50C0] text-white items-center justify-center font-black text-2xl shadow-xs mb-2">
+          <div class="inline-flex w-12 h-12 rounded-2xl bg-[#2456C6] text-white items-center justify-center font-black text-2xl shadow-xs mb-2">
             C
           </div>
           <h1 class="text-2xl sm:text-3xl font-black text-[#142238] tracking-tight font-display">
@@ -87,9 +87,13 @@ import { HttpErrorResponse } from '@angular/common/http';
               <label for="contrasena" class="block text-xs font-bold text-[#142238]">
                 Contraseña <span class="text-rose-500">*</span>
               </label>
-              <a routerLink="/auth/recuperar-password" class="text-[11px] font-semibold text-[#2456C6] hover:underline">
+              <button
+                type="button"
+                (click)="toggleRecoveryNotice()"
+                class="text-[11px] font-semibold text-[#2456C6] hover:underline"
+              >
                 ¿Olvidaste tu contraseña?
-              </a>
+              </button>
             </div>
             <div class="relative">
               <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -130,6 +134,11 @@ import { HttpErrorResponse } from '@angular/common/http';
                 La contraseña debe tener al menos 6 caracteres.
               </p>
             }
+            @if (recoveryNotice()) {
+              <div class="p-3 rounded-xl bg-blue-50 border border-blue-200 text-[11px] text-blue-800">
+                La recuperación automática no está disponible. Contacta al administrador de tu empresa para restablecer tu acceso.
+              </div>
+            }
           </div>
 
           <!-- Recordar Sesión -->
@@ -138,7 +147,7 @@ import { HttpErrorResponse } from '@angular/common/http';
               <input
                 type="checkbox"
                 formControlName="recordarSesion"
-                class="w-4 h-4 rounded text-[#1E50C0] focus:ring-[#1E50C0]/20 border-slate-300"
+                class="w-4 h-4 rounded text-[#2456C6] focus:ring-[#2456C6]/20 border-slate-300"
               />
               Recordar mi sesión en este equipo
             </label>
@@ -148,7 +157,7 @@ import { HttpErrorResponse } from '@angular/common/http';
           <button
             type="submit"
             [disabled]="isLoading()"
-            class="w-full py-3 px-4 rounded-full bg-[#1E50C0] hover:bg-[#1842A0] text-white text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+            class="w-full py-3 px-4 rounded-full bg-[#2456C6] hover:bg-[#1B429B] text-white text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
           >
             @if (isLoading()) {
               <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
@@ -169,7 +178,7 @@ import { HttpErrorResponse } from '@angular/common/http';
           </p>
           <a
             routerLink="/auth/registro-empresa"
-            class="inline-flex items-center gap-1.5 text-xs font-bold text-[#2456C6] hover:text-[#1842A0] transition-colors"
+            class="inline-flex items-center gap-1.5 text-xs font-bold text-[#2456C6] hover:text-[#1B429B] transition-colors"
           >
             Registrar mi empresa en COMPUNEX
             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -193,9 +202,14 @@ export class LoginComponent {
   public showPassword = signal<boolean>(false);
   public isLoading = signal<boolean>(false);
   public errorMessage = signal<string | null>(null);
+  public recoveryNotice = signal<boolean>(false);
 
   public toggleShowPassword(): void {
     this.showPassword.update(v => !v);
+  }
+
+  public toggleRecoveryNotice(): void {
+    this.recoveryNotice.update(v => !v);
   }
 
   public loginForm: FormGroup = this.fb.group({

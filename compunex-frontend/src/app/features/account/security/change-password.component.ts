@@ -32,7 +32,7 @@ import { ToastStateService } from '../../../core/state/toast-state.service';
         </a>
         <a
           routerLink="/cuenta/seguridad"
-          class="pb-3 border-b-2 border-[#1E50C0] text-[#1E50C0] transition-colors shrink-0"
+          class="pb-3 border-b-2 border-[#2456C6] text-[#2456C6] transition-colors shrink-0"
         >
           Seguridad y Contraseña
         </a>
@@ -54,8 +54,8 @@ import { ToastStateService } from '../../../core/state/toast-state.service';
 
       <!-- Encabezado de la Pantalla P-17 -->
       <div class="bg-white rounded-3xl border border-slate-200/80 p-6 md:p-8 space-y-1.5 shadow-xs">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-[#1E50C0] text-xs font-semibold mb-1">
-          <span class="w-1.5 h-1.5 rounded-full bg-[#1E50C0]"></span>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-[#2456C6] text-xs font-semibold mb-1">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#2456C6]"></span>
           Seguridad B2B
         </div>
         <h1 class="text-xl sm:text-2xl font-black text-[#142238] tracking-tight font-display">
@@ -148,7 +148,7 @@ import { ToastStateService } from '../../../core/state/toast-state.service';
           <button
             type="submit"
             [disabled]="form.invalid || hasMismatchError() || isSubmitting()"
-            class="px-8 py-3 rounded-full bg-[#1E50C0] hover:bg-[#1842A0] disabled:bg-slate-300 disabled:cursor-not-allowed text-white text-xs sm:text-sm font-bold transition-colors flex items-center gap-2 shadow-xs"
+            class="px-8 py-3 rounded-full bg-[#2456C6] hover:bg-[#1B429B] disabled:bg-slate-300 disabled:cursor-not-allowed text-white text-xs sm:text-sm font-bold transition-colors flex items-center gap-2 shadow-xs"
           >
             @if (isSubmitting()) {
               <svg class="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24">

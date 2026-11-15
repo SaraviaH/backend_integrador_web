@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { OrderApiService } from '../../../core/services/order-api.service';
-import { OrderSummary, OrderStatus } from '../../../core/models/order.model';
+import { OrderSummary } from '../../../core/models/order.model';
 
 @Component({
   selector: 'app-my-orders',
@@ -24,8 +24,8 @@ import { OrderSummary, OrderStatus } from '../../../core/models/order.model';
       <!-- Encabezado de la Pantalla P-14 -->
       <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200/80 pb-6">
         <div>
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-[#1E50C0] text-xs font-semibold mb-2">
-            <span class="w-1.5 h-1.5 rounded-full bg-[#1E50C0]"></span>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-[#2456C6] text-xs font-semibold mb-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#2456C6]"></span>
             Historial de Compras Corporativas
           </div>
           <h1 class="text-2xl sm:text-3xl font-black text-[#142238] tracking-tight font-display">
@@ -39,7 +39,7 @@ import { OrderSummary, OrderStatus } from '../../../core/models/order.model';
         <div class="flex items-center gap-3">
           <a
             routerLink="/catalog"
-            class="px-5 py-2.5 rounded-full bg-[#1E50C0] hover:bg-[#1842A0] text-white text-xs font-bold transition-colors flex items-center gap-1.5 shadow-2xs"
+            class="px-5 py-2.5 rounded-full bg-[#2456C6] hover:bg-[#1B429B] text-white text-xs font-bold transition-colors flex items-center gap-1.5 shadow-2xs"
           >
             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -67,22 +67,9 @@ import { OrderSummary, OrderStatus } from '../../../core/models/order.model';
           </div>
         </div>
 
-        <!-- Filtro por Estado -->
-        <div class="flex items-center gap-2">
-          <label for="statusFilter" class="text-xs text-slate-500 font-medium shrink-0">Filtrar estado:</label>
-          <select
-            id="statusFilter"
-            [(ngModel)]="selectedStatus"
-            class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-[#142238] focus:bg-white focus:border-[#2456C6] outline-none"
-          >
-            <option value="TODOS">Todos los estados</option>
-            <option value="CONFIRMADA">Confirmadas</option>
-            <option value="EN_PREPARACION">En Preparación</option>
-            <option value="DESPACHADA">Despachadas</option>
-            <option value="ENTREGADA">Entregadas</option>
-            <option value="CANCELADA">Canceladas</option>
-          </select>
-        </div>
+        <p class="text-[11px] text-slate-500">
+          El estado de despacho se muestra en el detalle de cada orden.
+        </p>
 
       </div>
 
@@ -140,26 +127,26 @@ import { OrderSummary, OrderStatus } from '../../../core/models/order.model';
           <div class="space-y-1">
             <h3 class="text-base font-bold text-[#142238]">No se encontraron órdenes registradas</h3>
             <p class="text-xs text-slate-500 max-w-sm mx-auto">
-              @if (searchFilter || selectedStatus !== 'TODOS') {
-                No hay compras que coincidan con los filtros aplicados. Intenta restablecer los términos de búsqueda.
+              @if (searchFilter) {
+                No hay compras que coincidan con el término de búsqueda. Intenta restablecerlo.
               } @else {
                 Aún no has realizado ninguna orden de compra en el marketplace. Explora nuestro catálogo de hardware para comenzar.
               }
             </p>
           </div>
           <div class="pt-2">
-            @if (searchFilter || selectedStatus !== 'TODOS') {
+            @if (searchFilter) {
               <button
                 type="button"
                 (click)="resetFilters()"
                 class="px-5 py-2 rounded-full border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
               >
-                Limpiar filtros
+                Limpiar búsqueda
               </button>
             } @else {
               <a
                 routerLink="/catalog"
-                class="px-6 py-2.5 rounded-full bg-[#1E50C0] hover:bg-[#1842A0] text-white text-xs font-bold transition-colors shadow-xs inline-flex items-center gap-2"
+                class="px-6 py-2.5 rounded-full bg-[#2456C6] hover:bg-[#1B429B] text-white text-xs font-bold transition-colors shadow-xs inline-flex items-center gap-2"
               >
                 Explorar Catálogo B2B
               </a>
@@ -178,7 +165,6 @@ import { OrderSummary, OrderStatus } from '../../../core/models/order.model';
                   <th class="py-3.5 px-6">Código de Orden</th>
                   <th class="py-3.5 px-4">Fecha de Emisión</th>
                   <th class="py-3.5 px-4 text-center">Subórdenes</th>
-                  <th class="py-3.5 px-4">Estado del Pedido</th>
                   <th class="py-3.5 px-6 text-right">Importe Total</th>
                   <th class="py-3.5 px-6 text-right">Acciones</th>
                 </tr>
@@ -189,7 +175,7 @@ import { OrderSummary, OrderStatus } from '../../../core/models/order.model';
                     
                     <!-- Código de Orden -->
                     <td class="py-4 px-6">
-                      <a [routerLink]="['/cuenta/mis-compras', order.id]" class="font-mono font-bold text-[#1E50C0] hover:underline text-xs sm:text-sm">
+                      <a [routerLink]="['/cuenta/mis-compras', order.id]" class="font-mono font-bold text-[#2456C6] hover:underline text-xs sm:text-sm">
                         {{ order.codigoOrden }}
                       </a>
                     </td>
@@ -201,19 +187,8 @@ import { OrderSummary, OrderStatus } from '../../../core/models/order.model';
 
                     <!-- Conteo de Subórdenes Split Order -->
                     <td class="py-4 px-4 text-center">
-                      <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-[#1E50C0] border border-blue-100">
+                      <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-[#2456C6] border border-blue-100">
                         {{ order.cantidadSubordenes }} {{ order.cantidadSubordenes === 1 ? 'proveedor' : 'proveedores' }}
-                      </span>
-                    </td>
-
-                    <!-- Badge de Estado Semántico -->
-                    <td class="py-4 px-4">
-                      <span
-                        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold border"
-                        [ngClass]="getStatusClasses(order.estadoGeneral)"
-                      >
-                        <span class="w-1.5 h-1.5 rounded-full" [ngClass]="getStatusDotClass(order.estadoGeneral)"></span>
-                        {{ order.estadoGeneral }}
                       </span>
                     </td>
 
@@ -226,7 +201,7 @@ import { OrderSummary, OrderStatus } from '../../../core/models/order.model';
                     <td class="py-4 px-6 text-right space-x-2 shrink-0">
                       <a
                         [routerLink]="['/pedidos', order.id, 'comprobante']"
-                        class="p-2 rounded-xl text-slate-400 hover:text-[#1E50C0] hover:bg-blue-50 transition-colors inline-flex items-center"
+                        class="p-2 rounded-xl text-slate-400 hover:text-[#2456C6] hover:bg-blue-50 transition-colors inline-flex items-center"
                         title="Ver Comprobante Electrónico (P-13)"
                       >
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -236,7 +211,7 @@ import { OrderSummary, OrderStatus } from '../../../core/models/order.model';
                       
                       <a
                         [routerLink]="['/cuenta/mis-compras', order.id]"
-                        class="px-3 py-1.5 rounded-xl border border-slate-200 text-slate-700 hover:border-[#1E50C0] hover:text-[#1E50C0] font-semibold text-xs transition-colors inline-block"
+                        class="px-3 py-1.5 rounded-xl border border-slate-200 text-slate-700 hover:border-[#2456C6] hover:text-[#2456C6] font-semibold text-xs transition-colors inline-block"
                       >
                         Trazabilidad
                       </a>
@@ -261,16 +236,12 @@ export class MyOrdersComponent implements OnInit {
   public readonly hasError = signal<boolean>(false);
 
   public searchFilter = '';
-  public selectedStatus = 'TODOS';
 
   public readonly filteredOrders = computed(() => {
     let list = this.orders();
     if (this.searchFilter.trim()) {
       const term = this.searchFilter.toLowerCase().trim();
       list = list.filter(o => o.codigoOrden.toLowerCase().includes(term));
-    }
-    if (this.selectedStatus !== 'TODOS') {
-      list = list.filter(o => o.estadoGeneral === this.selectedStatus);
     }
     return list;
   });
@@ -297,40 +268,5 @@ export class MyOrdersComponent implements OnInit {
 
   public resetFilters(): void {
     this.searchFilter = '';
-    this.selectedStatus = 'TODOS';
-  }
-
-  public getStatusClasses(status: OrderStatus): string {
-    switch (status) {
-      case 'ENTREGADA':
-        return 'bg-emerald-50 text-emerald-700 border-emerald-200';
-      case 'DESPACHADA':
-        return 'bg-purple-50 text-purple-700 border-purple-200';
-      case 'EN_PREPARACION':
-        return 'bg-amber-50 text-amber-700 border-amber-200';
-      case 'CONFIRMADA':
-        return 'bg-blue-50 text-[#1E50C0] border-blue-200';
-      case 'CANCELADA':
-        return 'bg-rose-50 text-rose-700 border-rose-200';
-      default:
-        return 'bg-slate-50 text-slate-700 border-slate-200';
-    }
-  }
-
-  public getStatusDotClass(status: OrderStatus): string {
-    switch (status) {
-      case 'ENTREGADA':
-        return 'bg-emerald-500';
-      case 'DESPACHADA':
-        return 'bg-purple-500';
-      case 'EN_PREPARACION':
-        return 'bg-amber-500';
-      case 'CONFIRMADA':
-        return 'bg-[#1E50C0]';
-      case 'CANCELADA':
-        return 'bg-rose-500';
-      default:
-        return 'bg-slate-400';
-    }
   }
 }

@@ -21,7 +21,7 @@ import { ProductCard } from '../../../core/models/catalog.model';
             loading="lazy"
           />
           @if (product.destacado) {
-            <span class="absolute top-2 left-2 px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#1E50C0] text-white shadow-2xs">
+            <span class="absolute top-2 left-2 px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#2456C6] text-white shadow-2xs">
               Destacado
             </span>
           }
@@ -53,7 +53,7 @@ import { ProductCard } from '../../../core/models/catalog.model';
         <!-- Precio y Pedido Mínimo -->
         <div class="mt-3 pt-3 border-t border-slate-100">
           <div class="flex items-baseline justify-between">
-            <div class="text-base font-extrabold text-[#1E50C0]">
+            <div class="text-base font-extrabold text-[#2456C6]">
               S/ {{ product.precioUnitario | number:'1.2-2' }} <span class="text-[11px] font-normal text-slate-400">c/u</span>
             </div>
             @if (product.stockDisponible > 0) {
@@ -67,9 +67,9 @@ import { ProductCard } from '../../../core/models/catalog.model';
             }
           </div>
 
-          @if (product.cantidadMinimaMayorista) {
+          @if (product.pedidoMinimoTexto) {
             <div class="text-[11px] text-slate-500 mt-1">
-              Pedido mínimo: <strong class="text-slate-700">{{ product.cantidadMinimaMayorista }} unidades</strong>
+              Pedido mínimo: <strong class="text-slate-700">{{ product.pedidoMinimoTexto }}</strong>
             </div>
           }
         </div>
@@ -79,14 +79,14 @@ import { ProductCard } from '../../../core/models/catalog.model';
       <div class="mt-5 grid grid-cols-2 gap-2">
         <a
           [routerLink]="['/catalog', product.id]"
-          class="py-2.5 px-3 rounded-full border border-[#1E50C0] text-[#1E50C0] hover:bg-blue-50/60 font-semibold text-xs flex items-center justify-center transition-colors text-center"
+          class="py-2.5 px-3 rounded-full border border-[#2456C6] text-[#2456C6] hover:bg-blue-50/60 font-semibold text-xs flex items-center justify-center transition-colors text-center"
         >
           Ver producto
         </a>
         <button
           type="button"
           (click)="onAdd()"
-          class="py-2.5 px-3 rounded-full bg-[#1E50C0] hover:bg-[#1842A0] text-white font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors shadow-2xs"
+          class="py-2.5 px-3 rounded-full bg-[#2456C6] hover:bg-[#1B429B] text-white font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors shadow-2xs"
         >
           <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />

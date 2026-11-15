@@ -69,7 +69,7 @@ import { ProviderProfile } from '../../../core/models/provider.model';
         <div class="bg-white rounded-3xl border border-slate-200/80 overflow-hidden shadow-xs">
           <div class="p-4 bg-slate-50 border-b border-slate-100 flex items-center justify-between text-xs">
             <span class="font-bold text-slate-400 uppercase tracking-wider">Vista Previa de tu Tienda Mayorista</span>
-            <span class="text-[11px] text-[#1E50C0] font-semibold">Cómo te ven los compradores B2B</span>
+            <span class="text-[11px] text-[#2456C6] font-semibold">Cómo te ven los compradores B2B</span>
           </div>
 
           <!-- Banner de Portada -->
@@ -77,7 +77,7 @@ import { ProviderProfile } from '../../../core/models/provider.model';
             @if (form.get('urlBanner')?.value) {
               <img [src]="form.get('urlBanner')?.value" alt="Banner del proveedor" class="w-full h-full object-cover" />
             } @else {
-              <div class="w-full h-full bg-gradient-to-r from-[#142238] to-[#1E50C0] flex items-center justify-center text-white/50 text-xs">
+              <div class="w-full h-full bg-gradient-to-r from-[#142238] to-[#2456C6] flex items-center justify-center text-white/50 text-xs">
                 Sin imagen de portada
               </div>
             }
@@ -91,7 +91,7 @@ import { ProviderProfile } from '../../../core/models/provider.model';
                 @if (form.get('urlLogo')?.value) {
                   <img [src]="form.get('urlLogo')?.value" alt="Logo de tienda" class="w-full h-full object-contain rounded-2xl" />
                 } @else {
-                  <div class="w-full h-full bg-blue-100 text-[#1E50C0] font-black text-2xl flex items-center justify-center rounded-2xl font-display">
+                  <div class="w-full h-full bg-blue-100 text-[#2456C6] font-black text-2xl flex items-center justify-center rounded-2xl font-display">
                     P
                   </div>
                 }
@@ -123,7 +123,7 @@ import { ProviderProfile } from '../../../core/models/provider.model';
           <!-- SECCIÓN 1: Subida de Imágenes con MediaApiService (POST /api/v1/media/upload) -->
           <div class="space-y-4">
             <h3 class="text-sm font-bold text-[#142238] uppercase tracking-wider pb-3 border-b border-slate-100 flex items-center gap-2">
-              <svg class="w-4 h-4 text-[#1E50C0]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg class="w-4 h-4 text-[#2456C6]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
               1. Imágenes de Marca (Subida previa al módulo Media)
@@ -140,11 +140,11 @@ import { ProviderProfile } from '../../../core/models/provider.model';
                   type="file"
                   accept="image/png,image/jpeg,image/webp"
                   (change)="onFileSelected($event, 'logo')"
-                  class="text-xs text-slate-600 file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-100 file:text-[#1E50C0] hover:file:bg-blue-200 cursor-pointer"
+                  class="text-xs text-slate-600 file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-100 file:text-[#2456C6] hover:file:bg-blue-200 cursor-pointer"
                 />
                 @if (isUploadingLogo()) {
-                  <span class="text-xs text-[#1E50C0] flex items-center gap-1 font-semibold">
-                    <svg class="animate-spin w-3 h-3 text-[#1E50C0]" fill="none" viewBox="0 0 24 24">
+                  <span class="text-xs text-[#2456C6] flex items-center gap-1 font-semibold">
+                    <svg class="animate-spin w-3 h-3 text-[#2456C6]" fill="none" viewBox="0 0 24 24">
                       <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                       <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
                     </svg>
@@ -162,11 +162,11 @@ import { ProviderProfile } from '../../../core/models/provider.model';
                   type="file"
                   accept="image/png,image/jpeg,image/webp"
                   (change)="onFileSelected($event, 'banner')"
-                  class="text-xs text-slate-600 file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-100 file:text-[#1E50C0] hover:file:bg-blue-200 cursor-pointer"
+                  class="text-xs text-slate-600 file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-100 file:text-[#2456C6] hover:file:bg-blue-200 cursor-pointer"
                 />
                 @if (isUploadingBanner()) {
-                  <span class="text-xs text-[#1E50C0] flex items-center gap-1 font-semibold">
-                    <svg class="animate-spin w-3 h-3 text-[#1E50C0]" fill="none" viewBox="0 0 24 24">
+                  <span class="text-xs text-[#2456C6] flex items-center gap-1 font-semibold">
+                    <svg class="animate-spin w-3 h-3 text-[#2456C6]" fill="none" viewBox="0 0 24 24">
                       <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                       <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
                     </svg>
@@ -181,7 +181,7 @@ import { ProviderProfile } from '../../../core/models/provider.model';
           <!-- SECCIÓN 2: Información Comercial del Proveedor -->
           <div class="space-y-4">
             <h3 class="text-sm font-bold text-[#142238] uppercase tracking-wider pb-3 border-b border-slate-100 flex items-center gap-2">
-              <svg class="w-4 h-4 text-[#1E50C0]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg class="w-4 h-4 text-[#2456C6]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
               </svg>
               2. Datos Comerciales de Contacto y Almacén
@@ -270,7 +270,7 @@ import { ProviderProfile } from '../../../core/models/provider.model';
             <button
               type="submit"
               [disabled]="form.invalid || isSaving()"
-              class="px-8 py-3 rounded-full bg-[#1E50C0] hover:bg-[#1842A0] disabled:bg-slate-300 disabled:cursor-not-allowed text-white text-xs sm:text-sm font-bold transition-colors flex items-center gap-2 shadow-xs"
+              class="px-8 py-3 rounded-full bg-[#2456C6] hover:bg-[#1B429B] disabled:bg-slate-300 disabled:cursor-not-allowed text-white text-xs sm:text-sm font-bold transition-colors flex items-center gap-2 shadow-xs"
             >
               @if (isSaving()) {
                 <svg class="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24">

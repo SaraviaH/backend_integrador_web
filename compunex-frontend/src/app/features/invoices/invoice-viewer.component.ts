@@ -48,7 +48,7 @@ import { OrderDetail, SuborderInvoice } from '../../core/models/order.model';
             <button
               type="button"
               (click)="printInvoice()"
-              class="px-5 py-2.5 rounded-full bg-[#1E50C0] hover:bg-[#1842A0] text-white text-xs font-bold transition-colors flex items-center gap-2 shadow-xs"
+              class="px-5 py-2.5 rounded-full bg-[#2456C6] hover:bg-[#1B429B] text-white text-xs font-bold transition-colors flex items-center gap-2 shadow-xs"
             >
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
@@ -62,7 +62,7 @@ import { OrderDetail, SuborderInvoice } from '../../core/models/order.model';
         @if (order() && order()!.subordenes.length > 1) {
           <div class="bg-blue-50/70 border border-blue-200/70 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
             <div class="flex items-center gap-2 text-blue-900 font-semibold">
-              <svg class="w-4 h-4 text-[#1E50C0]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg class="w-4 h-4 text-[#2456C6]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
               <span>Esta orden contiene facturas de múltiples proveedores:</span>
@@ -73,7 +73,7 @@ import { OrderDetail, SuborderInvoice } from '../../core/models/order.model';
                 <button
                   type="button"
                   (click)="selectedSuborderIndex.set(idx)"
-                  [class.bg-[#1E50C0]]="selectedSuborderIndex() === idx"
+                  [class.bg-[#2456C6]]="selectedSuborderIndex() === idx"
                   [class.text-white]="selectedSuborderIndex() === idx"
                   [class.bg-white]="selectedSuborderIndex() !== idx"
                   [class.text-slate-700]="selectedSuborderIndex() !== idx"
@@ -120,7 +120,7 @@ import { OrderDetail, SuborderInvoice } from '../../core/models/order.model';
             No se encontró el comprobante para la orden indicada o no tienes permisos para visualizarlo.
           </p>
           <div class="pt-2">
-            <a routerLink="/cuenta/mis-compras" class="px-6 py-2.5 rounded-full bg-[#1E50C0] text-white text-xs font-semibold">
+            <a routerLink="/cuenta/mis-compras" class="px-6 py-2.5 rounded-full bg-[#2456C6] text-white text-xs font-semibold">
               Ir a Mis Compras
             </a>
           </div>
@@ -160,7 +160,7 @@ import { OrderDetail, SuborderInvoice } from '../../core/models/order.model';
               <div class="text-sm sm:text-base font-black bg-[#142238] text-white py-1.5 my-2 uppercase tracking-wide rounded-sm font-display">
                 Factura Electrónica
               </div>
-              <div class="text-base sm:text-lg font-black font-mono text-[#1E50C0]">
+              <div class="text-base sm:text-lg font-black font-mono text-[#2456C6]">
                 {{ sub.numeroFacturaSimulada }}
               </div>
             </div>
@@ -290,7 +290,7 @@ import { OrderDetail, SuborderInvoice } from '../../core/models/order.model';
                 </div>
                 <div class="flex justify-between py-3 px-3 bg-slate-100 text-sm font-black text-[#142238]">
                   <span>IMPORTE TOTAL:</span>
-                  <span class="font-mono text-[#1E50C0] text-base">S/ {{ sub.total | number:'1.2-2' }}</span>
+                  <span class="font-mono text-[#2456C6] text-base">S/ {{ sub.total | number:'1.2-2' }}</span>
                 </div>
               </div>
             </div>

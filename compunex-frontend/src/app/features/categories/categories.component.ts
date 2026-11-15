@@ -88,7 +88,7 @@ import { ToastStateService } from '../../core/state/toast-state.service';
           <button
             type="button"
             (click)="loadCategories()"
-            class="px-5 py-2.5 rounded-full bg-[#1E50C0] hover:bg-[#1842A0] text-white text-xs font-semibold transition-colors shadow-2xs"
+            class="px-5 py-2.5 rounded-full bg-[#2456C6] hover:bg-[#1B429B] text-white text-xs font-semibold transition-colors shadow-2xs"
           >
             Reintentar conexión
           </button>
@@ -123,7 +123,7 @@ import { ToastStateService } from '../../core/state/toast-state.service';
               
               <div class="space-y-4">
                 <div class="flex items-center justify-between">
-                  <div class="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-100/80 text-[#1E50C0] flex items-center justify-center group-hover:scale-105 transition-transform">
+                  <div class="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-100/80 text-[#2456C6] flex items-center justify-center group-hover:scale-105 transition-transform">
                     <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
@@ -168,7 +168,7 @@ import { ToastStateService } from '../../core/state/toast-state.service';
                 <a
                   [routerLink]="['/catalog']"
                   [queryParams]="{ categoriaId: cat.id }"
-                  class="w-full py-2.5 px-4 rounded-full border border-[#1E50C0] text-[#1E50C0] hover:bg-blue-50/60 font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors"
+                  class="w-full py-2.5 px-4 rounded-full border border-[#2456C6] text-[#2456C6] hover:bg-blue-50/60 font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors"
                 >
                   Explorar catálogo de {{ cat.nombre }}
                   <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
