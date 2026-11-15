@@ -47,7 +47,7 @@ import { HttpErrorResponse } from '@angular/common/http';
         }
 
         <!-- Formulario Reactivo de Login -->
-        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-5" novalidate>
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" autocomplete="off" class="space-y-5" novalidate>
           
           <!-- Campo Correo Electrónico -->
           <div class="space-y-1.5">
@@ -62,9 +62,11 @@ import { HttpErrorResponse } from '@angular/common/http';
               </div>
               <input
                 id="correo"
+                name="correo"
                 type="email"
                 formControlName="correo"
-                placeholder="ejemplo@tuempresa.pe"
+                autocomplete="off"
+                placeholder="ventas.mayoristas@technova.com"
                 class="w-full pl-10 pr-3.5 py-2.5 bg-slate-50/60 border rounded-xl text-xs text-[#142238] placeholder-slate-400 focus:bg-white focus:border-[#2456C6] focus:ring-2 focus:ring-blue-500/15 outline-none transition-all"
                 [ngClass]="isFieldInvalid('correo') ? 'border-rose-400 bg-rose-50/20' : 'border-slate-250'"
               />
@@ -97,8 +99,10 @@ import { HttpErrorResponse } from '@angular/common/http';
               </div>
               <input
                 id="contrasena"
+                name="contrasena"
                 [type]="showPassword() ? 'text' : 'password'"
                 formControlName="contrasena"
+                autocomplete="new-password"
                 placeholder="Ingresa tu contraseña"
                 class="w-full pl-10 pr-10 py-2.5 bg-slate-50/60 border rounded-xl text-xs text-[#142238] placeholder-slate-400 focus:bg-white focus:border-[#2456C6] focus:ring-2 focus:ring-blue-500/15 outline-none transition-all"
                 [ngClass]="isFieldInvalid('contrasena') ? 'border-rose-400 bg-rose-50/20' : 'border-slate-250'"

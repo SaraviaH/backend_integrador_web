@@ -2,7 +2,7 @@
 
 > **Casa de Software:** NexusCore Software Studios S.A.C.  
 > **Proyecto:** COMPUNEX B2B — Wholesale Catalog API (Primer Avance)  
-> **Framework Base:** Java 21 + Spring Boot 3.3+ + Spring Security 6 + Spring Data JPA + Hibernate  
+> **Framework Base:** Java 25 + Spring Boot 3.3+ + Spring Security 6 + Spring Data JPA + Hibernate
 > **Persistencia:** PostgreSQL 15+ administrado 100% mediante ORM / Entidades JPA (Cero SQL manual)  
 > **Metodología de Desarrollo:** **TDD Estricto (Fase 1 RED ➔ Fase 2 GREEN ➔ Fase 3 REFACTOR) + Verificación en Postman**  
 > **Alcance del Primer Avance:** Autenticación básica y CRUD de Catálogo de Productos y Categorías con sus 7 tablas JPA relacionadas (`usuarios`, `perfiles_proveedor`, `categorias`, `subcategorias`, `productos`, `producto_especificaciones`, `imagenes_producto`).

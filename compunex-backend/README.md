@@ -1,12 +1,12 @@
 # COMPUNEX B2B — Back-end (Spring Boot API REST)
 
-> **Stack:** Java 21 (LTS) | Spring Boot 3.5.16 | Spring Security 6 + JWT | Spring Data JPA | PostgreSQL | Swagger/OpenAPI
+> **Stack:** Java 25 (LTS) | Spring Boot 3.5.16 | Spring Security 6 + JWT | Spring Data JPA | PostgreSQL | Swagger/OpenAPI
 
 ---
 
 ## 1. Requisitos Previos
 
-1. **JDK 21 (LTS)** instalado y configurado en `JAVA_HOME`.
+1. **JDK 25 (LTS)** instalado y configurado en `JAVA_HOME`.
 2. **PostgreSQL** en ejecución en el puerto `5432`.
 3. **IDE recomendado:** Apache NetBeans, IntelliJ IDEA o VS Code (también puede ejecutarse directamente con Maven Wrapper `mvnw`).
 

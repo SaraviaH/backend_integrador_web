@@ -1,7 +1,7 @@
 # 03. Arquitectura y Estructura del Backend (Spring Boot 3.5.16)
 
 > **Plataforma:** COMPUNEX B2B — Ecosistema Mayorista de Componentes de Computación  
-> **Framework:** Java 21 + Spring Boot 3.5.16 + Spring Security 6 + Spring Data JPA + Hibernate + Springdoc OpenAPI 2.8.9  
+> **Framework:** Java 25 + Spring Boot 3.5.16 + Spring Security 6 + Spring Data JPA + Hibernate + Springdoc OpenAPI 2.8.9  
 > **Persistencia:** PostgreSQL 15+ (y H2 en modo PostgreSQL para pruebas TDD)  
 > **Patrón:** Monolito Modular por Dominios (*Vertical Slicing* + *SRP / Opción B*)  
 > **Estándar DTO:** Segregación estricta de responsabilidades en paquetes `dto/request/` y `dto/response/`  
@@ -99,7 +99,7 @@ compunex-backend/
 | Paquete | Rol Arquitectónico | Anotaciones Permitidas | Convención de Nombre | Ejemplo |
 |---|---|---|---|---|
 | **`dto/request/`** | Parsear el `@RequestBody` del cliente HTTP | `@Valid`, `@NotBlank`, `@NotNull`, `@Size`, `@Min`, `@Pattern`, `@Email` | `*RequestDTO.java` | `CrearProductoRequestDTO.java` |
-| **`dto/response/`** | Serializar datos limpios hacia Angular SPA | `record` inmutables Java 21 o DTOs con `@Builder` | `*ResponseDTO.java` | `ProductoDetalleResponseDTO.java` |
+| **`dto/response/`** | Serializar datos limpios hacia Angular SPA | `record` inmutables Java 25 o DTOs con `@Builder` | `*ResponseDTO.java` | `ProductoDetalleResponseDTO.java` |
 
 > [!IMPORTANT]
 > **Regla de Cero Exposición:** Ningún DTO en `dto/response/` expone credenciales (`hashContrasena`) ni campos internos ajenos al contrato en `CONTRATOS_JSON.md`.
