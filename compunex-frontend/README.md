@@ -77,3 +77,16 @@ src/app/
 ├── layout/      # Navbar, layouts públicos y privados
 └── shared/      # Componentes reutilizables y modelos/interfaces
 ```
+
+---
+
+## 7. Credenciales de Prueba (Testing)
+
+El Back-end carga automáticamente estos usuarios semilla mediante `DataInitializer` al iniciar por primera vez:
+
+| Rol | Correo | Contraseña | Detalle |
+|---|---|---|---|
+| **PROVEEDOR** | `ventas.mayoristas@technova.com` | `PasswordMayorista123!` | TechNova Mayorista S.A.C. (RUC `20608945612`) |
+| **ADMIN** | `admin@compunex.com` | `AdminPassword2026!` | Administrador General COMPUNEX |
+
+* **Comprador / Empresa nueva:** Puedes registrar una cuenta nueva directamente desde la vista de registro en el portal (`http://localhost:4200/`).
