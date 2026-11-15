@@ -1,18 +1,57 @@
-# 🖥️ COMPUNEX B2B — Plataforma Mayorista de Hardware
+# COMPUNEX B2B — Plataforma Mayorista de Hardware
 
-> Repositorio oficial del proyecto integrador **COMPUNEX B2B**.
-
-### 📖 Documento Oficial y Contrato Canónico:
-Antes de codificar o mover tarjetas en Trello, consulta la especificación exacta de clases, DTOs y JSONs en:  
-👉 **[`docs/02_contratos_api/01_apis_por_rol/001-Apis-Formalizado-En-desarrollo/07_API_PROVEEDOR.md`](file:///c:/Users/Edison/Downloads/Proyectos/Universidad/Desarrollo%20web%20Integrado/Desarollo%20web%20integrado%20final/backend_integrador_web/compunex-backend/docs/02_contratos_api/01_apis_por_rol/001-Apis-Formalizado-En-desarrollo/07_API_PROVEEDOR.md)**
+> **Curso:** Desarrollo Web Integrado — Sección 48942 (UTP)  
+> **Grupo:** Grupo 02  
+> **Arquitectura:** Cliente – Servidor (`Angular 18` + `Spring Boot 3.5.16` + `PostgreSQL`)
 
 ---
 
-### 🚀 Inicio Rápido (NetBeans / IDE):
-1. **Requisitos:** Tener instalado **JDK 21** y **PostgreSQL**.
-2. **Base de Datos:** En pgAdmin / DBeaver crear una base de datos vacía llamada **`compunex_b2b`**.
-3. **Ejecutar:** Abrir el proyecto en **Apache NetBeans**, ir a `CompunexBackendApplication.java` y darle **Run File** (`Shift + F6`). ¡Y ya está!
-4. 🌐 **Swagger UI:** `http://localhost:8080/swagger-ui.html`
-5. 📋 **Tablero Trello (Reparto de los 6 Devs):** [COMPUNEX B2B en Trello](https://trello.com/b/qpK2u3wg/compunex-b2b-m%C3%B3dulo-proveedor-cat%C3%A1logo)
+## 1. Contexto del Proyecto
 
-Para más detalles, consulta la guía completa en: [compunex-backend/README.md](file:///c:/Users/Edison/Downloads/Proyectos/Universidad/Desarrollo%20web%20Integrado/Desarollo%20web%20integrado%20final/backend_integrador_web/compunex-backend/README.md).
+**COMPUNEX B2B** es una plataforma web mayorista orientada al rubro de componentes y hardware de computación (RAM, SSD, GPU, procesadores, placas, periféricos) enfocada en conectar **proveedores mayoristas** con **MYPES y compradores empresariales** en Perú.
+
+El sistema sigue una arquitectura **cliente–servidor** desacoplada mediante una API REST asegurada con **JWT (JSON Web Token)** y control de acceso basado en roles (**RBAC**: `ADMIN`, `PROVEEDOR`, `COMPRADOR`):
+
+* **Portal Público / Catálogo:** Exploración de categorías, búsqueda y detalle técnico de productos.
+* **Módulo Proveedor:** Autenticación, registro corporativo, gestión completa de catálogo propio (CRUD, especificaciones, imágenes, estados y borrado lógico).
+* **Módulo Administrador:** Supervisión global de productos, moderación de estados y administración.
+
+---
+
+## 2. Estructura del Repositorio
+
+```text
+integrador_web/
+├── compunex-backend/       # API REST en Spring Boot 3.5 (Java 21) + PostgreSQL + JWT
+├── compunex-frontend/      # Aplicación web cliente en Angular 18 + Tailwind CSS
+├── documentacion/          # Documentación por fases (análisis, arquitectura, QA y evidencias)
+└── README.md               # Este archivo general
+```
+
+---
+
+## 3. Inicio Rápido
+
+1. **Base de Datos y Back-end:**  
+   Sigue las instrucciones de instalación, configuración de PostgreSQL, variables de entorno y ejecución en:  
+   👉 [compunex-backend/README.md](compunex-backend/README.md)
+
+2. **Front-end (Angular):**  
+   Sigue las instrucciones de instalación de dependencias, entornos (`environment.ts`) y arranque en:  
+   👉 [compunex-frontend/README.md](compunex-frontend/README.md)
+
+3. **URLs locales por defecto:**
+   * **Front-end:** `http://localhost:4200`
+   * **Back-end API:** `http://localhost:8080/api/v1`
+   * **Swagger UI:** `http://localhost:8080/swagger-ui.html`
+
+---
+
+## 4. Equipo (Grupo 02)
+
+* Sivipaucar Quispe, Edison Edgar
+* Saravia Humana, José Manuel Elias
+* Rosales Miranda, Owen Sebastian
+* Rodríguez Lapa, Yussef Amir
+* Rodríguez Guevara, Eudes
+* Yarleque Valladolid, Guadalupe Jamile
