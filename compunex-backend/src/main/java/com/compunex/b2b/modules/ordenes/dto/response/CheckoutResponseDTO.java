@@ -20,5 +20,8 @@ public class CheckoutResponseDTO {
     private String moneda;
     private BigDecimal totalGeneral;
     private Boolean esSimulado;
+    private String metodoPagoSimulado;
+    private String codigoAutorizacionPago;
+    private String estadoPagoSimulado;
     private List<SubordenResumenDTO> facturasEmitidas;
 }

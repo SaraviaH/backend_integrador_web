@@ -61,6 +61,12 @@ public class Orden {
     @Column(name = "metodo_pago_simulado", length = 40)
     private String metodoPagoSimulado = "TRANSFERENCIA_B2B";
 
+    @Column(name = "codigo_autorizacion_pago", length = 40)
+    private String codigoAutorizacionPago;
+
+    @Column(name = "estado_pago_simulado", length = 30)
+    private String estadoPagoSimulado = "APROBADO";
+
     @Column(name = "moneda", nullable = false, length = 10, columnDefinition = "varchar(10) default 'PEN'")
     private String moneda = "PEN";
 

@@ -42,6 +42,9 @@ public class OrderResponseMapper {
                 .moneda(orden.getMoneda())
                 .totalGeneral(orden.getMontoTotal())
                 .esSimulado(true)
+                .metodoPagoSimulado(orden.getMetodoPagoSimulado())
+                .codigoAutorizacionPago(orden.getCodigoAutorizacionPago())
+                .estadoPagoSimulado(orden.getEstadoPagoSimulado())
                 .facturasEmitidas(facturasEmitidas)
                 .build();
     }

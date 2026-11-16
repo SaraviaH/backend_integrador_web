@@ -33,7 +33,7 @@ import { CheckoutStateService } from '../../../core/state/checkout-state.service
           </div>
 
           <!-- Metadatos de la Orden -->
-          <div class="bg-slate-50 rounded-2xl p-6 border border-slate-200/70 max-w-2xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs text-left">
+          <div class="bg-slate-50 rounded-2xl p-6 border border-slate-200/70 max-w-2xl mx-auto grid grid-cols-1 sm:grid-cols-4 gap-4 text-xs text-left">
             <div>
               <span class="text-slate-400 block text-[11px]">Código de Orden:</span>
               <strong class="text-brand-night font-mono text-sm">{{ order.codigoOrden }}</strong>
@@ -41,6 +41,11 @@ import { CheckoutStateService } from '../../../core/state/checkout-state.service
             <div>
               <span class="text-slate-400 block text-[11px]">Fecha de Emisión:</span>
               <strong class="text-slate-700">{{ order.fechaEmision | date:'dd/MM/yyyy HH:mm' }}</strong>
+            </div>
+            <div>
+              <span class="text-slate-400 block text-[11px]">Autorización Pago:</span>
+              <strong class="text-emerald-700 font-mono text-xs">{{ order.codigoAutorizacionPago || 'PAY-APROBADO' }}</strong>
+              <span class="block text-[10px] text-emerald-600 font-semibold">{{ order.estadoPagoSimulado || 'APROBADO' }}</span>
             </div>
             <div>
               <span class="text-slate-400 block text-[11px]">Importe Total (con IGV):</span>

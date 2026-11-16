@@ -6,11 +6,12 @@ import { CartStateService } from '../../../core/state/cart-state.service';
 import { OrderApiService } from '../../../core/services/order-api.service';
 import { ToastStateService } from '../../../core/state/toast-state.service';
 import { CheckoutRequest, CheckoutItemRequest } from '../../../core/models/order.model';
+import { PaymentGatewayModalComponent, PaymentGatewayMethod } from '../payment-gateway-modal/payment-gateway-modal.component';
 
 @Component({
   selector: 'app-review-step',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, PaymentGatewayModalComponent],
   template: `
     <div class="space-y-6">
       
@@ -211,13 +212,27 @@ import { CheckoutRequest, CheckoutItemRequest } from '../../../core/models/order
             </svg>
             <span>Procesando Orden...</span>
           } @else {
-            <span>Confirmar Compra y Generar Órdenes B2B</span>
+            <span>Pagar y Confirmar Compra B2B</span>
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
             </svg>
           }
         </button>
       </div>
+
+      @if (showGatewayModal() && checkoutState.billingData(); as billing) {
+        <app-payment-gateway-modal
+          [totalAmount]="cartState.total()"
+          [suborderCount]="cartState.itemsByProvider().length"
+          [ruc]="billing.ruc"
+          [razonSocial]="billing.razonSocial"
+          [initialMethod]="billing.metodoPagoSimulado"
+          [isSubmitting]="isPlacingOrder()"
+          [externalError]="checkoutError()"
+          (closeModal)="showGatewayModal.set(false)"
+          (paymentAuthorized)="executeCheckout($event)"
+        />
+      }
 
     </div>
   `
@@ -231,10 +246,24 @@ export class ReviewStepComponent {
   @Output() prevStep = new EventEmitter<void>();
   @Output() orderConfirmed = new EventEmitter<void>();
 
+  public readonly showGatewayModal = signal<boolean>(false);
   public readonly isPlacingOrder = signal<boolean>(false);
   public readonly checkoutError = signal<string | null>(null);
 
   public confirmOrder(): void {
+    const billing = this.checkoutState.billingData();
+    const items = this.cartState.items();
+
+    if (!billing || items.length === 0) {
+      this.toastState.error('No fue posible registrar el pedido', 'No hay datos de facturación o el carrito está vacío.', 'checkout-empty');
+      return;
+    }
+
+    this.checkoutError.set(null);
+    this.showGatewayModal.set(true);
+  }
+
+  public executeCheckout(method: PaymentGatewayMethod): void {
     if (this.isPlacingOrder()) {
       return;
     }
@@ -259,7 +288,7 @@ export class ReviewStepComponent {
       rucFacturacion: billing.ruc,
       razonSocialFacturacion: billing.razonSocial,
       direccionFiscal: billing.direccionFiscal,
-      metodoPagoSimulado: billing.metodoPagoSimulado,
+      metodoPagoSimulado: method,
       notasPedido: billing.notasPedido,
       items: checkoutItems
     };
@@ -267,9 +296,10 @@ export class ReviewStepComponent {
     this.orderApi.checkout(payload).subscribe({
       next: (res) => {
         this.isPlacingOrder.set(false);
+        this.showGatewayModal.set(false);
         this.checkoutState.setConfirmedOrder(res);
         this.cartState.clear();
-        this.toastState.success('Pedido registrado correctamente', `Orden ${res.codigoOrden} generada con éxito.`, 'checkout-success');
+        this.toastState.success('Pago autorizado y pedido registrado', `Orden ${res.codigoOrden} generada con éxito.`, 'checkout-success');
         this.orderConfirmed.emit();
       },
       error: (err) => {

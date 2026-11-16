@@ -21,6 +21,9 @@ interface BackendCheckoutResponseDTO {
   moneda?: string;
   totalGeneral: number;
   esSimulado?: boolean;
+  metodoPagoSimulado?: string;
+  codigoAutorizacionPago?: string;
+  estadoPagoSimulado?: string;
   facturasEmitidas?: BackendSubordenResumenDTO[];
 }
 
@@ -87,6 +90,9 @@ function mapBackendCheckoutToFrontend(res: BackendCheckoutResponseDTO): Checkout
     totalGeneral: Number(res.totalGeneral),
     subtotalGeneral,
     igvGeneral,
+    metodoPagoSimulado: res.metodoPagoSimulado,
+    codigoAutorizacionPago: res.codigoAutorizacionPago,
+    estadoPagoSimulado: res.estadoPagoSimulado,
     subordenes
   };
 }

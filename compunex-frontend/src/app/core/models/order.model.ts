@@ -32,7 +32,7 @@ export interface CheckoutRequest {
   rucFacturacion: string;
   razonSocialFacturacion: string;
   direccionFiscal: string;
-  metodoPagoSimulado: 'TRANSFERENCIA_BANCARIA' | 'LINEA_CREDITO_B2B' | 'TARJETA_EMPRESARIAL';
+  metodoPagoSimulado: 'TRANSFERENCIA_BANCARIA' | 'LINEA_CREDITO_B2B' | 'TARJETA_EMPRESARIAL' | 'YAPE_PLIN_EMPRESA';
   notasPedido?: string;
   items: CheckoutItemRequest[];
 }
@@ -63,6 +63,9 @@ export interface CheckoutResponse {
   totalGeneral: number;
   subtotalGeneral: number;
   igvGeneral: number;
+  metodoPagoSimulado?: string;
+  codigoAutorizacionPago?: string;
+  estadoPagoSimulado?: string;
   subordenes: SuborderInvoice[];
 }
 

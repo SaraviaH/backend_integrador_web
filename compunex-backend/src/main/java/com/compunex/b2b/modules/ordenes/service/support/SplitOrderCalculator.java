@@ -8,6 +8,7 @@ import com.compunex.b2b.modules.catalogo.repository.ProductoRepository;
 import com.compunex.b2b.modules.ordenes.dto.request.CheckoutItemDTO;
 import com.compunex.b2b.modules.ordenes.dto.request.CheckoutRequestDTO;
 import com.compunex.b2b.modules.ordenes.dto.request.DatosFacturacionDTO;
+import com.compunex.b2b.modules.ordenes.entity.EstadoOrden;
 import com.compunex.b2b.modules.ordenes.entity.Orden;
 import com.compunex.b2b.modules.ordenes.entity.OrdenItem;
 import com.compunex.b2b.modules.ordenes.entity.SubordenFactura;
@@ -60,6 +61,14 @@ public class SplitOrderCalculator {
         orden.setDireccionFiscal(datos.getDireccionFiscal());
         orden.setTipoComprobante(tipoComprobante);
         orden.setMetodoPagoSimulado(metodoPago);
+        orden.setCodigoAutorizacionPago("PAY-" + java.util.UUID.randomUUID().toString().substring(0, 8).toUpperCase());
+        if ("LINEA_CREDITO_B2B".equalsIgnoreCase(metodoPago)) {
+            orden.setEstado(EstadoOrden.PROCESANDO);
+            orden.setEstadoPagoSimulado("APROBADO_CREDITO_30D");
+        } else {
+            orden.setEstado(EstadoOrden.PAGADO);
+            orden.setEstadoPagoSimulado("APROBADO");
+        }
         orden.setMoneda(monedaOrden);
 
         BigDecimal totalSubtotal = BigDecimal.ZERO;
