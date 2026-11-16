@@ -86,9 +86,10 @@ import { CurrencySymbolPipe } from '../../../shared/pipes/currency-symbol.pipe';
                     </div>
                     <a
                       [routerLink]="['/pedidos', order.ordenId, 'comprobante']"
+                      [queryParams]="{ sub: idx }"
                       class="px-3 py-1.5 rounded-xl border border-brand-primary text-brand-primary hover:bg-brand-tint text-xs font-bold transition-colors shrink-0"
                     >
-                      Ver Factura
+                      Ver / Descargar Factura
                     </a>
                   </div>
                 </div>
@@ -103,6 +104,14 @@ import { CurrencySymbolPipe } from '../../../shared/pipes/currency-symbol.pipe';
               class="px-6 py-3 rounded-full border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
             >
               Volver al Catálogo
+            </a>
+
+            <a
+              [routerLink]="['/pedidos', order.ordenId, 'comprobante']"
+              [queryParams]="{ modo: 'general' }"
+              class="px-6 py-3 rounded-full border border-[#1786B4] bg-sky-50 text-[#04202E] hover:bg-sky-100 text-xs font-bold transition-colors flex items-center gap-1.5"
+            >
+              📄 Comprobante General COMPUNEX
             </a>
 
             <button

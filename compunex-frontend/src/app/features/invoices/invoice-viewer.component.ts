@@ -59,25 +59,37 @@ import { SunatFacturaData, SunatFacturaSheetComponent } from '../../shared/compo
           </div>
         </div>
 
-        <!-- Selector de Suborden / Proveedor (en caso de Split Order) -->
-        @if (order() && order()!.subordenes.length > 1) {
+        <!-- Selector de Comprobante General o Factura Independiente por Proveedor -->
+        @if (order(); as ord) {
           <div class="bg-brand-tint/70 border border-brand-ice/70 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
             <div class="flex items-center gap-2 text-brand-night font-semibold">
-              <svg class="w-4 h-4 text-brand-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg class="w-4 h-4 text-brand-primary shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              <span>Esta orden contiene facturas de múltiples proveedores:</span>
+              <span>Selecciona el documento a visualizar / descargar:</span>
             </div>
 
             <div class="flex flex-wrap items-center gap-2">
-              @for (sub of order()!.subordenes; track sub.subordenId; let idx = $index) {
+              <button
+                type="button"
+                (click)="viewMode.set('general')"
+                [class.bg-[#04202E]]="viewMode() === 'general'"
+                [class.text-white]="viewMode() === 'general'"
+                [class.bg-white]="viewMode() !== 'general'"
+                [class.text-slate-700]="viewMode() !== 'general'"
+                class="px-3 py-1.5 rounded-xl border border-slate-300 text-xs font-bold transition-all shadow-2xs"
+              >
+                📋 Comprobante General COMPUNEX
+              </button>
+
+              @for (sub of ord.subordenes; track sub.subordenId; let idx = $index) {
                 <button
                   type="button"
-                  (click)="selectedSuborderIndex.set(idx)"
-                  [class.bg-brand-primary]="selectedSuborderIndex() === idx"
-                  [class.text-white]="selectedSuborderIndex() === idx"
-                  [class.bg-white]="selectedSuborderIndex() !== idx"
-                  [class.text-slate-700]="selectedSuborderIndex() !== idx"
+                  (click)="viewMode.set('provider'); selectedSuborderIndex.set(idx)"
+                  [class.bg-brand-primary]="viewMode() === 'provider' && selectedSuborderIndex() === idx"
+                  [class.text-white]="viewMode() === 'provider' && selectedSuborderIndex() === idx"
+                  [class.bg-white]="!(viewMode() === 'provider' && selectedSuborderIndex() === idx)"
+                  [class.text-slate-700]="!(viewMode() === 'provider' && selectedSuborderIndex() === idx)"
                   class="px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-bold transition-all shadow-2xs"
                 >
                   {{ sub.numeroFacturaSimulada }} ({{ sub.proveedorRazonSocial }})
@@ -128,12 +140,134 @@ import { SunatFacturaData, SunatFacturaSheetComponent } from '../../shared/compo
         </div>
       }
 
-      <!-- 3. ESTADO CON DATOS: FACTURA ELECTRÓNICA FORMAL SUNAT (HOJA A4) -->
+      <!-- 3. ESTADO CON DATOS: COMPROBANTE GENERAL O FACTURA ELECTRÓNICA SUNAT -->
       @else {
-        @if (currentSunatFactura(); as factura) {
-          <div class="invoice-a4-sheet">
-            <app-sunat-factura-sheet [data]="factura" />
+        @if (viewMode() === 'general' && order(); as ord) {
+          <div class="invoice-a4-sheet bg-white text-black border border-slate-400 p-6 sm:p-8 max-w-4xl mx-auto text-[11px] leading-snug font-sans shadow-sm space-y-5">
+            <!-- Cabecera Comprobante Consolidado COMPUNEX -->
+            <div class="flex flex-col sm:flex-row justify-between items-start gap-4 pb-3 border-b-2 border-black">
+              <div class="space-y-0.5 uppercase">
+                <div class="text-base font-extrabold tracking-tight text-[#04202E]">COMPUNEX B2B MARKETPLACE S.A.C.</div>
+                <div class="text-[11px] text-slate-700">PLATAFORMA MAYORISTA DE HARDWARE Y TECNOLOGÍA</div>
+                <div class="text-[10px] text-slate-600">AV. GARCILASO DE LA VEGA 1348 · LIMA - PERÚ</div>
+              </div>
+              <div class="border-2 border-black px-5 py-2.5 text-center w-full sm:w-72 shrink-0">
+                <div class="font-extrabold text-xs">COMPROBANTE GENERAL DE COMPRA</div>
+                <div class="font-bold text-xs mt-0.5">RUC COMPUNEX: 20609998881</div>
+                <div class="font-extrabold text-sm font-mono mt-0.5">{{ ord.codigoOrden }}</div>
+              </div>
+            </div>
+
+            <!-- Datos del Comprador y Pago -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 border-b border-black pb-3">
+              <div class="grid grid-cols-[130px_1fr] gap-y-1">
+                <span class="font-semibold">Fecha de Emisión</span>
+                <span>: {{ ord.fechaEmision | date:'dd/MM/yyyy HH:mm' }}</span>
+                <span class="font-semibold">Empresa Compradora</span>
+                <span class="font-bold uppercase">: {{ ord.razonSocialFacturacion }}</span>
+                <span class="font-semibold">RUC Comprador</span>
+                <span class="font-mono">: {{ ord.rucFacturacion }}</span>
+              </div>
+              <div class="grid grid-cols-[130px_1fr] gap-y-1">
+                <span class="font-semibold">Dirección Fiscal</span>
+                <span class="uppercase">: {{ ord.direccionFiscal }}</span>
+                <span class="font-semibold">Medio de Pago</span>
+                <span>: {{ ord.metodoPago }}</span>
+                <span class="font-semibold">Subórdenes Split</span>
+                <span>: {{ ord.subordenes.length }} proveedor(es)</span>
+              </div>
+            </div>
+
+            <!-- Desglose por Proveedor (Facturas Independientes Vinculadas) -->
+            <div class="space-y-2">
+              <div class="font-bold uppercase text-xs">Resumen de Dispersión y Facturas Independientes por Proveedor</div>
+              <div class="border border-black overflow-x-auto">
+                <table class="w-full text-left border-collapse text-[11px]">
+                  <thead>
+                    <tr class="border-b border-black bg-slate-100 font-bold">
+                      <th class="py-1.5 px-2">Proveedor Emisor</th>
+                      <th class="py-1.5 px-2">RUC Emisor</th>
+                      <th class="py-1.5 px-2">Factura SUNAT</th>
+                      <th class="py-1.5 px-2 text-right">Subtotal</th>
+                      <th class="py-1.5 px-2 text-right">IGV 18%</th>
+                      <th class="py-1.5 px-2 text-right">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-200">
+                    @for (sub of ord.subordenes; track sub.subordenId) {
+                      <tr>
+                        <td class="py-1.5 px-2 font-semibold uppercase">{{ sub.proveedorRazonSocial }}</td>
+                        <td class="py-1.5 px-2 font-mono">{{ sub.proveedorRuc }}</td>
+                        <td class="py-1.5 px-2 font-mono font-bold">{{ sub.numeroFacturaSimulada }}</td>
+                        <td class="py-1.5 px-2 text-right font-mono">S/ {{ sub.subtotal | number:'1.2-2' }}</td>
+                        <td class="py-1.5 px-2 text-right font-mono">S/ {{ sub.igv | number:'1.2-2' }}</td>
+                        <td class="py-1.5 px-2 text-right font-mono font-bold">S/ {{ sub.total | number:'1.2-2' }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Detalle Consolidado de Ítems -->
+            <div class="space-y-2">
+              <div class="font-bold uppercase text-xs">Detalle Consolidado de Productos Adquiridos</div>
+              <div class="border border-black overflow-x-auto">
+                <table class="w-full text-left border-collapse text-[11px]">
+                  <thead>
+                    <tr class="border-b border-black bg-slate-100 font-bold">
+                      <th class="py-1.5 px-2">Factura</th>
+                      <th class="py-1.5 px-2">Descripción</th>
+                      <th class="py-1.5 px-2 text-center">Cant.</th>
+                      <th class="py-1.5 px-2 text-right">V. Unitario</th>
+                      <th class="py-1.5 px-2 text-right">Subtotal</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-200">
+                    @for (sub of ord.subordenes; track sub.subordenId) {
+                      @for (it of sub.items; track it.productoId) {
+                        <tr>
+                          <td class="py-1.5 px-2 font-mono text-[10px]">{{ sub.numeroFacturaSimulada }}</td>
+                          <td class="py-1.5 px-2 uppercase">{{ it.nombre }}</td>
+                          <td class="py-1.5 px-2 text-center font-mono">{{ it.cantidad }}</td>
+                          <td class="py-1.5 px-2 text-right font-mono">S/ {{ it.precioUnitario | number:'1.2-2' }}</td>
+                          <td class="py-1.5 px-2 text-right font-mono font-semibold">S/ {{ it.subtotal | number:'1.2-2' }}</td>
+                        </tr>
+                      }
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Total Consolidado -->
+            <div class="flex justify-end">
+              <div class="w-full sm:w-72 border border-black text-[11px]">
+                <div class="grid grid-cols-[1fr_110px] border-b border-slate-300 px-2 py-1">
+                  <span class="text-right pr-2">Subtotal Consolidado:</span>
+                  <span class="text-right font-mono">S/ {{ ord.subtotalGeneral | number:'1.2-2' }}</span>
+                </div>
+                <div class="grid grid-cols-[1fr_110px] border-b border-black px-2 py-1">
+                  <span class="text-right pr-2">IGV Consolidado (18%):</span>
+                  <span class="text-right font-mono">S/ {{ ord.igvGeneral | number:'1.2-2' }}</span>
+                </div>
+                <div class="grid grid-cols-[1fr_110px] px-2 py-1.5 font-extrabold bg-slate-100 text-xs">
+                  <span class="text-right pr-2">TOTAL PAGADO:</span>
+                  <span class="text-right font-mono">S/ {{ ord.totalGeneral | number:'1.2-2' }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="border border-black p-2.5 text-center italic text-[11px]">
+              Documento consolidado informativo emitido por COMPUNEX B2B. Cada proveedor emite su propia Factura Electrónica SUNAT independiente.
+            </div>
           </div>
+        } @else {
+          @if (currentSunatFactura(); as factura) {
+            <div class="invoice-a4-sheet">
+              <app-sunat-factura-sheet [data]="factura" />
+            </div>
+          }
         }
       }
 
@@ -171,6 +305,7 @@ export class InvoiceViewerComponent implements OnInit {
   public readonly isLoading = signal<boolean>(true);
   public readonly hasError = signal<boolean>(false);
   public readonly selectedSuborderIndex = signal<number>(0);
+  public readonly viewMode = signal<'provider' | 'general'>('provider');
 
   public readonly currentSuborder = computed<SuborderInvoice | null>(() => {
     const o = this.order();
@@ -210,6 +345,17 @@ export class InvoiceViewerComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    this.route.queryParamMap.subscribe(qp => {
+      const modo = qp.get('modo');
+      const subParam = qp.get('sub');
+      if (modo === 'general') {
+        this.viewMode.set('general');
+      } else if (subParam !== null && !Number.isNaN(Number(subParam))) {
+        this.viewMode.set('provider');
+        this.selectedSuborderIndex.set(Math.max(0, Number(subParam)));
+      }
+    });
+
     this.route.paramMap.subscribe(params => {
       const idParam = params.get('id');
       const ordenId = idParam ? Number(idParam) : 0;
