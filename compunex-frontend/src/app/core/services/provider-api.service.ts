@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, forkJoin, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
@@ -146,6 +146,12 @@ function findSpecValue(specs: { clave: string; valor: string }[] | undefined, ke
   return specs?.find(s => s.clave.trim().toLowerCase() === key.toLowerCase())?.valor;
 }
 
+function parseOptionalNonNegativeInt(val?: string): number | undefined {
+  if (!val) return undefined;
+  const m = val.match(/\d+/);
+  return m ? Math.max(0, Number(m[0])) : undefined;
+}
+
 function parseLeadingInt(val?: string, fallback: number = 1): number {
   if (!val) return fallback;
   const m = val.match(/\d+/);
@@ -159,7 +165,7 @@ export class ProviderApiService {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = environment.useMock ? environment.mockApiUrl : environment.apiUrl;
 
-  public getDashboardMetrics(): Observable<ProviderMetrics> {
+  public getDashboardOverview(): Observable<{ metrics: ProviderMetrics; recentSales: ProviderSaleItem[] }> {
     if (!environment.useMock) {
       return forkJoin({
         products: this.getMyCatalog(0, 100),
@@ -178,27 +184,49 @@ export class ProviderApiService {
             s => s.estado === 'PENDIENTE_DESPACHO' || s.estado === 'EN_PREPARACION'
           ).length;
           const valorInventario = Math.round(
-            activeProds.reduce((acc, p) => acc + p.precioUnitario * p.stock, 0) * 100
+            activeProds.reduce((acc, p) => acc + p.precioUnitario * (p.stock ?? 0), 0) * 100
           ) / 100;
 
           return {
-            ventasMesActual,
-            pedidosPendientes,
-            productosPublicados: prodList.length,
-            valorInventario
+            metrics: {
+              ventasMesActual,
+              pedidosPendientes,
+              productosPublicados: products.totalElements ?? prodList.length,
+              valorInventario
+            },
+            recentSales: salesList.slice(0, 5)
           };
         })
       );
     }
 
-    return this.http.get<ProviderMetrics>(`${this.baseUrl}/providers/me/metrics`).pipe(
-      catchError(() => of(this.getFallbackMetrics()))
+    return forkJoin({
+      metrics: this.http.get<ProviderMetrics>(`${this.baseUrl}/providers/me/metrics`).pipe(
+        catchError(() => of(this.getFallbackMetrics()))
+      ),
+      sales: this.getMySales(0, 5)
+    }).pipe(
+      map(({ metrics, sales }) => ({
+        metrics,
+        recentSales: (sales.content || []).slice(0, 5)
+      }))
     );
   }
 
-  public getMyCatalog(page: number = 0, size: number = 10): Observable<PaginatedResponse<ProviderProductItem>> {
+  public getDashboardMetrics(): Observable<ProviderMetrics> {
+    return this.getDashboardOverview().pipe(map(overview => overview.metrics));
+  }
+
+  public getMyCatalog(page: number = 0, size: number = 10, search: string = ''): Observable<PaginatedResponse<ProviderProductItem>> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+    if (search.trim()) {
+      params = params.set('search', search.trim());
+    }
+
     const request$ = this.http
-      .get<BackendProductoPaginadoDTO>(`${this.baseUrl}/providers/me/products?page=${page}&size=${size}`)
+      .get<BackendProductoPaginadoDTO>(`${this.baseUrl}/providers/me/products`, { params })
       .pipe(
         map(res => ({
           content: (res.contenido || []).map(p => ({
@@ -211,7 +239,7 @@ export class ProviderApiService {
             unidadesPorPaquete: parseLeadingInt(p.unidadesPorPaquete || p.pedidoMinimo, 1),
             unidadesPorPaqueteTexto: p.unidadesPorPaquete,
             pedidoMinimoTexto: p.pedidoMinimo,
-            stock: parseLeadingInt(findSpecValue(p.especificaciones, 'Stock Referencial'), 100),
+            stock: parseOptionalNonNegativeInt(findSpecValue(p.especificaciones, 'Stock Referencial')),
             activo: p.estado === 'ACTIVO',
             ultimaActualizacion: p.fechaActualizacion || p.fechaPublicacion || new Date().toISOString(),
             imagenUrl: resolveMediaUrl(p.urlImagenPrincipal || p.imagenes?.[0]?.urlImagen)
@@ -251,7 +279,7 @@ export class ProviderApiService {
             unidadesPorPaquete: parseLeadingInt(d.unidadesPorPaquete || d.pedidoMinimo, 1),
             unidadesPorPaqueteTexto: d.unidadesPorPaquete,
             pedidoMinimoTexto: d.pedidoMinimo,
-            stockDisponible: parseLeadingInt(findSpecValue(specs, 'Stock Referencial'), 100),
+            stockDisponible: parseOptionalNonNegativeInt(findSpecValue(specs, 'Stock Referencial')),
             proveedorId: d.proveedorId,
             proveedorRazonSocial: d.proveedorRazonSocial || 'Mi Empresa B2B',
             proveedorRuc: '—',
@@ -348,7 +376,7 @@ export class ProviderApiService {
   public updateProduct(id: number, data: UpdateProductRequest): Observable<ApiResponse<ProductDetail>> {
     const payload = this.buildBackendProductPayload(data as CreateProductRequest);
     const request$ = this.http
-      .put<{ id: number; titulo: string; precioUnitarioRef: number; precioTotalRef: number }>(
+      .put<{ id: number; titulo: string; categoriaId?: string; precioUnitarioRef: number; precioTotalRef?: number }>(
         `${this.baseUrl}/providers/me/products/${id}`,
         payload
       )
@@ -357,11 +385,28 @@ export class ProviderApiService {
           success: true,
           message: 'Producto actualizado con éxito',
           data: {
-            ...this.getFallbackProductDetail(id),
             id: res.id,
+            categoriaId: res.categoriaId || String(data.categoriaId || ''),
             nombre: res.titulo,
+            sku: data.sku || `CMP-${String(res.id).padStart(4, '0')}`,
+            categoriaNombre: res.categoriaId || String(data.categoriaId || 'Hardware B2B'),
             precioUnitario: Number(res.precioUnitarioRef),
-            imagenPrincipalUrl: resolveMediaUrl(data.urlImagen)
+            precioTotalCaja: res.precioTotalRef != null ? Number(res.precioTotalRef) : data.precioTotalCaja,
+            unidadesPorPaquete: data.unidadesPorPaquete,
+            unidadesPorPaqueteTexto: payload.unidadesPorPaquete,
+            pedidoMinimoTexto: payload.pedidoMinimo,
+            stockDisponible: data.stockDisponible,
+            proveedorId: 0,
+            proveedorRazonSocial: '',
+            proveedorRuc: '',
+            imagenPrincipalUrl: resolveMediaUrl(data.urlImagen),
+            imagenesSecundarias: [],
+            descripcion: data.descripcion || '',
+            marca: data.marca || '',
+            modelo: data.modelo || '',
+            especificaciones: payload.especificaciones,
+            garantiaMeses: data.garantiaMeses || 12,
+            condicion: 'NUEVO' as const
           },
           timestamp: new Date().toISOString()
         }))
@@ -572,9 +617,11 @@ export class ProviderApiService {
             nombreComercial: d.nombreComercial,
             descripcion: d.descripcion,
             telefono: d.telefonoContacto,
+            correoContacto: d.correoContacto,
             direccion: d.direccion,
             ciudad: d.ciudad,
-            anosMercado: d.anosMercado
+            anosMercado: d.anosMercado,
+            politicaComercial: d.politicaComercial
           },
           timestamp: new Date().toISOString()
         }))
@@ -644,7 +691,8 @@ export class ProviderApiService {
             direccion: data.direccion || current.data.direccion,
             ciudad: data.ciudad || current.data.ciudad || 'Lima',
             anosMercado: data.anosMercado || current.data.anosMercado,
-            descripcion: data.descripcion || current.data.descripcion
+            descripcion: data.descripcion || current.data.descripcion,
+            politicaComercial: data.politicaComercial ?? current.data.politicaComercial
           }).pipe(
             switchMap(() => this.getProfile()),
             map(refreshed => ({

@@ -2,7 +2,7 @@ spring:
   datasource:
     url: ${DB_URL:jdbc:postgresql://localhost:5432/compunex_b2b}
     username: ${DB_USER:postgres}
-    password: ${DB_PASSWORD:98306001}
+    password: ${DB_PASSWORD:S4r4v14!}
   jpa:
     hibernate:
       ddl-auto: update

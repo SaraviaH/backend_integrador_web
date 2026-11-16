@@ -88,20 +88,6 @@ export class AuthApiService {
     return request$.pipe(catchError(() => of(this.getFallbackProfile())));
   }
 
-  public updateProfile(data: Partial<UserProfile>): Observable<UserProfile> {
-    const current = this.authState.currentUser();
-    if (!current) {
-      return of(this.getFallbackProfile());
-    }
-    const merged: UserProfile = {
-      ...current,
-      ...data,
-      rol: normalizeUserRole(data.rol || current.rol)
-    };
-    this.authState.updateProfile(merged);
-    return of(merged);
-  }
-
   public changePassword(data: ChangePasswordRequest): Observable<ApiResponse<void>> {
     const request$ = this.http
       .patch<{ mensaje?: string; fechaActualizacion?: string }>(`${this.baseUrl}/auth/password`, data)

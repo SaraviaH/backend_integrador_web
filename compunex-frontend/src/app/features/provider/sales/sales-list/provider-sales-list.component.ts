@@ -1,9 +1,8 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ProviderApiService } from '../../../../core/services/provider-api.service';
 import { ProviderSaleItem } from '../../../../core/models/provider.model';
-import { SuborderStatus } from '../../../../core/models/order.model';
 import { SaleFilterStatus, SalesFilterTabsComponent } from './components/sales-filter-tabs/sales-filter-tabs.component';
 import { SalesTableComponent } from './components/sales-table/sales-table.component';
 import { PaginationBarComponent } from '../../../../shared/components/pagination-bar/pagination-bar.component';
@@ -14,35 +13,33 @@ import { PaginationBarComponent } from '../../../../shared/components/pagination
   imports: [CommonModule, RouterModule, SalesFilterTabsComponent, SalesTableComponent, PaginationBarComponent],
   template: `
     <div class="space-y-6">
-      <!-- Encabezado de la Pantalla P-24 -->
+      <!-- Encabezado -->
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <nav class="flex items-center gap-2 text-xs text-slate-500 mb-1">
+          <nav class="flex items-center gap-2 text-xs text-slate-500 mb-1" aria-label="Ruta de navegación">
             <a routerLink="/panel/dashboard" class="hover:text-brand-primary transition-colors">Panel</a>
             <span>/</span>
             <span class="text-slate-800 font-medium">Ventas Recibidas</span>
           </nav>
-          <h1 class="text-2xl font-black text-slate-900 tracking-tight">
+          <h1 class="text-2xl font-black text-slate-900 tracking-tight font-display">
             Ventas B2B & Despacho de Pedidos
           </h1>
           <p class="text-xs text-slate-500 mt-1">
-            Revisa las subórdenes asignadas a tu empresa, emite comprobantes y actualiza los hitos logísticos.
+            Revisa todas las subórdenes asignadas a tu empresa y gestiona cada etapa de despacho o cancelación.
           </p>
         </div>
 
         <button
           type="button"
-          (click)="loadSales()"
+          (click)="loadSales(currentPage())"
           class="px-3.5 py-2 border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold rounded-xl shadow-2xs transition-colors flex items-center gap-2 cursor-pointer self-start md:self-auto"
         >
-          <svg class="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg class="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
           </svg>
           Refrescar Ventas
         </button>
       </div>
-
-      <!-- 4 ESTADOS DE UI -->
 
       <!-- 1. CARGA -->
       @if (isLoading()) {
@@ -56,7 +53,7 @@ import { PaginationBarComponent } from '../../../../shared/components/pagination
       @else if (hasError()) {
         <div class="bg-white rounded-2xl border border-rose-200 p-8 text-center shadow-xs">
           <div class="w-12 h-12 bg-rose-50 text-rose-600 rounded-2xl mx-auto flex items-center justify-center mb-3">
-            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
           </div>
@@ -66,7 +63,7 @@ import { PaginationBarComponent } from '../../../../shared/components/pagination
           </p>
           <button
             type="button"
-            (click)="loadSales()"
+            (click)="loadSales(currentPage())"
             class="px-4 py-2 bg-brand-primary text-white text-xs font-semibold rounded-xl hover:bg-brand-primary-hover transition-colors cursor-pointer"
           >
             Reintentar
@@ -74,11 +71,11 @@ import { PaginationBarComponent } from '../../../../shared/components/pagination
         </div>
       }
 
-      <!-- 3. VACÍO (SIN VENTAS REGISTRADAS) -->
-      @else if (rawSales().length === 0) {
+      <!-- 3. VACÍO -->
+      @else if (totalElements() === 0) {
         <div class="bg-white rounded-2xl border border-slate-200/80 p-12 text-center shadow-xs">
           <div class="w-14 h-14 bg-slate-100 text-slate-400 rounded-2xl mx-auto flex items-center justify-center mb-3">
-            <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
             </svg>
           </div>
@@ -97,32 +94,32 @@ import { PaginationBarComponent } from '../../../../shared/components/pagination
 
       <!-- 4. CON DATOS -->
       @else {
-        <!-- Barra de Filtros Dumb Component -->
         <app-sales-filter-tabs
           [totalCount]="rawSales().length"
           [pendingCount]="countPending()"
           [inPrepCount]="countInPrep()"
           [dispatchedCount]="countDispatched()"
+          [cancelledCount]="countCancelled()"
           [activeStatus]="currentFilter()"
           (statusChange)="onStatusChanged($event)"
           (searchChange)="onSearchChanged($event)"
         ></app-sales-filter-tabs>
 
-        <!-- Tabla de Ventas Dumb Component -->
         <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
           @if (filteredSales().length === 0) {
             <div class="p-8 text-center text-slate-500 text-xs">
-              No hay subórdenes que coincidan con el filtro aplicado.
+              No hay subórdenes en esta página que coincidan con el filtro aplicado.
             </div>
           } @else {
-            <app-sales-table [sales]="paginatedSales()"></app-sales-table>
-            <app-pagination-bar
-              [totalItems]="filteredSales().length"
-              [pageSize]="pageSize"
-              [currentPage]="currentPage()"
-              (pageChange)="currentPage.set($event)">
-            </app-pagination-bar>
+            <app-sales-table [sales]="filteredSales()"></app-sales-table>
           }
+
+          <app-pagination-bar
+            [totalItems]="totalElements()"
+            [pageSize]="pageSize"
+            [currentPage]="currentPage()"
+            (pageChange)="onPageChange($event)"
+          ></app-pagination-bar>
         </div>
       }
     </div>
@@ -137,7 +134,8 @@ export class ProviderSalesListComponent implements OnInit {
   public readonly currentFilter = signal<SaleFilterStatus>('ALL');
   public readonly searchFilter = signal<string>('');
   public readonly currentPage = signal<number>(1);
-  public readonly pageSize = 8;
+  public readonly totalElements = signal<number>(0);
+  public readonly pageSize = 10;
 
   public readonly countPending = computed(() =>
     this.rawSales().filter(s => s.estado === 'PENDIENTE_DESPACHO').length
@@ -147,6 +145,9 @@ export class ProviderSalesListComponent implements OnInit {
   );
   public readonly countDispatched = computed(() =>
     this.rawSales().filter(s => s.estado === 'DESPACHADO' || s.estado === 'ENTREGADO').length
+  );
+  public readonly countCancelled = computed(() =>
+    this.rawSales().filter(s => s.estado === 'CANCELADO').length
   );
 
   public readonly filteredSales = computed(() => {
@@ -170,22 +171,20 @@ export class ProviderSalesListComponent implements OnInit {
     return list;
   });
 
-  public readonly paginatedSales = computed(() => {
-    const start = (this.currentPage() - 1) * this.pageSize;
-    return this.filteredSales().slice(start, start + this.pageSize);
-  });
-
   public ngOnInit(): void {
-    this.loadSales();
+    this.loadSales(1);
   }
 
-  public loadSales(): void {
+  public loadSales(page: number = this.currentPage()): void {
     this.isLoading.set(true);
     this.hasError.set(false);
+    this.currentPage.set(page);
 
-    this.providerApi.getMySales().subscribe({
+    this.providerApi.getMySales(page - 1, this.pageSize).subscribe({
       next: (res) => {
-        this.rawSales.set(res.content || []);
+        const items = res.content || [];
+        this.rawSales.set(items);
+        this.totalElements.set(res.totalElements ?? items.length);
         this.isLoading.set(false);
       },
       error: () => {
@@ -195,13 +194,16 @@ export class ProviderSalesListComponent implements OnInit {
     });
   }
 
+  public onPageChange(page: number): void {
+    this.currentFilter.set('ALL');
+    this.loadSales(page);
+  }
+
   public onStatusChanged(status: SaleFilterStatus): void {
     this.currentFilter.set(status);
-    this.currentPage.set(1);
   }
 
   public onSearchChanged(query: string): void {
     this.searchFilter.set(query);
-    this.currentPage.set(1);
   }
 }

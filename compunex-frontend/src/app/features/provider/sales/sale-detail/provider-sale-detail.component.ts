@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { ProviderApiService } from '../../../../core/services/provider-api.service';
+import { ToastStateService } from '../../../../core/state/toast-state.service';
 import { ProviderSaleItem } from '../../../../core/models/provider.model';
 import { SuborderStatus } from '../../../../core/models/order.model';
 import { DispatchStepperComponent } from './components/dispatch-stepper/dispatch-stepper.component';
@@ -56,6 +57,14 @@ import { SaleClientCardComponent } from './components/sale-client-card/sale-clie
         </div>
       }
 
+      <!-- Banner de Error en transición -->
+      @if (errorMessage()) {
+        <div class="p-3.5 rounded-xl bg-rose-50 border border-rose-200 flex items-center justify-between text-xs text-rose-800" role="alert">
+          <span>{{ errorMessage() }}</span>
+          <button type="button" (click)="errorMessage.set(null)" class="text-rose-700 hover:text-rose-900 font-bold cursor-pointer" aria-label="Cerrar error">✕</button>
+        </div>
+      }
+
       <!-- 4 ESTADOS DE UI -->
 
       <!-- 1. CARGA -->
@@ -104,46 +113,47 @@ import { SaleClientCardComponent } from './components/sale-client-card/sale-clie
           <!-- Stepper Logístico Dumb Component -->
           <app-dispatch-stepper
             [currentStatus]="s.estado"
+            [isUpdating]="isUpdatingStatus()"
             (statusUpdate)="onStatusUpdated($event)"
           ></app-dispatch-stepper>
 
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Tabla de Ítems Vendidos (2 cols) -->
             <div class="lg:col-span-2 space-y-6">
-              <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
-                <div class="p-4 border-b border-slate-100 flex items-center justify-between">
-                  <h3 class="text-sm font-bold text-slate-900">
+              <div class="bg-white dark:bg-[#0F3043] rounded-2xl border border-[#CFE4EE] dark:border-[#1D4960] shadow-sm overflow-hidden">
+                <div class="p-4 sm:px-6 border-b border-[#E1F2FA] dark:border-[#1D4960] flex items-center justify-between">
+                  <h3 class="text-sm font-bold text-[#04202E] dark:text-[#F2F9FC]">
                     Hardware Requerido en esta Suborden
                   </h3>
-                  <span class="text-xs text-slate-400 font-semibold">
+                  <span class="text-xs text-[#527588] dark:text-[#98D5EE] font-semibold">
                     {{ s.items.length }} productos
                   </span>
                 </div>
 
-                <div class="overflow-x-auto">
-                  <table class="w-full text-left border-collapse text-xs">
+                <div class="b2b-table-wrapper overflow-x-auto">
+                  <table class="b2b-table w-full min-w-[540px] text-left border-collapse text-xs">
                     <thead>
-                      <tr class="bg-slate-50/75 border-b border-slate-200/80 text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                        <th class="py-3 px-4">Descripción del Ítem</th>
-                        <th class="py-3 px-4 text-center">Cant.</th>
-                        <th class="py-3 px-4 text-right">Precio Unitario</th>
-                        <th class="py-3 px-4 text-right">Subtotal</th>
+                      <tr class="bg-[#E1F2FA] dark:bg-[#114662] text-[#0A3C55] dark:text-[#BCE6FA] border-b-2 border-[#7CC5E6] dark:border-[#2C7DA3] text-[11px] font-extrabold uppercase tracking-wider">
+                        <th class="py-3.5 px-5">Descripción del Ítem</th>
+                        <th class="py-3.5 px-4 text-center">Cant.</th>
+                        <th class="py-3.5 px-4 text-right">Precio Unitario</th>
+                        <th class="py-3.5 px-5 text-right">Subtotal</th>
                       </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-100">
+                    <tbody class="divide-y divide-[#D8ECF6] dark:divide-[#1D4960]">
                       @for (item of s.items; track item.productoId) {
-                        <tr class="hover:bg-slate-50/60">
-                          <td class="py-3.5 px-4">
-                            <p class="font-bold text-slate-800">{{ item.nombre }}</p>
-                            <p class="text-[10px] text-slate-400 font-mono mt-0.5">SKU: {{ item.sku }}</p>
+                        <tr class="hover:bg-[#EBF6FC] dark:hover:bg-[#153F58] transition-colors">
+                          <td class="py-3.5 px-5">
+                            <p class="font-bold text-[#04202E] dark:text-[#F2F9FC]">{{ item.nombre }}</p>
+                            <p class="text-[10px] text-[#527588] dark:text-[#98D5EE] font-mono mt-0.5">SKU: {{ item.sku }}</p>
                           </td>
-                          <td class="py-3.5 px-4 text-center font-bold text-slate-800">
+                          <td class="py-3.5 px-4 text-center font-bold text-[#04202E] dark:text-[#F2F9FC]">
                             {{ item.cantidad }}
                           </td>
-                          <td class="py-3.5 px-4 text-right text-slate-700">
+                          <td class="py-3.5 px-4 text-right font-mono text-[#527588] dark:text-[#B8DFEF] whitespace-nowrap">
                             S/ {{ item.precioUnitario | number:'1.2-2' }}
                           </td>
-                          <td class="py-3.5 px-4 text-right font-black text-slate-900">
+                          <td class="py-3.5 px-5 text-right font-mono font-black text-[#04202E] dark:text-[#F2F9FC] whitespace-nowrap">
                             S/ {{ item.subtotal | number:'1.2-2' }}
                           </td>
                         </tr>
@@ -167,11 +177,14 @@ import { SaleClientCardComponent } from './components/sale-client-card/sale-clie
 export class ProviderSaleDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly providerApi = inject(ProviderApiService);
+  private readonly toastState = inject(ToastStateService);
 
   public readonly isLoading = signal<boolean>(true);
   public readonly hasError = signal<boolean>(false);
   public readonly sale = signal<ProviderSaleItem | null>(null);
   public readonly bannerMessage = signal<string | null>(null);
+  public readonly errorMessage = signal<string | null>(null);
+  public readonly isUpdatingStatus = signal<boolean>(false);
 
   public ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
@@ -203,12 +216,25 @@ export class ProviderSaleDetailComponent implements OnInit {
 
   public onStatusUpdated(newStatus: SuborderStatus): void {
     const current = this.sale();
-    if (!current) return;
+    if (!current || this.isUpdatingStatus()) return;
+
+    this.isUpdatingStatus.set(true);
+    this.errorMessage.set(null);
+    this.bannerMessage.set(null);
 
     this.providerApi.updateSuborderStatus(current.subordenId, newStatus).subscribe({
       next: () => {
+        this.isUpdatingStatus.set(false);
         this.sale.update(s => s ? { ...s, estado: newStatus } : null);
-        this.bannerMessage.set(`Estado de despacho actualizado con éxito a "${newStatus}".`);
+        const msg = `Estado de despacho actualizado con éxito a "${newStatus.replace(/_/g, ' ')}".`;
+        this.bannerMessage.set(msg);
+        this.toastState.success('Despacho actualizado', msg);
+      },
+      error: (err) => {
+        this.isUpdatingStatus.set(false);
+        const msg = err?.error?.mensaje || err?.error?.detail || 'No se pudo actualizar el estado de la suborden.';
+        this.errorMessage.set(msg);
+        this.toastState.error('Error al actualizar despacho', msg);
       }
     });
   }

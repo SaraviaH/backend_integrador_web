@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: 'class',
   content: [
     "./src/**/*.{html,ts,scss}",
   ],
@@ -7,16 +8,26 @@ module.exports = {
     extend: {
       colors: {
         brand: {
-          primary: '#2456C6',
-          'primary-hover': '#1B429B',
-          'primary-light': '#EEF4FF',
-          secondary: '#142238',
-          'secondary-hover': '#0E1726',
-          bg: '#F5F7FA',
+          night: '#04202E',
+          deep: '#0A3C55',
+          petrol: '#0F5E83',
+          primary: '#1786B4',
+          'primary-hover': '#0F5E83',
+          'primary-light': '#E1F2FA',
+          sky: '#4FB3DA',
+          ice: '#98D5EE',
+          tint: '#E1F2FA',
+          secondary: '#04202E',
+          'secondary-hover': '#0A3C55',
+          bg: '#F4F9FC',
           surface: '#FFFFFF',
-          border: '#E2E8F0',
-          text: '#1E293B',
-          'text-muted': '#64748B',
+          border: '#CFE4EE',
+          text: '#04202E',
+          'text-muted': '#476577',
+          'dark-bg': '#061722',
+          'dark-secondary': '#0A2535',
+          'dark-card': '#0F3043',
+          'dark-border': '#1D4960',
           success: '#10B981',
           warning: '#F59E0B',
           danger: '#EF4444',

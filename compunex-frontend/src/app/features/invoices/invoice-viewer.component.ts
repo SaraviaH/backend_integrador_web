@@ -17,11 +17,11 @@ import { OrderDetail, SuborderInvoice } from '../../core/models/order.model';
       <div class="no-print space-y-4">
         <!-- Migas de Pan (Breadcrumbs) -->
         <nav class="flex items-center gap-2 text-xs text-slate-400">
-          <a routerLink="/" class="hover:text-[#2456C6] transition-colors">Inicio</a>
+          <a routerLink="/" class="hover:text-brand-primary transition-colors">Inicio</a>
           <span>/</span>
-          <a routerLink="/cuenta/mis-compras" class="hover:text-[#2456C6] transition-colors">Mis Compras</a>
+          <a routerLink="/cuenta/mis-compras" class="hover:text-brand-primary transition-colors">Mis Compras</a>
           <span>/</span>
-          <span class="text-[#142238] font-bold">Comprobante de Pago Electrónico</span>
+          <span class="text-brand-night font-bold">Comprobante de Pago Electrónico</span>
         </nav>
 
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-3xl border border-slate-200/80 shadow-xs">
@@ -32,7 +32,7 @@ import { OrderDetail, SuborderInvoice } from '../../core/models/order.model';
               </span>
               <span class="text-xs text-slate-400">Régimen Mayorista B2B</span>
             </div>
-            <h1 class="text-xl sm:text-2xl font-black text-[#142238] tracking-tight font-display mt-1">
+            <h1 class="text-xl sm:text-2xl font-black text-brand-night tracking-tight font-display mt-1">
               Visor de Factura Electrónica
             </h1>
           </div>
@@ -48,7 +48,7 @@ import { OrderDetail, SuborderInvoice } from '../../core/models/order.model';
             <button
               type="button"
               (click)="printInvoice()"
-              class="px-5 py-2.5 rounded-full bg-[#2456C6] hover:bg-[#1B429B] text-white text-xs font-bold transition-colors flex items-center gap-2 shadow-xs"
+              class="px-5 py-2.5 rounded-full bg-brand-primary hover:bg-brand-petrol text-white text-xs font-bold transition-colors flex items-center gap-2 shadow-xs"
             >
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
@@ -60,9 +60,9 @@ import { OrderDetail, SuborderInvoice } from '../../core/models/order.model';
 
         <!-- Selector de Suborden / Proveedor (en caso de Split Order) -->
         @if (order() && order()!.subordenes.length > 1) {
-          <div class="bg-blue-50/70 border border-blue-200/70 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-            <div class="flex items-center gap-2 text-blue-900 font-semibold">
-              <svg class="w-4 h-4 text-[#2456C6]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div class="bg-brand-tint/70 border border-brand-ice/70 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+            <div class="flex items-center gap-2 text-brand-night font-semibold">
+              <svg class="w-4 h-4 text-brand-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
               <span>Esta orden contiene facturas de múltiples proveedores:</span>
@@ -73,7 +73,7 @@ import { OrderDetail, SuborderInvoice } from '../../core/models/order.model';
                 <button
                   type="button"
                   (click)="selectedSuborderIndex.set(idx)"
-                  [class.bg-[#2456C6]]="selectedSuborderIndex() === idx"
+                  [class.bg-brand-primary]="selectedSuborderIndex() === idx"
                   [class.text-white]="selectedSuborderIndex() === idx"
                   [class.bg-white]="selectedSuborderIndex() !== idx"
                   [class.text-slate-700]="selectedSuborderIndex() !== idx"
@@ -88,7 +88,7 @@ import { OrderDetail, SuborderInvoice } from '../../core/models/order.model';
       </div>
 
       <!-- ========================================================================= -->
-      <!-- 4 ESTADOS DE PANTALLA (P-13)                                             -->
+      <!-- 4 ESTADOS DE PANTALLA                                                    -->
       <!-- ========================================================================= -->
 
       <!-- 1. ESTADO DE CARGA (Skeleton Factura A4) -->
@@ -115,12 +115,12 @@ import { OrderDetail, SuborderInvoice } from '../../core/models/order.model';
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
           </div>
-          <h2 class="text-base font-bold text-[#142238]">No pudimos cargar la factura</h2>
+          <h2 class="text-base font-bold text-brand-night">No pudimos cargar la factura</h2>
           <p class="text-xs text-slate-500 leading-relaxed">
             No se encontró el comprobante para la orden indicada o no tienes permisos para visualizarlo.
           </p>
           <div class="pt-2">
-            <a routerLink="/cuenta/mis-compras" class="px-6 py-2.5 rounded-full bg-[#2456C6] text-white text-xs font-semibold">
+            <a routerLink="/cuenta/mis-compras" class="px-6 py-2.5 rounded-full bg-brand-primary text-white text-xs font-semibold">
               Ir a Mis Compras
             </a>
           </div>
@@ -131,7 +131,7 @@ import { OrderDetail, SuborderInvoice } from '../../core/models/order.model';
       @else {
         @if (currentSuborder(); as sub) {
         
-        <div class="invoice-a4-sheet bg-white rounded-2xl border border-slate-300 p-8 sm:p-12 shadow-md max-w-4xl mx-auto space-y-6 text-[#142238]">
+        <div class="invoice-a4-sheet bg-white rounded-2xl border border-slate-300 p-8 sm:p-12 shadow-md max-w-4xl mx-auto space-y-6 text-brand-night">
           
           <!-- Encabezado SUNAT: Datos Emisor + Recuadro Fiscal -->
           <div class="flex flex-col sm:flex-row justify-between items-start gap-6 border-b border-slate-200 pb-6">
@@ -139,17 +139,18 @@ import { OrderDetail, SuborderInvoice } from '../../core/models/order.model';
             <!-- Datos del Emisor (Proveedor Mayorista) -->
             <div class="space-y-1.5 flex-1 min-w-0">
               <div class="flex items-center gap-2 mb-2">
-                <span class="w-8 h-8 rounded-lg bg-[#142238] text-white font-black text-sm flex items-center justify-center font-display">
-                  C
-                </span>
-                <span class="font-extrabold text-sm tracking-tight font-display text-slate-700">COMPUNEX B2B · RED MAYORISTA</span>
+                <img
+                  src="/images/compunex-icon.png"
+                  alt="COMPUNEX B2B"
+                  class="w-8 h-8 rounded-lg object-contain"
+                />
+                <span class="font-extrabold text-sm tracking-tight font-display text-brand-deep">COMPUNEX B2B · RED MAYORISTA</span>
               </div>
-              <h2 class="text-base sm:text-lg font-black uppercase text-[#142238] tracking-tight">
+              <h2 class="text-base sm:text-lg font-black uppercase text-brand-night tracking-tight">
                 {{ sub.proveedorRazonSocial }}
               </h2>
-              <p class="text-xs text-slate-600">Av. Central Industrial 1450, Almacén Central B2B</p>
-              <p class="text-xs text-slate-600">Lima - Perú · Teléfono: (01) 680-9900</p>
-              <p class="text-xs text-slate-600">Email: facturacion&#64;{{ getProviderSlug(sub.proveedorRazonSocial) }}.pe</p>
+              <p class="text-xs text-slate-600">Proveedor Mayorista Registrado · Emisión Electrónica B2B</p>
+              <p class="text-xs text-slate-500">Suborden #{{ sub.subordenId }} · Orden {{ order()!.codigoOrden }}</p>
             </div>
 
             <!-- Recuadro Oficial SUNAT (RUC / FACTURA ELECTRÓNICA / NÚMERO) -->
@@ -157,10 +158,10 @@ import { OrderDetail, SuborderInvoice } from '../../core/models/order.model';
               <div class="text-xs sm:text-sm font-extrabold tracking-wider font-mono">
                 R.U.C. N° {{ sub.proveedorRuc }}
               </div>
-              <div class="text-sm sm:text-base font-black bg-[#142238] text-white py-1.5 my-2 uppercase tracking-wide rounded-sm font-display">
+              <div class="text-sm sm:text-base font-black bg-brand-night text-white py-1.5 my-2 uppercase tracking-wide rounded-sm font-display">
                 Factura Electrónica
               </div>
-              <div class="text-base sm:text-lg font-black font-mono text-[#2456C6]">
+              <div class="text-base sm:text-lg font-black font-mono text-brand-primary">
                 {{ sub.numeroFacturaSimulada }}
               </div>
             </div>
@@ -263,10 +264,10 @@ import { OrderDetail, SuborderInvoice } from '../../core/models/order.model';
                 </div>
 
                 <div class="space-y-1 leading-tight">
-                  <div class="font-bold text-slate-700">Representación Impresa de la Factura Electrónica</div>
-                  <div>Autorizado por Resolución de Superintendencia SUNAT N° 034-005-0005315</div>
-                  <div class="font-mono text-[9px] text-slate-400 truncate max-w-xs">
-                    Hash: 7f8a9b2c3d4e5f6a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c
+                  <div class="font-bold text-slate-700">Representación Impresa del Comprobante Electrónico B2B</div>
+                  <div>Emitido para la orden {{ order()!.codigoOrden }} · Comprobante {{ sub.numeroFacturaSimulada }}</div>
+                  <div class="text-[10px] text-slate-400">
+                    Documento generado conforme al detalle de suborden registrado en el servidor.
                   </div>
                 </div>
               </div>
@@ -288,9 +289,9 @@ import { OrderDetail, SuborderInvoice } from '../../core/models/order.model';
                   <span>I.G.V. (18.00%):</span>
                   <span class="font-mono font-bold text-slate-800">S/ {{ sub.igv | number:'1.2-2' }}</span>
                 </div>
-                <div class="flex justify-between py-3 px-3 bg-slate-100 text-sm font-black text-[#142238]">
+                <div class="flex justify-between py-3 px-3 bg-slate-100 text-sm font-black text-brand-night">
                   <span>IMPORTE TOTAL:</span>
-                  <span class="font-mono text-[#2456C6] text-base">S/ {{ sub.total | number:'1.2-2' }}</span>
+                  <span class="font-mono text-brand-primary text-base">S/ {{ sub.total | number:'1.2-2' }}</span>
                 </div>
               </div>
             </div>
@@ -347,8 +348,13 @@ export class InvoiceViewerComponent implements OnInit {
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
       const idParam = params.get('id');
-      const ordenId = idParam ? Number(idParam) : 10001;
-      this.loadInvoice(ordenId);
+      const ordenId = idParam ? Number(idParam) : 0;
+      if (ordenId > 0) {
+        this.loadInvoice(ordenId);
+      } else {
+        this.isLoading.set(false);
+        this.hasError.set(true);
+      }
     });
   }
 
@@ -372,10 +378,6 @@ export class InvoiceViewerComponent implements OnInit {
     if (typeof window !== 'undefined') {
       window.print();
     }
-  }
-
-  public getProviderSlug(razonSocial: string): string {
-    return razonSocial.toLowerCase().replace(/[^a-z0-9]/g, '');
   }
 
   public getMontoEnLetras(total: number): string {

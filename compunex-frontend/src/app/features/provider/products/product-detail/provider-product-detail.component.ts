@@ -23,7 +23,7 @@ import { ProductMetricBadgesComponent } from './components/product-metric-badges
           </nav>
           <div class="flex items-center gap-3">
             <h1 class="text-2xl font-black text-slate-900 tracking-tight">
-              Ficha Técnica del Producto (P-22)
+              Ficha Técnica del Producto
             </h1>
             @if (product(); as prod) {
               <span class="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-slate-100 text-slate-700">

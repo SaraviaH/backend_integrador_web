@@ -30,7 +30,7 @@ export interface ProductCard {
   precioTotalCaja?: number;
   unidadesPorPaqueteTexto?: string;
   pedidoMinimoTexto?: string;
-  stockDisponible: number;
+  stockDisponible?: number;
   proveedorId: number;
   proveedorRazonSocial: string;
   imagenPrincipalUrl: string;
@@ -48,6 +48,9 @@ export interface ProductDetail extends ProductCard {
   garantiaMeses: number;
   condicion: 'NUEVO' | 'REACONDICIONADO_CERTIFICADO';
   proveedorRuc: string;
+  proveedorCiudad?: string;
+  proveedorTelefono?: string;
+  proveedorCorreo?: string;
   proveedorCalificacion?: number;
 }
 

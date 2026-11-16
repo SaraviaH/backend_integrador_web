@@ -6,10 +6,8 @@ import { environment } from '../../../environments/environment';
 import {
   CatalogFilterParams,
   Category,
-  CreateProductRequest,
   ProductCard,
   ProductDetail,
-  UpdateProductRequest,
 } from '../models/catalog.model';
 import { PaginatedResponse, ApiResponse } from '../models/api-response.model';
 import { resolveMediaUrl } from './media-api.service';
@@ -74,6 +72,12 @@ function parseLeadingPositiveInt(value?: string, fallback: number = 1): number {
   return match ? Math.max(1, Number(match[0])) : fallback;
 }
 
+function parseOptionalNonNegativeInt(value?: string): number | undefined {
+  if (!value) return undefined;
+  const match = value.match(/\d+/);
+  return match ? Math.max(0, Number(match[0])) : undefined;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -83,6 +87,10 @@ export class CatalogApiService {
 
   public getCategories(): Observable<Category[]> {
     return this.http.get<Category[]>(`${this.baseUrl}/categories`);
+  }
+
+  public getCategoryById(id: string | number): Observable<Category> {
+    return this.http.get<Category>(`${this.baseUrl}/categories/${encodeURIComponent(String(id))}`);
   }
 
   public getProducts(filter: CatalogFilterParams = {}): Observable<PaginatedResponse<ProductCard>> {
@@ -104,7 +112,7 @@ export class CatalogApiService {
           categoriaNombre: item.categoriaNombre || 'Hardware B2B',
           precioUnitario: Number(item.precioUnitarioRef),
           pedidoMinimoTexto: item.pedidoMinimo,
-          stockDisponible: item.stockDisponible ?? 100,
+          stockDisponible: item.stockDisponible != null ? Number(item.stockDisponible) : undefined,
           proveedorId: item.proveedorId,
           proveedorRazonSocial: item.proveedorNombreComercial || 'Proveedor COMPUNEX',
           imagenPrincipalUrl: resolveMediaUrl(item.urlImagenPrincipal),
@@ -118,7 +126,7 @@ export class CatalogApiService {
           content = content.filter(p => p.precioUnitario <= filter.precioMax!);
         }
         if (filter.soloConStock) {
-          content = content.filter(p => p.stockDisponible > 0);
+          content = content.filter(p => p.stockDisponible == null || p.stockDisponible > 0);
         }
         if (filter.sort === 'precio_asc') {
           content = [...content].sort((a, b) => a.precioUnitario - b.precioUnitario);
@@ -154,6 +162,8 @@ export class CatalogApiService {
         const unitPrice = Number(d.precioUnitarioRef);
         const totalRef = d.precioTotalRef != null ? Number(d.precioTotalRef) : undefined;
         const warrantyDigits = parseLeadingPositiveInt(findSpec('Garantía') || d.terminosComerciales, 12);
+        const stockFromSpec = parseOptionalNonNegativeInt(findSpec('Stock Referencial'));
+        const stockDisponible = d.stockDisponible != null ? Number(d.stockDisponible) : stockFromSpec;
 
         return {
           id: d.id,
@@ -166,10 +176,13 @@ export class CatalogApiService {
           unidadesPorPaquete: parseLeadingPositiveInt(d.unidadesPorPaquete, 1),
           unidadesPorPaqueteTexto: d.unidadesPorPaquete,
           pedidoMinimoTexto: d.pedidoMinimo,
-          stockDisponible: d.stockDisponible ?? 100,
+          stockDisponible,
           proveedorId: d.proveedor?.id || 0,
           proveedorRazonSocial: d.proveedor?.nombreComercial || d.proveedor?.razonSocial || 'Proveedor B2B',
           proveedorRuc: d.proveedor?.identificacionFiscal || '—',
+          proveedorCiudad: d.proveedor?.ciudad,
+          proveedorTelefono: d.proveedor?.telefonoContacto,
+          proveedorCorreo: d.proveedor?.correoContacto,
           imagenPrincipalUrl: imgs[0] || resolveMediaUrl(null),
           imagenesSecundarias: imgs.slice(1),
           descripcion: d.descripcion,
@@ -299,20 +312,6 @@ export class CatalogApiService {
         { clave: 'Empaque', valor: 'Caja original sellada de fábrica' }
       ]
     };
-  }
-
-  /**
-   * Crea un nuevo producto enviando la URL de imagen obtenida previamente desde /api/v1/media/upload
-   */
-  public createProduct(data: CreateProductRequest): Observable<ApiResponse<ProductDetail>> {
-    return this.http.post<ApiResponse<ProductDetail>>(`${this.baseUrl}/products`, data);
-  }
-
-  /**
-   * Actualiza un producto existente
-   */
-  public updateProduct(id: number, data: UpdateProductRequest): Observable<ApiResponse<ProductDetail>> {
-    return this.http.put<ApiResponse<ProductDetail>>(`${this.baseUrl}/products/${id}`, data);
   }
 
   /**

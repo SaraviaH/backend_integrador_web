@@ -1,51 +1,43 @@
-import { Component, inject, OnInit, signal, computed } from '@angular/core';
+import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, ActivatedRoute, Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CatalogApiService } from '../../core/services/catalog-api.service';
 import { CartStateService } from '../../core/state/cart-state.service';
 import { ToastStateService } from '../../core/state/toast-state.service';
-import { ProductDetail, ProductCard } from '../../core/models/catalog.model';
+import { ActionTracker } from '../../core/state/action-state.util';
+import { ProductCard, ProductDetail } from '../../core/models/catalog.model';
 import { ProductContactModalComponent } from './product-contact-modal/product-contact-modal.component';
+import { ProductPurchasePanelComponent } from './product-purchase-panel/product-purchase-panel.component';
 import { ProductCardComponent } from '../../shared/components/product-card/product-card.component';
 
 @Component({
   selector: 'app-product-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, ProductContactModalComponent, ProductCardComponent],
+  imports: [CommonModule, RouterModule, ProductContactModalComponent, ProductPurchasePanelComponent, ProductCardComponent],
   template: `
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-      
-      <!-- ========================================================================= -->
-      <!-- 4 ESTADOS DE PANTALLA (P-04)                                             -->
-      <!-- ========================================================================= -->
 
-      <!-- 1. ESTADO DE CARGA (Skeleton Loader Completo) -->
+      <!-- 1. ESTADO DE CARGA -->
       @if (isLoading()) {
         <div class="space-y-6 animate-pulse">
-          <!-- Migas de pan skeleton -->
-          <div class="h-4 bg-slate-200 rounded w-1/3"></div>
-
+          <div class="h-4 bg-slate-200 dark:bg-[#1D4960] rounded w-1/3"></div>
           <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <!-- Galería skeleton (5 cols) -->
             <div class="lg:col-span-5 space-y-4">
-              <div class="aspect-square bg-slate-200 rounded-3xl w-full"></div>
+              <div class="aspect-square bg-slate-200 dark:bg-[#0F3043] rounded-3xl w-full"></div>
               <div class="flex gap-3">
-                <div class="w-20 h-20 bg-slate-200 rounded-2xl"></div>
-                <div class="w-20 h-20 bg-slate-200 rounded-2xl"></div>
-                <div class="w-20 h-20 bg-slate-200 rounded-2xl"></div>
+                <div class="w-20 h-20 bg-slate-200 dark:bg-[#0F3043] rounded-2xl"></div>
+                <div class="w-20 h-20 bg-slate-200 dark:bg-[#0F3043] rounded-2xl"></div>
+                <div class="w-20 h-20 bg-slate-200 dark:bg-[#0F3043] rounded-2xl"></div>
               </div>
             </div>
-
-            <!-- Información skeleton (7 cols) -->
             <div class="lg:col-span-7 space-y-6">
               <div class="space-y-3">
-                <div class="h-6 bg-slate-200 rounded w-1/4"></div>
-                <div class="h-8 bg-slate-200 rounded w-4/5"></div>
-                <div class="h-4 bg-slate-150 rounded w-1/2"></div>
+                <div class="h-6 bg-slate-200 dark:bg-[#1D4960] rounded w-1/4"></div>
+                <div class="h-8 bg-slate-200 dark:bg-[#1D4960] rounded w-4/5"></div>
+                <div class="h-4 bg-slate-200 dark:bg-[#0F3043] rounded w-1/2"></div>
               </div>
-              <div class="h-32 bg-slate-100 rounded-3xl p-6"></div>
-              <div class="h-24 bg-slate-100 rounded-3xl p-6"></div>
+              <div class="h-32 bg-slate-100 dark:bg-[#0F3043] rounded-3xl p-6"></div>
+              <div class="h-24 bg-slate-100 dark:bg-[#0F3043] rounded-3xl p-6"></div>
             </div>
           </div>
         </div>
@@ -53,29 +45,29 @@ import { ProductCardComponent } from '../../shared/components/product-card/produ
 
       <!-- 2. ESTADO DE ERROR / NO ENCONTRADO -->
       @else if (hasError() || !product()) {
-        <div class="bg-white rounded-3xl border border-slate-200 p-12 text-center space-y-5 max-w-lg mx-auto my-12">
-          <div class="w-16 h-16 mx-auto rounded-3xl bg-rose-50 text-rose-500 flex items-center justify-center">
-            <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div class="bg-white dark:bg-[#0F3043] rounded-3xl border border-[#CFE4EE] dark:border-[#1D4960] p-12 text-center space-y-5 max-w-lg mx-auto my-12 shadow-sm">
+          <div class="w-16 h-16 mx-auto rounded-3xl bg-rose-50 dark:bg-rose-950/40 text-rose-500 dark:text-rose-300 flex items-center justify-center">
+            <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
           <div class="space-y-1">
-            <h2 class="text-lg font-bold text-[#142238]">Producto no disponible</h2>
-            <p class="text-xs text-slate-500 leading-relaxed">
-              El producto solicitado no fue encontrado o ha sido pausado por el proveedor. Puedes explorar otros artículos disponibles en el catálogo.
+            <h2 class="text-lg font-bold text-[#04202E] dark:text-[#F2F9FC]">Producto no disponible</h2>
+            <p class="text-xs text-[#527588] dark:text-[#B8DFEF] leading-relaxed">
+              El producto solicitado no fue encontrado o fue pausado por el proveedor. Puedes explorar otros artículos disponibles en el catálogo.
             </p>
           </div>
           <div class="flex items-center justify-center gap-3 pt-2">
             <button
               type="button"
               (click)="loadProduct()"
-              class="px-5 py-2.5 rounded-full border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+              class="px-5 py-2.5 rounded-xl border border-[#CFE4EE] dark:border-[#1D4960] text-xs font-semibold text-[#0A3C55] dark:text-[#E1F2FA] hover:bg-[#E1F2FA]/50 dark:hover:bg-[#1D4960]/60 transition-colors"
             >
               Reintentar
             </button>
             <a
               routerLink="/catalog"
-              class="px-6 py-2.5 rounded-full bg-[#2456C6] text-white text-xs font-semibold hover:bg-[#1B429B] transition-colors shadow-xs"
+              class="px-6 py-2.5 rounded-xl bg-[#1786B4] text-white text-xs font-semibold hover:bg-[#0F5E83] transition-colors shadow-sm"
             >
               Ir al Catálogo Mayorista
             </a>
@@ -83,420 +75,324 @@ import { ProductCardComponent } from '../../shared/components/product-card/produ
         </div>
       }
 
-      <!-- 3. ESTADO CON DATOS: FICHA TÉCNICA DETALLADA P-04 -->
+      <!-- 3. ESTADO CON DATOS: FICHA TÉCNICA DETALLADA -->
       @else {
         @if (product(); as p) {
-        <!-- Migas de Pan (Breadcrumbs) -->
-        <nav class="flex items-center gap-2 text-xs text-slate-400">
-          <a routerLink="/" class="hover:text-[#2456C6] transition-colors">Inicio</a>
-          <span>/</span>
-          <a routerLink="/catalog" class="hover:text-[#2456C6] transition-colors">Catálogo B2B</a>
-          <span>/</span>
-          <span class="text-slate-500 font-medium">{{ p.categoriaNombre }}</span>
-          <span>/</span>
-          <span class="text-[#142238] font-bold truncate max-w-xs">{{ p.nombre }}</span>
-        </nav>
+          <!-- Migas de Pan -->
+          <nav class="flex items-center gap-2 text-xs text-[#527588] dark:text-[#98D5EE]" aria-label="Ruta de navegación">
+            <a routerLink="/" class="hover:text-[#1786B4] dark:hover:text-[#4FB3DA] transition-colors">Inicio</a>
+            <span>/</span>
+            <a routerLink="/catalog" class="hover:text-[#1786B4] dark:hover:text-[#4FB3DA] transition-colors">Catálogo B2B</a>
+            <span>/</span>
+            <span class="font-medium">{{ p.categoriaNombre }}</span>
+            <span>/</span>
+            <span class="text-[#04202E] dark:text-[#F2F9FC] font-bold truncate max-w-xs">{{ p.nombre }}</span>
+          </nav>
 
-        <!-- Cabecera y Grilla Principal (Galería + Compra) -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          
-          <!-- ===================================================================== -->
-          <!-- COLUMNA IZQUIERDA: GALERÍA DE IMÁGENES (5 Columnas)                   -->
-          <!-- ===================================================================== -->
-          <div class="lg:col-span-5 space-y-4">
-            
-            <!-- Vista Principal de Imagen -->
-            <div class="bg-white rounded-3xl border border-slate-200/80 p-6 flex items-center justify-center aspect-square overflow-hidden relative shadow-xs">
-              <img
-                [src]="activeImage()"
-                [alt]="p.nombre"
-                class="w-full h-full object-contain hover:scale-105 transition-transform duration-300"
-              />
-              @if (p.destacado) {
-                <span class="absolute top-4 left-4 px-3 py-1 rounded-full text-[11px] font-bold bg-[#2456C6] text-white shadow-xs">
-                  Destacado Mayorista
+          <!-- Cabecera y Grilla Principal -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+            <!-- COLUMNA IZQUIERDA: GALERÍA DE IMÁGENES -->
+            <div class="lg:col-span-5 space-y-4">
+              <div class="bg-white dark:bg-[#0F3043] rounded-3xl border border-[#CFE4EE] dark:border-[#1D4960] p-6 flex items-center justify-center aspect-square overflow-hidden relative shadow-sm">
+                <img
+                  [src]="activeImage()"
+                  [alt]="p.nombre"
+                  class="w-full h-full object-contain motion-safe:hover:scale-105 motion-safe:transition-transform motion-safe:duration-300"
+                />
+                @if (p.destacado) {
+                  <span class="absolute top-4 left-4 px-3 py-1 rounded-full text-[11px] font-bold bg-[#04202E] dark:bg-[#1786B4] text-white shadow-sm">
+                    Destacado Mayorista
+                  </span>
+                }
+                <span class="absolute bottom-4 right-4 px-2.5 py-1 rounded-lg text-[10px] font-mono bg-[#F4F9FC] dark:bg-[#0A2535] text-[#0A3C55] dark:text-[#B8DFEF] border border-[#CFE4EE] dark:border-[#1D4960]">
+                  SKU: {{ p.sku }}
                 </span>
-              }
-              <span class="absolute bottom-4 right-4 px-2.5 py-1 rounded-lg text-[10px] font-mono bg-slate-100 text-slate-600 border border-slate-200/60">
-                SKU: {{ p.sku }}
-              </span>
-            </div>
+              </div>
 
-            <!-- Tira de Miniaturas Seleccionables -->
-            <div class="flex items-center gap-3 overflow-x-auto pb-2">
-              <button
-                type="button"
-                (click)="activeImage.set(p.imagenPrincipalUrl)"
-                [class.ring-2]="activeImage() === p.imagenPrincipalUrl"
-                [class.ring-[#2456C6]]="activeImage() === p.imagenPrincipalUrl"
-                class="w-20 h-20 rounded-2xl bg-white border border-slate-200 p-2 shrink-0 overflow-hidden transition-all hover:border-[#2456C6]"
-              >
-                <img [src]="p.imagenPrincipalUrl" alt="Miniatura principal" class="w-full h-full object-contain" />
-              </button>
-
-              @for (img of p.imagenesSecundarias; track img) {
+              <!-- Tira de Miniaturas Seleccionables -->
+              <div class="flex items-center gap-3 overflow-x-auto pb-2">
                 <button
                   type="button"
-                  (click)="activeImage.set(img)"
-                  [class.ring-2]="activeImage() === img"
-                  [class.ring-[#2456C6]]="activeImage() === img"
-                  class="w-20 h-20 rounded-2xl bg-white border border-slate-200 p-2 shrink-0 overflow-hidden transition-all hover:border-[#2456C6]"
+                  (click)="activeImage.set(p.imagenPrincipalUrl)"
+                  [class.ring-2]="activeImage() === p.imagenPrincipalUrl"
+                  [class.ring-brand-primary]="activeImage() === p.imagenPrincipalUrl"
+                  class="w-20 h-20 rounded-2xl bg-white dark:bg-[#0F3043] border border-[#CFE4EE] dark:border-[#1D4960] p-2 shrink-0 overflow-hidden transition-all hover:border-[#1786B4]"
+                  aria-label="Ver imagen principal"
                 >
-                  <img [src]="img" alt="Miniatura secundaria" class="w-full h-full object-contain" />
+                  <img [src]="p.imagenPrincipalUrl" alt="Miniatura principal" class="w-full h-full object-contain" />
                 </button>
-              }
-            </div>
 
-            <!-- Tarjeta Informativa de Garantía Oficial -->
-            <div class="bg-slate-50/80 rounded-2xl border border-slate-200/70 p-4 flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-blue-100 text-[#2456C6] flex items-center justify-center shrink-0">
-                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                </svg>
-              </div>
-              <div class="text-xs">
-                <h4 class="font-bold text-[#142238]">Garantía Corporativa Oficial: {{ p.garantiaMeses }} meses</h4>
-                <p class="text-slate-500 text-[11px] mt-0.5">Soporte directo con fabricante y reposición mayorista inmediata por defectos de fábrica.</p>
-              </div>
-            </div>
-
-          </div>
-
-          <!-- ===================================================================== -->
-          <!-- COLUMNA DERECHA: INFORMACIÓN TÉCNICA Y CAJA DE COMPRA (7 Columnas)     -->
-          <!-- ===================================================================== -->
-          <div class="lg:col-span-7 space-y-6">
-            
-            <!-- Bloque de Título y Metadatos -->
-            <div class="space-y-3">
-              <div class="flex flex-wrap items-center gap-2">
-                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-[#2456C6] border border-blue-100">
-                  {{ p.categoriaNombre }}
-                </span>
-                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700">
-                  Marca: {{ p.marca }}
-                </span>
-                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100">
-                  Condición: {{ p.condicion }}
-                </span>
-              </div>
-
-              <h1 class="text-2xl sm:text-3xl font-black text-[#142238] tracking-tight font-display leading-snug">
-                {{ p.nombre }}
-              </h1>
-
-              <div class="flex flex-wrap items-center gap-4 text-xs text-slate-500 pt-1">
-                <div class="flex items-center gap-1.5">
-                  <span class="font-semibold text-slate-700">Modelo:</span>
-                  <span>{{ p.modelo }}</span>
-                </div>
-                <span>•</span>
-                <div class="flex items-center gap-1.5">
-                  <span class="font-semibold text-slate-700">Disponibilidad:</span>
-                  @if (p.stockDisponible > 0) {
-                    <span class="text-emerald-600 font-bold flex items-center gap-1">
-                      <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                      {{ p.stockDisponible }} unidades listas en almacén
-                    </span>
-                  } @else {
-                    <span class="text-rose-600 font-bold">Agotado temporalmente</span>
-                  }
-                </div>
-              </div>
-            </div>
-
-            <!-- Ficha del Proveedor Mayorista con CTA de Contacto P-05 -->
-            <div class="bg-white rounded-3xl border border-slate-200/80 p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
-              <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-2xl bg-slate-100 border border-slate-200 text-[#2456C6] flex items-center justify-center font-bold text-lg font-display">
-                  {{ p.proveedorRazonSocial.substring(0, 2).toUpperCase() }}
-                </div>
-                <div>
-                  <div class="flex items-center gap-2">
-                    <h3 class="text-sm font-bold text-[#142238]">{{ p.proveedorRazonSocial }}</h3>
-                    <span class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                      ✓ Verificado
-                    </span>
-                  </div>
-                  <p class="text-xs text-slate-500 mt-0.5">
-                    RUC: <strong class="text-slate-700">{{ p.proveedorRuc }}</strong> · Calificación: ★ {{ p.proveedorCalificacion || '4.9' }}
-                  </p>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                (click)="isContactModalOpen.set(true)"
-                class="px-4 py-2.5 rounded-full border border-[#2456C6] text-[#2456C6] hover:bg-blue-50/60 text-xs font-bold transition-colors flex items-center justify-center gap-1.5 shrink-0"
-              >
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                </svg>
-                Contactar Proveedor (P-05)
-              </button>
-            </div>
-
-            <!-- CAJA DE LIQUIDACIÓN Y COMPRA MAYORISTA B2B -->
-            <div class="bg-gradient-to-br from-slate-50 to-blue-50/40 rounded-3xl border border-blue-100 p-6 space-y-6 shadow-xs">
-              
-              <!-- Precio unitario y contenido de caja -->
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <!-- Precio Unitario -->
-                <div class="bg-white p-4 rounded-2xl border border-slate-200/80">
-                  <span class="text-[11px] text-slate-500 uppercase tracking-wider font-semibold block">
-                    Precio por Unidad
-                  </span>
-                  <div class="text-2xl font-black text-slate-800 mt-1">
-                    S/ {{ p.precioUnitario | number:'1.2-2' }}
-                    <span class="text-xs font-normal text-slate-400">sin IGV</span>
-                  </div>
-                  <span class="text-[10px] text-slate-400 mt-0.5 block">
-                    Precio aplicado en el carrito y checkout.
-                  </span>
-                </div>
-
-                <!-- Total de caja -->
-                @if (p.precioTotalCaja) {
-                  <div class="bg-blue-600 text-white p-4 rounded-2xl border border-blue-700 shadow-xs relative overflow-hidden">
-                    <span class="absolute top-2 right-2 text-[10px] bg-white/20 px-2 py-0.5 rounded-full font-bold">
-                      Caja completa
-                    </span>
-                    <span class="text-[11px] text-blue-100 uppercase tracking-wider font-semibold block">
-                      Total de caja
-                    </span>
-                    <div class="text-2xl font-black text-white mt-1">
-                      S/ {{ p.precioTotalCaja | number:'1.2-2' }}
-                      <span class="text-xs font-normal text-blue-200">sin IGV</span>
-                    </div>
-                    <span class="text-[10px] text-blue-100 mt-0.5 block">
-                      {{ p.unidadesPorPaqueteTexto || 'Paquete completo' }}. Referencial.
-                    </span>
-                  </div>
-                } @else {
-                  <div class="bg-white p-4 rounded-2xl border border-slate-200/80">
-                    <span class="text-[11px] text-slate-500 uppercase tracking-wider font-semibold block">
-                      Pedido mínimo
-                    </span>
-                    <div class="text-lg font-black text-slate-800 mt-1">
-                      {{ p.pedidoMinimoTexto || 'Consultar con el proveedor' }}
-                    </div>
-                    <span class="text-[10px] text-slate-400 mt-0.5 block">
-                      Condición comercial informada por el proveedor.
-                    </span>
-                  </div>
+                @for (img of p.imagenesSecundarias; track img; let i = $index) {
+                  <button
+                    type="button"
+                    (click)="activeImage.set(img)"
+                    [class.ring-2]="activeImage() === img"
+                    [class.ring-brand-primary]="activeImage() === img"
+                    class="w-20 h-20 rounded-2xl bg-white dark:bg-[#0F3043] border border-[#CFE4EE] dark:border-[#1D4960] p-2 shrink-0 overflow-hidden transition-all hover:border-[#1786B4]"
+                    [attr.aria-label]="'Ver imagen ' + (i + 2)"
+                  >
+                    <img [src]="img" alt="Miniatura secundaria" class="w-full h-full object-contain" />
+                  </button>
                 }
               </div>
 
-              <!-- Selector de Cantidad Dinámico -->
-              <div class="space-y-3 pt-2">
-                <div class="flex items-center justify-between gap-3">
-                  <label class="text-xs font-bold text-slate-700">
-                    Cantidad a Pedir:
-                  </label>
-                  <span class="text-xs text-slate-500 text-right">
-                    Pedido mínimo: <strong class="text-[#2456C6]">{{ p.pedidoMinimoTexto || 'No especificado' }}</strong>
+              <!-- Tarjeta Informativa de Garantía Oficial -->
+              <div class="bg-[#F4F9FC] dark:bg-[#0A2535] rounded-2xl border border-[#CFE4EE] dark:border-[#1D4960] p-4 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-[#E1F2FA] dark:bg-[#0F3043] text-[#1786B4] dark:text-[#4FB3DA] flex items-center justify-center shrink-0">
+                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                </div>
+                <div class="text-xs">
+                  <h4 class="font-bold text-[#04202E] dark:text-[#F2F9FC]">Garantía Corporativa Oficial: {{ p.garantiaMeses }} meses</h4>
+                  <p class="text-[#527588] dark:text-[#B8DFEF] text-[11px] mt-0.5">Respaldada directamente por el proveedor según términos comerciales del lote.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- COLUMNA DERECHA: INFORMACIÓN TÉCNICA Y COMPRA -->
+            <div class="lg:col-span-7 space-y-6">
+
+              <div class="space-y-3">
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="px-3 py-1 rounded-full text-xs font-semibold bg-[#E1F2FA] dark:bg-[#0F3043] text-[#0F5E83] dark:text-[#98D5EE] border border-[#98D5EE]/60 dark:border-[#1D4960]">
+                    {{ p.categoriaNombre }}
+                  </span>
+                  <span class="px-3 py-1 rounded-full text-xs font-semibold bg-[#F4F9FC] dark:bg-[#0A2535] text-[#0A3C55] dark:text-[#E1F2FA] border border-[#CFE4EE] dark:border-[#1D4960]">
+                    Marca: {{ p.marca }}
+                  </span>
+                  <span class="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60">
+                    Condición: {{ p.condicion }}
                   </span>
                 </div>
 
-                <div class="flex items-center gap-4">
-                  <div class="inline-flex items-center bg-white border border-slate-200 rounded-2xl p-1 shadow-2xs">
-                    <button
-                      type="button"
-                      (click)="decreaseQty()"
-                      [disabled]="quantity() <= 1"
-                      class="w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center font-bold text-base transition-colors"
-                    >
-                      −
-                    </button>
-                    <input
-                      type="number"
-                      [ngModel]="quantity()"
-                      (ngModelChange)="setQuantity($event)"
-                      [min]="1"
-                      [max]="p.stockDisponible"
-                      class="w-16 text-center text-sm font-bold text-[#142238] bg-transparent outline-none"
-                    />
-                    <button
-                      type="button"
-                      (click)="increaseQty()"
-                      [disabled]="quantity() >= p.stockDisponible"
-                      class="w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center font-bold text-base transition-colors"
-                    >
-                      +
-                    </button>
+                <h1 class="text-2xl sm:text-3xl font-black text-[#04202E] dark:text-[#F2F9FC] tracking-tight font-display leading-snug">
+                  {{ p.nombre }}
+                </h1>
+
+                <div class="flex flex-wrap items-center gap-4 text-xs text-[#527588] dark:text-[#B8DFEF] pt-1">
+                  <div class="flex items-center gap-1.5">
+                    <span class="font-semibold text-[#04202E] dark:text-[#F2F9FC]">Modelo:</span>
+                    <span>{{ p.modelo }}</span>
+                  </div>
+                  <span>•</span>
+                  <div class="flex items-center gap-1.5">
+                    <span class="font-semibold text-[#04202E] dark:text-[#F2F9FC]">Disponibilidad:</span>
+                    @if (p.stockDisponible === 0) {
+                      <span class="text-rose-600 dark:text-rose-400 font-bold">Agotado temporalmente</span>
+                    } @else if (p.stockDisponible != null) {
+                      <span class="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                        {{ p.stockDisponible }} unidades referenciales en almacén
+                      </span>
+                    } @else {
+                      <span class="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                        Disponible para despacho mayorista
+                      </span>
+                    }
                   </div>
                 </div>
               </div>
 
-              <!-- Desglose de Liquidación B2B con IGV -->
-              <div class="bg-white/80 rounded-2xl p-4 border border-slate-200/60 space-y-2 text-xs">
-                <div class="flex justify-between text-slate-600">
-                  <span>Subtotal ({{ quantity() }} {{ quantity() === 1 ? 'unidad' : 'unidades' }} × S/ {{ currentUnitPrice() | number:'1.2-2' }}):</span>
-                  <span class="font-semibold text-slate-800">S/ {{ calculatedSubtotal() | number:'1.2-2' }}</span>
+              <!-- Ficha del Proveedor Mayorista -->
+              <div class="bg-white dark:bg-[#0F3043] rounded-2xl border border-[#CFE4EE] dark:border-[#1D4960] p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
+                <div class="flex items-center gap-3">
+                  <div class="w-12 h-12 rounded-2xl bg-[#F4F9FC] dark:bg-[#0A2535] border border-[#CFE4EE] dark:border-[#1D4960] text-[#1786B4] dark:text-[#4FB3DA] flex items-center justify-center font-bold text-lg font-display shrink-0">
+                    {{ p.proveedorRazonSocial.substring(0, 2).toUpperCase() }}
+                  </div>
+                  <div>
+                    <div class="flex items-center gap-2 flex-wrap">
+                      <h3 class="text-sm font-bold text-[#04202E] dark:text-[#F2F9FC]">{{ p.proveedorRazonSocial }}</h3>
+                      <span class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800/60">
+                        ✓ Proveedor Activo
+                      </span>
+                    </div>
+                    <p class="text-xs text-[#527588] dark:text-[#B8DFEF] mt-0.5">
+                      RUC: <strong class="text-[#04202E] dark:text-[#F2F9FC] font-mono">{{ p.proveedorRuc }}</strong>
+                      @if (p.proveedorCiudad) {
+                        <span> · {{ p.proveedorCiudad }}</span>
+                      }
+                    </p>
+                  </div>
                 </div>
-                <div class="flex justify-between text-slate-600">
-                  <span>IGV Ley (18%):</span>
-                  <span class="font-semibold text-slate-800">S/ {{ calculatedIgv() | number:'1.2-2' }}</span>
-                </div>
-                <div class="flex justify-between text-sm font-extrabold text-[#142238] pt-2 border-t border-slate-100">
-                  <span>Total Liquidación Estimado:</span>
-                  <span class="text-[#2456C6]">S/ {{ calculatedTotal() | number:'1.2-2' }}</span>
-                </div>
-              </div>
 
-              <!-- Botones de Acción Primaria -->
-              <div class="flex flex-col sm:flex-row gap-3 pt-2">
                 <button
                   type="button"
-                  (click)="addToCart()"
-                  [disabled]="p.stockDisponible === 0"
-                  class="flex-1 py-3.5 px-6 rounded-full bg-[#2456C6] hover:bg-[#1B429B] disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-bold text-sm flex items-center justify-center gap-2 transition-colors shadow-xs"
+                  (click)="isContactModalOpen.set(true)"
+                  class="px-4 py-2.5 rounded-xl border border-[#1786B4] dark:border-[#4FB3DA] text-[#1786B4] dark:text-[#4FB3DA] hover:bg-[#E1F2FA]/60 dark:hover:bg-[#1786B4]/20 text-xs font-bold transition-colors flex items-center justify-center gap-1.5 shrink-0"
                 >
-                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                   </svg>
-                  Agregar {{ quantity() }} un. a la Orden
+                  Contactar Proveedor
                 </button>
-
-                <a
-                  routerLink="/catalog"
-                  class="py-3.5 px-5 rounded-full border border-slate-300 text-slate-700 hover:bg-white text-xs font-semibold flex items-center justify-center transition-colors text-center"
-                >
-                  Seguir Comprando
-                </a>
               </div>
+
+              <!-- PROCESO DE COMPRA MAYORISTA B2B EN DOS PANELES -->
+              <app-product-purchase-panel
+                [product]="p"
+                [quantity]="quantity()"
+                [unitPrice]="currentUnitPrice()"
+                [subtotal]="calculatedSubtotal()"
+                [igv]="calculatedIgv()"
+                [totalWithIgv]="calculatedTotal()"
+                [isAdding]="cartAction.isLoading('add-main')"
+                [justAdded]="cartAction.isSuccess('add-main')"
+                (quantityChange)="setQuantity($event)"
+                (addToCart)="addToCart()"
+              />
 
             </div>
 
           </div>
 
-        </div>
+          <!-- PESTAÑAS TÉCNICAS -->
+          <div class="bg-white dark:bg-[#0F3043] rounded-3xl border border-[#CFE4EE] dark:border-[#1D4960] p-6 md:p-8 space-y-6 shadow-sm mt-10">
 
-        <!-- ========================================================================= -->
-        <!-- PESTAÑAS TÉCNICAS (Especificaciones, Descripción, Garantía)              -->
-        <!-- ========================================================================= -->
-        <div class="bg-white rounded-3xl border border-slate-200/80 p-6 md:p-8 space-y-6 shadow-xs mt-10">
-          
-          <!-- Encabezado de Pestañas -->
-          <div class="flex border-b border-slate-200 gap-6 overflow-x-auto">
-            <button
-              type="button"
-              (click)="activeTab.set('specs')"
-              [class.border-[#2456C6]]="activeTab() === 'specs'"
-              [class.text-[#2456C6]]="activeTab() === 'specs'"
-              [class.font-bold]="activeTab() === 'specs'"
-              class="pb-4 text-sm text-slate-500 hover:text-slate-800 border-b-2 border-transparent transition-all shrink-0"
-            >
-              Especificaciones Técnicas
-            </button>
-            <button
-              type="button"
-              (click)="activeTab.set('desc')"
-              [class.border-[#2456C6]]="activeTab() === 'desc'"
-              [class.text-[#2456C6]]="activeTab() === 'desc'"
-              [class.font-bold]="activeTab() === 'desc'"
-              class="pb-4 text-sm text-slate-500 hover:text-slate-800 border-b-2 border-transparent transition-all shrink-0"
-            >
-              Descripción Corporativa
-            </button>
-            <button
-              type="button"
-              (click)="activeTab.set('warranty')"
-              [class.border-[#2456C6]]="activeTab() === 'warranty'"
-              [class.text-[#2456C6]]="activeTab() === 'warranty'"
-              [class.font-bold]="activeTab() === 'warranty'"
-              class="pb-4 text-sm text-slate-500 hover:text-slate-800 border-b-2 border-transparent transition-all shrink-0"
-            >
-              Garantía y Despacho Mayorista
-            </button>
+            <div class="flex border-b border-[#CFE4EE] dark:border-[#1D4960] gap-6 overflow-x-auto" role="tablist">
+              <button
+                type="button"
+                role="tab"
+                [attr.aria-selected]="activeTab() === 'specs'"
+                (click)="activeTab.set('specs')"
+                [class.border-brand-primary]="activeTab() === 'specs'"
+                [class.text-brand-primary]="activeTab() === 'specs'"
+                [class.font-bold]="activeTab() === 'specs'"
+                class="pb-4 text-sm text-[#527588] dark:text-[#B8DFEF] hover:text-[#04202E] dark:hover:text-[#F2F9FC] border-b-2 border-transparent transition-all shrink-0"
+              >
+                Especificaciones Técnicas
+              </button>
+              <button
+                type="button"
+                role="tab"
+                [attr.aria-selected]="activeTab() === 'desc'"
+                (click)="activeTab.set('desc')"
+                [class.border-brand-primary]="activeTab() === 'desc'"
+                [class.text-brand-primary]="activeTab() === 'desc'"
+                [class.font-bold]="activeTab() === 'desc'"
+                class="pb-4 text-sm text-[#527588] dark:text-[#B8DFEF] hover:text-[#04202E] dark:hover:text-[#F2F9FC] border-b-2 border-transparent transition-all shrink-0"
+              >
+                Descripción Corporativa
+              </button>
+              <button
+                type="button"
+                role="tab"
+                [attr.aria-selected]="activeTab() === 'warranty'"
+                (click)="activeTab.set('warranty')"
+                [class.border-brand-primary]="activeTab() === 'warranty'"
+                [class.text-brand-primary]="activeTab() === 'warranty'"
+                [class.font-bold]="activeTab() === 'warranty'"
+                class="pb-4 text-sm text-[#527588] dark:text-[#B8DFEF] hover:text-[#04202E] dark:hover:text-[#F2F9FC] border-b-2 border-transparent transition-all shrink-0"
+              >
+                Garantía y Despacho Mayorista
+              </button>
+            </div>
+
+            @if (activeTab() === 'specs') {
+              <div class="space-y-4">
+                <h3 class="text-base font-bold text-[#04202E] dark:text-[#F2F9FC]">Ficha de Homologación de Hardware</h3>
+                @if (p.especificaciones.length > 0) {
+                  <div class="overflow-hidden rounded-2xl border border-[#CFE4EE] dark:border-[#1D4960]">
+                    <table class="w-full text-left text-xs">
+                      <tbody class="divide-y divide-[#E1F2FA] dark:divide-[#1D4960]">
+                        @for (spec of p.especificaciones; track spec.clave; let even = $even) {
+                          <tr [ngClass]="even ? 'bg-[#F4F9FC] dark:bg-[#0A2535]' : 'bg-white dark:bg-[#0F3043]'" class="hover:bg-[#E1F2FA]/40 dark:hover:bg-[#1D4960]/40 transition-colors">
+                            <td class="px-5 py-3.5 font-bold text-[#04202E] dark:text-[#F2F9FC] w-1/3 border-r border-[#E1F2FA] dark:border-[#1D4960]">
+                              {{ spec.clave }}
+                            </td>
+                            <td class="px-5 py-3.5 text-[#527588] dark:text-[#B8DFEF]">
+                              {{ spec.valor }}
+                            </td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                } @else {
+                  <p class="text-xs text-[#527588] dark:text-[#B8DFEF]">El proveedor no registró especificaciones técnicas adicionales para este ítem.</p>
+                }
+              </div>
+            }
+
+            @if (activeTab() === 'desc') {
+              <div class="prose prose-slate dark:prose-invert max-w-none text-xs sm:text-sm text-[#527588] dark:text-[#B8DFEF] leading-relaxed space-y-4">
+                <p>{{ p.descripcion }}</p>
+              </div>
+            }
+
+            @if (activeTab() === 'warranty') {
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs text-[#527588] dark:text-[#B8DFEF]">
+                <div class="p-5 rounded-2xl bg-[#F4F9FC] dark:bg-[#0A2535] border border-[#CFE4EE] dark:border-[#1D4960] space-y-2">
+                  <h4 class="font-bold text-[#04202E] dark:text-[#F2F9FC] flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-[#1786B4] dark:bg-[#4FB3DA]"></span>
+                    Garantía del Proveedor
+                  </h4>
+                  <p>
+                    Este producto cuenta con <strong class="text-[#04202E] dark:text-[#F2F9FC]">{{ p.garantiaMeses }} meses</strong> de garantía respaldada por {{ p.proveedorRazonSocial }}.
+                  </p>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-[#F4F9FC] dark:bg-[#0A2535] border border-[#CFE4EE] dark:border-[#1D4960] space-y-2">
+                  <h4 class="font-bold text-[#04202E] dark:text-[#F2F9FC] flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-600 dark:bg-emerald-400"></span>
+                    Despacho y Trazabilidad (Split Order)
+                  </h4>
+                  <p>
+                    El despacho se coordina directamente por el proveedor en suborden independiente con seguimiento de estado hasta la entrega.
+                  </p>
+                </div>
+              </div>
+            }
+
           </div>
 
-          <!-- Contenido Pestaña 1: Especificaciones Técnicas (Tabla Elegante) -->
-          @if (activeTab() === 'specs') {
-            <div class="space-y-4">
-              <h3 class="text-base font-bold text-[#142238]">Ficha de Homologación de Hardware</h3>
-              <div class="overflow-hidden rounded-2xl border border-slate-200">
-                <table class="w-full text-left text-xs">
-                  <tbody class="divide-y divide-slate-100">
-                    @for (spec of p.especificaciones; track spec.clave; let even = $even) {
-                      <tr [class.bg-slate-50]="even" class="hover:bg-blue-50/40 transition-colors">
-                        <td class="px-5 py-3.5 font-bold text-slate-700 w-1/3 border-r border-slate-100">
-                          {{ spec.clave }}
-                        </td>
-                        <td class="px-5 py-3.5 text-slate-600">
-                          {{ spec.valor }}
-                        </td>
-                      </tr>
-                    }
-                  </tbody>
-                </table>
-              </div>
-            </div>
+          <!-- PRODUCTOS RELACIONADOS CON CARGA DIFERIDA (@defer) -->
+          @defer (on viewport) {
+            @if (relatedProducts().length > 0) {
+              <section class="pt-4 space-y-5">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <span class="text-[11px] font-extrabold uppercase tracking-wider text-[#1786B4] dark:text-[#4FB3DA]">Más opciones B2B</span>
+                    <h2 class="text-xl font-black text-[#04202E] dark:text-[#F2F9FC] font-display">Otros productos del catálogo</h2>
+                  </div>
+                  <a routerLink="/catalog" class="text-xs font-bold text-[#1786B4] dark:text-[#4FB3DA] hover:underline">
+                    Ver catálogo completo →
+                  </a>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                  @for (item of relatedProducts(); track item.id) {
+                    <app-product-card [product]="item" (addToCart)="onAddRelatedToCart($event)" />
+                  }
+                </div>
+              </section>
+            }
+          } @placeholder {
+            <div class="h-16"></div>
           }
 
-          <!-- Contenido Pestaña 2: Descripción -->
-          @if (activeTab() === 'desc') {
-            <div class="prose prose-slate max-w-none text-xs sm:text-sm text-slate-600 leading-relaxed space-y-4">
-              <p>{{ p.descripcion }}</p>
-              <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
-                <h4 class="font-bold text-[#142238] text-xs">Casos de Uso Corporativos:</h4>
-                <ul class="list-disc list-inside space-y-1 text-slate-600 text-xs">
-                  <li>Equipamiento de puestos de trabajo administrativo, operativo y técnico.</li>
-                  <li>Infraestructura homologable para licitaciones públicas y compras directas B2B.</li>
-                  <li>Total compatibilidad con estándares de red y seguridad empresarial.</li>
-                </ul>
-              </div>
-            </div>
-          }
-
-          <!-- Contenido Pestaña 3: Garantía y Despacho -->
-          @if (activeTab() === 'warranty') {
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs text-slate-600">
-              <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
-                <h4 class="font-bold text-[#142238] flex items-center gap-2">
-                  <span class="w-2 h-2 rounded-full bg-blue-600"></span>
-                  Garantía del Fabricante
-                </h4>
-                <p>
-                  Este producto cuenta con <strong>{{ p.garantiaMeses }} meses</strong> de garantía oficial respaldada por {{ p.proveedorRazonSocial }}. Cubre fallas de hardware, circuitos y defectos de ensamblaje.
-                </p>
-              </div>
-
-              <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
-                <h4 class="font-bold text-[#142238] flex items-center gap-2">
-                  <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
-                  Despacho y Trazabilidad (Split Order)
-                </h4>
-                <p>
-                  El despacho se coordina de manera directa por el proveedor con guía de remisión física y electrónica. Recibirás actualizaciones de estado desde la preparación hasta la entrega final.
-                </p>
-              </div>
-            </div>
-          }
-
-        </div>
-
-        <!-- Modal de Contacto P-05 -->
-        <app-product-contact-modal
-          [isOpen]="isContactModalOpen()"
-          [product]="product()"
-          (close)="isContactModalOpen.set(false)"
-        />
-
+          <!-- Modal de Contacto -->
+          <app-product-contact-modal
+            [isOpen]="isContactModalOpen()"
+            [product]="product()"
+            (close)="isContactModalOpen.set(false)"
+          />
         }
       }
 
     </div>
   `
 })
-export class ProductDetailComponent implements OnInit {
+export class ProductDetailComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
-  private readonly router = inject(Router);
   private readonly catalogApi = inject(CatalogApiService);
   private readonly cartState = inject(CartStateService);
   private readonly toastState = inject(ToastStateService);
 
+  public readonly cartAction = new ActionTracker<'add-main'>();
   public readonly product = signal<ProductDetail | null>(null);
+  public readonly relatedProducts = signal<ProductCard[]>([]);
   public readonly isLoading = signal<boolean>(true);
   public readonly hasError = signal<boolean>(false);
   public readonly activeImage = signal<string>('');
@@ -504,22 +400,19 @@ export class ProductDetailComponent implements OnInit {
   public readonly isContactModalOpen = signal<boolean>(false);
   public readonly quantity = signal<number>(1);
 
-  // Precios y cálculos computados
-  public readonly currentUnitPrice = computed(() => {
-    return this.product()?.precioUnitario ?? 0;
-  });
+  public readonly currentUnitPrice = computed(() => this.product()?.precioUnitario ?? 0);
 
-  public readonly calculatedSubtotal = computed(() => {
-    return Math.round(this.currentUnitPrice() * this.quantity() * 100) / 100;
-  });
+  public readonly calculatedSubtotal = computed(() =>
+    Math.round(this.currentUnitPrice() * this.quantity() * 100) / 100
+  );
 
-  public readonly calculatedIgv = computed(() => {
-    return Math.round(this.calculatedSubtotal() * 0.18 * 100) / 100;
-  });
+  public readonly calculatedIgv = computed(() =>
+    Math.round(this.calculatedSubtotal() * 0.18 * 100) / 100
+  );
 
-  public readonly calculatedTotal = computed(() => {
-    return Math.round((this.calculatedSubtotal() + this.calculatedIgv()) * 100) / 100;
-  });
+  public readonly calculatedTotal = computed(() =>
+    Math.round((this.calculatedSubtotal() + this.calculatedIgv()) * 100) / 100
+  );
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
@@ -533,7 +426,6 @@ export class ProductDetailComponent implements OnInit {
       }
     });
 
-    // Si viene con parámetro ?contacto=true, abrir automáticamente el modal P-05
     this.route.queryParamMap.subscribe(qp => {
       if (qp.get('contacto') === 'true') {
         this.isContactModalOpen.set(true);
@@ -542,7 +434,13 @@ export class ProductDetailComponent implements OnInit {
   }
 
   public loadProduct(id?: number): void {
-    const productId = id ?? (this.product()?.id || 101);
+    const productId = id ?? this.product()?.id;
+    if (!productId || productId <= 0) {
+      this.isLoading.set(false);
+      this.hasError.set(true);
+      return;
+    }
+
     this.isLoading.set(true);
     this.hasError.set(false);
 
@@ -552,6 +450,7 @@ export class ProductDetailComponent implements OnInit {
         this.product.set(detail);
         this.activeImage.set(detail.imagenPrincipalUrl);
         this.quantity.set(1);
+        this.loadRelatedProducts(detail.id);
       },
       error: () => {
         this.isLoading.set(false);
@@ -560,11 +459,22 @@ export class ProductDetailComponent implements OnInit {
     });
   }
 
+  private loadRelatedProducts(currentId: number): void {
+    this.catalogApi.getFeaturedProducts().subscribe({
+      next: (items) => {
+        this.relatedProducts.set((items || []).filter(item => item.id !== currentId).slice(0, 4));
+      },
+      error: () => {
+        this.relatedProducts.set([]);
+      }
+    });
+  }
+
   public increaseQty(): void {
     const p = this.product();
-    if (p && this.quantity() < p.stockDisponible) {
-      this.quantity.update(q => q + 1);
-    }
+    if (!p) return;
+    if (p.stockDisponible != null && this.quantity() >= p.stockDisponible) return;
+    this.quantity.update(q => q + 1);
   }
 
   public decreaseQty(): void {
@@ -576,18 +486,56 @@ export class ProductDetailComponent implements OnInit {
   public setQuantity(val: number): void {
     const p = this.product();
     if (!p) return;
-    const clamped = Math.max(1, Math.min(val || 1, p.stockDisponible));
+    const parsed = Math.max(1, Math.floor(Number(val) || 1));
+    const clamped = p.stockDisponible != null
+      ? Math.min(parsed, Math.max(1, p.stockDisponible))
+      : parsed;
     this.quantity.set(clamped);
+  }
+
+  public ngOnDestroy(): void {
+    this.cartAction.clearAll();
   }
 
   public addToCart(): void {
     const p = this.product();
-    if (!p) return;
+    if (!p || p.stockDisponible === 0 || this.cartAction.isSuccess('add-main')) return;
+    if (!this.cartAction.start('add-main')) return;
 
-    this.cartState.addItem(p, this.quantity());
+    const result = this.cartState.addItem(p, this.quantity());
+    if (!result.added) {
+      this.cartAction.fail('add-main');
+      this.toastState.warning(
+        'Stock máximo alcanzado',
+        `Ya agregaste la cantidad máxima disponible de "${p.nombre}" en tu carrito.`,
+        `detail-stock-${p.id}`
+      );
+      return;
+    }
+
+    this.cartAction.succeed('add-main', 950);
     this.toastState.success(
-      'Producto Agregado al Carrito',
-      `${this.quantity()} un. de "${p.nombre}" añadidas a tu pedido B2B.`
+      'Producto agregado al carrito',
+      `${result.addedQty} un. de "${p.nombre}" añadidas a tu pedido B2B.`,
+      `detail-add-${p.id}`
+    );
+  }
+
+  public onAddRelatedToCart(item: ProductCard): void {
+    const result = this.cartState.addItem(item, 1);
+    if (!result.added) {
+      this.toastState.warning(
+        'Stock máximo alcanzado',
+        `Ya agregaste la cantidad máxima disponible de "${item.nombre}" en tu carrito.`,
+        `related-stock-${item.id}`
+      );
+      return;
+    }
+
+    this.toastState.success(
+      'Producto agregado al carrito',
+      `${result.addedQty} un. de "${item.nombre}" añadida a tu pedido B2B.`,
+      `related-add-${item.id}`
     );
   }
 }

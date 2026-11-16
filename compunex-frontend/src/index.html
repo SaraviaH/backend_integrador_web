@@ -6,8 +6,16 @@
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="COMPUNEX B2B conecta empresas compradoras con proveedores mayoristas de tecnología. Catálogo, cotizaciones y compras corporativas.">
-  <meta name="theme-color" content="#2456C6">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <meta name="theme-color" content="#0A3C55">
+  <link rel="icon" type="image/x-icon" href="favicon.ico?v=2">
+  <script>
+    try {
+      if (localStorage.getItem('compunex_theme') === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.documentElement.style.colorScheme = 'dark';
+      }
+    } catch {}
+  </script>
 </head>
 <body>
   <app-root></app-root>

@@ -16,11 +16,11 @@ import { CheckoutRequest, CheckoutItemRequest } from '../../../core/models/order
       
       <!-- Encabezado del Paso P-11 -->
       <div class="bg-white rounded-3xl border border-slate-200/80 p-6 md:p-8 shadow-xs">
-        <div class="flex items-center gap-2 text-xs font-bold text-[#2456C6] uppercase tracking-wider mb-1">
-          <span class="w-2 h-2 rounded-full bg-[#2456C6]"></span>
+        <div class="flex items-center gap-2 text-xs font-bold text-brand-primary uppercase tracking-wider mb-1">
+          <span class="w-2 h-2 rounded-full bg-brand-primary"></span>
           Paso 2 de 3 · Confirmación de Split Order
         </div>
-        <h2 class="text-xl sm:text-2xl font-black text-[#142238] tracking-tight font-display">
+        <h2 class="text-xl sm:text-2xl font-black text-brand-night tracking-tight font-display">
           Revisión Final de tu Orden de Compra
         </h2>
         <p class="text-xs sm:text-sm text-slate-500 mt-1">
@@ -34,13 +34,13 @@ import { CheckoutRequest, CheckoutItemRequest } from '../../../core/models/order
         <!-- Tarjeta 1: Datos de Facturación -->
         <div class="bg-white rounded-3xl border border-slate-200/80 p-6 space-y-3 shadow-xs">
           <div class="flex items-center justify-between pb-2 border-b border-slate-100">
-            <h3 class="text-xs font-bold text-[#142238] uppercase tracking-wider flex items-center gap-1.5">
+            <h3 class="text-xs font-bold text-brand-night uppercase tracking-wider flex items-center gap-1.5">
               <span>🏢</span> Datos Fiscales de Emisión
             </h3>
             <button
               type="button"
               (click)="prevStep.emit()"
-              class="text-xs font-semibold text-[#2456C6] hover:underline"
+              class="text-xs font-semibold text-brand-primary hover:underline"
             >
               Editar
             </button>
@@ -48,7 +48,7 @@ import { CheckoutRequest, CheckoutItemRequest } from '../../../core/models/order
 
           @if (checkoutState.billingData(); as b) {
             <div class="space-y-1.5 text-xs text-slate-600">
-              <div class="font-bold text-[#142238] text-sm">{{ b.razonSocial }}</div>
+              <div class="font-bold text-brand-night text-sm">{{ b.razonSocial }}</div>
               <div>RUC: <strong class="text-slate-800">{{ b.ruc }}</strong></div>
               <div>Dirección: {{ b.direccionFiscal }} ({{ b.departamento }})</div>
               <div class="pt-1 text-[11px] text-slate-400">
@@ -64,13 +64,13 @@ import { CheckoutRequest, CheckoutItemRequest } from '../../../core/models/order
         <!-- Tarjeta 2: Método de Pago y Logística -->
         <div class="bg-white rounded-3xl border border-slate-200/80 p-6 space-y-3 shadow-xs">
           <div class="flex items-center justify-between pb-2 border-b border-slate-100">
-            <h3 class="text-xs font-bold text-[#142238] uppercase tracking-wider flex items-center gap-1.5">
+            <h3 class="text-xs font-bold text-brand-night uppercase tracking-wider flex items-center gap-1.5">
               <span>💳</span> Condición Comercial y Pago
             </h3>
             <button
               type="button"
               (click)="prevStep.emit()"
-              class="text-xs font-semibold text-[#2456C6] hover:underline"
+              class="text-xs font-semibold text-brand-primary hover:underline"
             >
               Cambiar
             </button>
@@ -78,7 +78,7 @@ import { CheckoutRequest, CheckoutItemRequest } from '../../../core/models/order
 
           @if (checkoutState.billingData(); as b) {
             <div class="space-y-1.5 text-xs text-slate-600">
-              <div class="font-bold text-[#142238] text-sm">
+              <div class="font-bold text-brand-night text-sm">
                 @switch (b.metodoPagoSimulado) {
                   @case ('TRANSFERENCIA_BANCARIA') { Transferencia Bancaria Directa B2B }
                   @case ('LINEA_CREDITO_B2B') { Línea de Crédito Mayorista a 30 días }
@@ -103,14 +103,14 @@ import { CheckoutRequest, CheckoutItemRequest } from '../../../core/models/order
       <div class="bg-white rounded-3xl border border-slate-200/80 p-6 md:p-8 space-y-6 shadow-xs">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-slate-100">
           <div>
-            <h3 class="text-base font-bold text-[#142238]">
+            <h3 class="text-base font-bold text-brand-night">
               Desglose de Subórdenes por Proveedor
             </h3>
             <p class="text-xs text-slate-500 mt-0.5">
               Esta compra se estructurará en {{ cartState.itemsByProvider().length }} subórdenes independientes con trazabilidad individual.
             </p>
           </div>
-          <span class="px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-[#2456C6] border border-blue-100 self-start sm:self-auto">
+          <span class="px-3 py-1 rounded-full text-xs font-bold bg-brand-tint text-brand-primary border border-brand-tint self-start sm:self-auto">
             {{ cartState.totalItemsCount() }} unidades en total
           </span>
         </div>
@@ -123,7 +123,7 @@ import { CheckoutRequest, CheckoutItemRequest } from '../../../core/models/order
                   <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
                   <span class="text-xs font-bold text-slate-800">{{ group.proveedorRazonSocial }}</span>
                 </div>
-                <span class="text-xs font-black text-[#2456C6]">
+                <span class="text-xs font-black text-brand-primary">
                   S/ {{ group.total | number:'1.2-2' }} (inc. IGV)
                 </span>
               </div>
@@ -158,20 +158,42 @@ import { CheckoutRequest, CheckoutItemRequest } from '../../../core/models/order
             <span>IGV Total (18% Ley SUNAT):</span>
             <span class="font-bold text-slate-800">S/ {{ cartState.igv() | number:'1.2-2' }}</span>
           </div>
-          <div class="flex justify-between text-base font-black text-[#142238] pt-3 border-t border-slate-200">
+          <div class="flex justify-between text-base font-black text-brand-night pt-3 border-t border-slate-200">
             <span>Importe Total a Pagar:</span>
-            <span class="text-[#2456C6] text-lg">S/ {{ cartState.total() | number:'1.2-2' }}</span>
+            <span class="text-brand-primary text-lg">S/ {{ cartState.total() | number:'1.2-2' }}</span>
           </div>
         </div>
 
       </div>
+
+      <!-- Banner de error en checkout (ej. auto-compra o stock insuficiente) -->
+      @if (checkoutError()) {
+        <div class="p-4 rounded-2xl bg-rose-50 border border-rose-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-rose-800" role="alert">
+          <div class="flex items-start gap-2.5">
+            <svg class="w-5 h-5 text-rose-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div>
+              <p class="font-bold text-rose-900">No se pudo confirmar la orden</p>
+              <p class="mt-0.5 text-rose-700">{{ checkoutError() }}</p>
+            </div>
+          </div>
+          <a
+            routerLink="/carrito"
+            class="px-4 py-2 rounded-xl bg-white border border-rose-200 text-rose-700 hover:bg-rose-100 font-bold shrink-0 text-center transition-colors"
+          >
+            Revisar carrito
+          </a>
+        </div>
+      }
 
       <!-- Acciones de Navegación del Paso 2 -->
       <div class="flex items-center justify-between pt-4">
         <button
           type="button"
           (click)="prevStep.emit()"
-          class="px-6 py-3 rounded-full border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+          [disabled]="isPlacingOrder()"
+          class="px-6 py-3 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           ← Volver a Datos Fiscales
         </button>
@@ -180,17 +202,17 @@ import { CheckoutRequest, CheckoutItemRequest } from '../../../core/models/order
           type="button"
           (click)="confirmOrder()"
           [disabled]="isPlacingOrder()"
-          class="px-8 py-3.5 rounded-full bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white text-xs sm:text-sm font-bold transition-colors flex items-center gap-2 shadow-xs"
+          class="px-8 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white text-xs sm:text-sm font-bold transition-colors flex items-center gap-2 shadow-xs"
         >
           @if (isPlacingOrder()) {
-            <svg class="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24">
+            <svg class="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" aria-hidden="true">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
             </svg>
-            <span>Generando Órdenes ACID...</span>
+            <span>Procesando Orden...</span>
           } @else {
-            <span>Confirmar Compra y Generar Órdenes B2B (P-12)</span>
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <span>Confirmar Compra y Generar Órdenes B2B</span>
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
             </svg>
           }
@@ -210,17 +232,23 @@ export class ReviewStepComponent {
   @Output() orderConfirmed = new EventEmitter<void>();
 
   public readonly isPlacingOrder = signal<boolean>(false);
+  public readonly checkoutError = signal<string | null>(null);
 
   public confirmOrder(): void {
+    if (this.isPlacingOrder()) {
+      return;
+    }
+
     const billing = this.checkoutState.billingData();
     const items = this.cartState.items();
 
     if (!billing || items.length === 0) {
-      this.toastState.error('Error en la Orden', 'No hay datos de facturación o el carrito está vacío.');
+      this.toastState.error('No fue posible registrar el pedido', 'No hay datos de facturación o el carrito está vacío.', 'checkout-empty');
       return;
     }
 
     this.isPlacingOrder.set(true);
+    this.checkoutError.set(null);
 
     const checkoutItems: CheckoutItemRequest[] = items.map(it => ({
       productoId: it.productoId,
@@ -240,15 +268,15 @@ export class ReviewStepComponent {
       next: (res) => {
         this.isPlacingOrder.set(false);
         this.checkoutState.setConfirmedOrder(res);
-        // Limpiar el carrito una vez emitida exitosamente la compra
         this.cartState.clear();
-        this.toastState.success('¡Compra Confirmada!', `Orden ${res.codigoOrden} generada con éxito.`);
+        this.toastState.success('Pedido registrado correctamente', `Orden ${res.codigoOrden} generada con éxito.`, 'checkout-success');
         this.orderConfirmed.emit();
       },
       error: (err) => {
         this.isPlacingOrder.set(false);
-        const msg = err?.error?.mensaje || 'Ocurrió un error al procesar la compra. Intenta nuevamente.';
-        this.toastState.error('Error al procesar la compra', msg);
+        const msg = err?.error?.mensaje || err?.error?.detail || err?.error?.message || 'No fue posible registrar el pedido. Verifica tu carrito o datos fiscales.';
+        this.checkoutError.set(msg);
+        this.toastState.error('No fue posible registrar el pedido', msg, 'checkout-error');
       }
     });
   }

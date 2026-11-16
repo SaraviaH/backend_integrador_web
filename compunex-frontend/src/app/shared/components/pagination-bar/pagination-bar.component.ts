@@ -9,11 +9,11 @@ import { CommonModule } from '@angular/common';
     @if (totalPages() > 1) {
       <nav
         aria-label="Paginación de resultados"
-        class="flex flex-col sm:flex-row items-center justify-between gap-3 px-5 py-3.5 border-t border-slate-200/80 bg-slate-50/50 text-xs"
+        class="flex flex-col sm:flex-row items-center justify-between gap-3 px-5 py-3.5 border-t border-[#CFE4EE] dark:border-[#1D4960] bg-[#F4F9FC] dark:bg-[#0A2535] text-xs"
       >
-        <p class="text-slate-500">
-          Mostrando <span class="font-bold text-slate-800">{{ startItem() }}–{{ endItem() }}</span> de
-          <span class="font-bold text-slate-800">{{ totalItems }}</span> registros
+        <p class="text-[#527588] dark:text-[#B8DFEF]">
+          Mostrando <span class="font-bold text-[#04202E] dark:text-[#F2F9FC]">{{ startItem() }}–{{ endItem() }}</span> de
+          <span class="font-bold text-[#04202E] dark:text-[#F2F9FC]">{{ totalItems }}</span> registros
         </p>
 
         <div class="flex items-center gap-1.5">
@@ -21,7 +21,7 @@ import { CommonModule } from '@angular/common';
             type="button"
             (click)="goToPage(currentPage - 1)"
             [disabled]="currentPage <= 1"
-            class="px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-700 font-semibold hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+            class="px-3 py-1.5 rounded-lg border border-[#CFE4EE] dark:border-[#1D4960] bg-white dark:bg-[#0F3043] text-[#0A3C55] dark:text-[#E1F2FA] font-semibold hover:bg-[#E1F2FA] dark:hover:bg-[#153F58] disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
           >
             Anterior
           </button>
@@ -33,8 +33,8 @@ import { CommonModule } from '@angular/common';
               [attr.aria-current]="page === currentPage ? 'page' : null"
               class="min-w-8 h-8 px-2 rounded-lg font-bold transition-colors cursor-pointer"
               [ngClass]="page === currentPage
-                ? 'bg-[#1E50C0] text-white shadow-2xs'
-                : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-100'"
+                ? 'bg-[#1786B4] dark:bg-[#4FB3DA] text-white dark:text-[#04202E] shadow-sm'
+                : 'border border-[#CFE4EE] dark:border-[#1D4960] bg-white dark:bg-[#0F3043] text-[#0A3C55] dark:text-[#E1F2FA] hover:bg-[#E1F2FA] dark:hover:bg-[#153F58]'"
             >
               {{ page }}
             </button>
@@ -44,7 +44,7 @@ import { CommonModule } from '@angular/common';
             type="button"
             (click)="goToPage(currentPage + 1)"
             [disabled]="currentPage >= totalPages()"
-            class="px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-700 font-semibold hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+            class="px-3 py-1.5 rounded-lg border border-[#CFE4EE] dark:border-[#1D4960] bg-white dark:bg-[#0F3043] text-[#0A3C55] dark:text-[#E1F2FA] font-semibold hover:bg-[#E1F2FA] dark:hover:bg-[#153F58] disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
           >
             Siguiente
           </button>

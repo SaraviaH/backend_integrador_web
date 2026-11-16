@@ -11,8 +11,8 @@ const COMPANY_META_PREFIX = 'compunex_company_meta_';
 export class AuthStateService {
   private readonly _token = signal<string | null>(this.getStoredToken());
   private readonly _currentUser = signal<UserProfile | null>(this.getStoredUser());
+  private rememberSession = this.detectRememberSession();
 
-  // Señales Públicas Computadas
   public readonly token = this._token.asReadonly();
   public readonly currentUser = this._currentUser.asReadonly();
   public readonly isAuthenticated = computed(() => !!this._token());
@@ -24,9 +24,10 @@ export class AuthStateService {
   public readonly isCliente = computed(() => this.userRole() === 'ROLE_CLIENTE');
   public readonly isProveedor = computed(() => this.userRole() === 'ROLE_PROVEEDOR');
   public readonly isAdmin = computed(() => this.userRole() === 'ROLE_ADMIN');
-  public readonly canAccessPanel = computed(() => this.isProveedor() || this.isAdmin());
+  public readonly canAccessPanel = computed(() => this.isProveedor());
 
-  public setAuth(auth: AuthResponse): void {
+  public setAuth(auth: AuthResponse, remember: boolean = true): void {
+    this.rememberSession = remember;
     this._token.set(auth.token);
 
     let usuario = auth.usuario ?? null;
@@ -63,15 +64,7 @@ export class AuthStateService {
     }
 
     this._currentUser.set(usuario);
-
-    try {
-      localStorage.setItem(TOKEN_KEY, auth.token);
-      if (usuario) {
-        localStorage.setItem(USER_KEY, JSON.stringify(usuario));
-      }
-    } catch (e) {
-      console.warn('No se pudo persistir la sesión en localStorage:', e);
-    }
+    this.persistSessionData(auth.token, usuario, remember);
   }
 
   public saveCompanyMeta(correo: string, meta: Partial<UserProfile>): void {
@@ -110,9 +103,9 @@ export class AuthStateService {
       });
     }
     try {
-      localStorage.setItem(USER_KEY, JSON.stringify(normalized));
+      this.getActiveStorage().setItem(USER_KEY, JSON.stringify(normalized));
     } catch (e) {
-      console.warn('No se pudo actualizar perfil en localStorage:', e);
+      console.warn('No se pudo actualizar perfil en almacenamiento:', e);
     }
   }
 
@@ -121,7 +114,7 @@ export class AuthStateService {
     if (newToken) {
       this._token.set(newToken);
       try {
-        localStorage.setItem(TOKEN_KEY, newToken);
+        this.getActiveStorage().setItem(TOKEN_KEY, newToken);
       } catch {
         // Ignorar
       }
@@ -142,14 +135,50 @@ export class AuthStateService {
     try {
       localStorage.removeItem(TOKEN_KEY);
       localStorage.removeItem(USER_KEY);
+      sessionStorage.removeItem(TOKEN_KEY);
+      sessionStorage.removeItem(USER_KEY);
     } catch (e) {
-      console.warn('Error al limpiar localStorage:', e);
+      console.warn('Error al limpiar sesión:', e);
     }
+  }
+
+  private persistSessionData(token: string, usuario: UserProfile | null, remember: boolean): void {
+    try {
+      const target = remember ? localStorage : sessionStorage;
+      const other = remember ? sessionStorage : localStorage;
+      other.removeItem(TOKEN_KEY);
+      other.removeItem(USER_KEY);
+      target.setItem(TOKEN_KEY, token);
+      if (usuario) {
+        target.setItem(USER_KEY, JSON.stringify(usuario));
+      }
+    } catch (e) {
+      console.warn('No se pudo persistir la sesión:', e);
+    }
+  }
+
+  private getActiveStorage(): Storage {
+    try {
+      if (sessionStorage.getItem(TOKEN_KEY)) return sessionStorage;
+      if (localStorage.getItem(TOKEN_KEY)) return localStorage;
+    } catch {
+      // Ignorar
+    }
+    return this.rememberSession ? localStorage : sessionStorage;
+  }
+
+  private detectRememberSession(): boolean {
+    try {
+      if (sessionStorage.getItem(TOKEN_KEY)) return false;
+    } catch {
+      // Ignorar
+    }
+    return true;
   }
 
   private getStoredToken(): string | null {
     try {
-      return localStorage.getItem(TOKEN_KEY);
+      return localStorage.getItem(TOKEN_KEY) || sessionStorage.getItem(TOKEN_KEY);
     } catch {
       return null;
     }
@@ -157,7 +186,7 @@ export class AuthStateService {
 
   private getStoredUser(): UserProfile | null {
     try {
-      const data = localStorage.getItem(USER_KEY);
+      const data = localStorage.getItem(USER_KEY) || sessionStorage.getItem(USER_KEY);
       if (data) {
         const parsed = JSON.parse(data) as UserProfile;
         return { ...parsed, rol: normalizeUserRole(parsed.rol) };

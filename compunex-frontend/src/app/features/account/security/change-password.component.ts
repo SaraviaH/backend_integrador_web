@@ -12,18 +12,18 @@ import { ToastStateService } from '../../../core/state/toast-state.service';
   imports: [CommonModule, RouterModule, ReactiveFormsModule],
   template: `
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-      
-      <!-- Migas de Pan (Breadcrumbs) -->
-      <nav class="flex items-center gap-2 text-xs text-slate-400">
-        <a routerLink="/" class="hover:text-[#2456C6] transition-colors">Inicio</a>
+
+      <!-- Migas de Pan -->
+      <nav class="flex items-center gap-2 text-xs text-slate-400" aria-label="Ruta de navegación">
+        <a routerLink="/" class="hover:text-brand-primary transition-colors">Inicio</a>
         <span>/</span>
-        <a routerLink="/cuenta/perfil" class="hover:text-[#2456C6] transition-colors">Mi Cuenta</a>
+        <a routerLink="/cuenta/perfil" class="hover:text-brand-primary transition-colors">Mi Cuenta</a>
         <span>/</span>
-        <span class="text-[#142238] font-bold">Seguridad y Credenciales</span>
+        <span class="text-brand-night font-bold">Seguridad y Credenciales</span>
       </nav>
 
       <!-- Barra de Pestañas de la Cuenta -->
-      <div class="flex items-center gap-3 overflow-x-auto pb-2 border-b border-slate-200/80 text-xs font-bold">
+      <div class="flex items-center gap-5 overflow-x-auto pb-2 border-b border-slate-200/80 text-xs font-bold">
         <a
           routerLink="/cuenta/perfil"
           class="pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition-colors shrink-0"
@@ -32,7 +32,7 @@ import { ToastStateService } from '../../../core/state/toast-state.service';
         </a>
         <a
           routerLink="/cuenta/seguridad"
-          class="pb-3 border-b-2 border-[#2456C6] text-[#2456C6] transition-colors shrink-0"
+          class="pb-3 border-b-2 border-brand-primary text-brand-primary transition-colors shrink-0"
         >
           Seguridad y Contraseña
         </a>
@@ -45,41 +45,56 @@ import { ToastStateService } from '../../../core/state/toast-state.service';
         @if (!authState.isProveedor()) {
           <a
             routerLink="/cuenta/activar-proveedor"
-            class="pb-3 border-b-2 border-transparent text-amber-600 hover:text-amber-700 font-bold transition-colors shrink-0 flex items-center gap-1"
+            class="pb-3 border-b-2 border-transparent text-brand-primary hover:text-brand-petrol font-bold transition-colors shrink-0 flex items-center gap-1"
           >
-            <span>★</span> Activar como Proveedor
+            Activar como Proveedor
+          </a>
+        } @else {
+          <a
+            routerLink="/panel"
+            class="pb-3 border-b-2 border-transparent text-emerald-700 hover:text-emerald-800 font-bold transition-colors shrink-0 flex items-center gap-1"
+          >
+            Mi Panel Proveedor
           </a>
         }
       </div>
 
-      <!-- Encabezado de la Pantalla P-17 -->
+      <!-- Encabezado -->
       <div class="bg-white rounded-3xl border border-slate-200/80 p-6 md:p-8 space-y-1.5 shadow-xs">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-[#2456C6] text-xs font-semibold mb-1">
-          <span class="w-1.5 h-1.5 rounded-full bg-[#2456C6]"></span>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-tint border border-brand-tint text-brand-primary text-xs font-semibold mb-1">
+          <span class="w-1.5 h-1.5 rounded-full bg-brand-primary"></span>
           Seguridad B2B
         </div>
-        <h1 class="text-xl sm:text-2xl font-black text-[#142238] tracking-tight font-display">
+        <h1 class="text-xl sm:text-2xl font-black text-brand-night tracking-tight font-display">
           Cambiar Contraseña de Acceso
         </h1>
         <p class="text-xs sm:text-sm text-slate-500 max-w-2xl">
-          Protege tu cuenta corporativa. Recomendamos usar al menos 8 caracteres combinando mayúsculas, minúsculas, números y símbolos.
+          Protege tu cuenta corporativa. Usa al menos 8 caracteres combinando mayúsculas, minúsculas, números y símbolos.
         </p>
       </div>
 
       <!-- Formulario de Seguridad -->
       <form [formGroup]="form" (ngSubmit)="onSubmit()" class="bg-white rounded-3xl border border-slate-200/80 p-6 md:p-8 space-y-6 shadow-xs max-w-xl mx-auto">
-        
+
+        @if (errorMessage()) {
+          <div class="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-800 flex items-start justify-between gap-3" role="alert">
+            <span>{{ errorMessage() }}</span>
+            <button type="button" (click)="errorMessage.set(null)" class="text-rose-500 hover:text-rose-700 font-bold" aria-label="Cerrar error">✕</button>
+          </div>
+        }
+
         <!-- Contraseña Actual -->
         <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1.5">
+          <label for="current-pwd" class="block text-xs font-semibold text-slate-700 mb-1.5">
             Contraseña Actual *
           </label>
           <div class="relative">
             <input
+              id="current-pwd"
               [type]="showCurrent() ? 'text' : 'password'"
               formControlName="contrasenaActual"
               placeholder="••••••••••••"
-              class="w-full px-4 py-2.5 bg-slate-50 border rounded-2xl text-xs sm:text-sm text-[#142238] outline-none pr-10"
+              class="w-full px-4 py-2.5 bg-slate-50 border rounded-2xl text-xs sm:text-sm text-brand-night outline-none pr-10"
               [class.border-rose-400]="isFieldInvalid('contrasenaActual')"
               [class.border-slate-200]="!isFieldInvalid('contrasenaActual')"
             />
@@ -87,8 +102,12 @@ import { ToastStateService } from '../../../core/state/toast-state.service';
               type="button"
               (click)="showCurrent.set(!showCurrent())"
               class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600"
+              [attr.aria-label]="showCurrent() ? 'Ocultar contraseña actual' : 'Mostrar contraseña actual'"
             >
-              @if (showCurrent()) { 👁️ } @else { 🔒 }
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
             </button>
           </div>
           @if (isFieldInvalid('contrasenaActual')) {
@@ -98,15 +117,16 @@ import { ToastStateService } from '../../../core/state/toast-state.service';
 
         <!-- Nueva Contraseña -->
         <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1.5">
+          <label for="new-pwd" class="block text-xs font-semibold text-slate-700 mb-1.5">
             Nueva Contraseña *
           </label>
           <div class="relative">
             <input
+              id="new-pwd"
               [type]="showNew() ? 'text' : 'password'"
               formControlName="nuevaContrasena"
               placeholder="Mínimo 8 caracteres"
-              class="w-full px-4 py-2.5 bg-slate-50 border rounded-2xl text-xs sm:text-sm text-[#142238] outline-none pr-10"
+              class="w-full px-4 py-2.5 bg-slate-50 border rounded-2xl text-xs sm:text-sm text-brand-night outline-none pr-10"
               [class.border-rose-400]="isFieldInvalid('nuevaContrasena')"
               [class.border-slate-200]="!isFieldInvalid('nuevaContrasena')"
             />
@@ -114,8 +134,12 @@ import { ToastStateService } from '../../../core/state/toast-state.service';
               type="button"
               (click)="showNew.set(!showNew())"
               class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600"
+              [attr.aria-label]="showNew() ? 'Ocultar nueva contraseña' : 'Mostrar nueva contraseña'"
             >
-              @if (showNew()) { 👁️ } @else { 🔒 }
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
             </button>
           </div>
           @if (isFieldInvalid('nuevaContrasena')) {
@@ -125,19 +149,18 @@ import { ToastStateService } from '../../../core/state/toast-state.service';
 
         <!-- Confirmar Nueva Contraseña -->
         <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1.5">
+          <label for="confirm-pwd" class="block text-xs font-semibold text-slate-700 mb-1.5">
             Confirmar Nueva Contraseña *
           </label>
-          <div class="relative">
-            <input
-              [type]="showNew() ? 'text' : 'password'"
-              formControlName="confirmarContrasena"
-              placeholder="Repite la nueva contraseña"
-              class="w-full px-4 py-2.5 bg-slate-50 border rounded-2xl text-xs sm:text-sm text-[#142238] outline-none pr-10"
-              [class.border-rose-400]="isFieldInvalid('confirmarContrasena') || hasMismatchError()"
-              [class.border-slate-200]="!isFieldInvalid('confirmarContrasena') && !hasMismatchError()"
-            />
-          </div>
+          <input
+            id="confirm-pwd"
+            [type]="showNew() ? 'text' : 'password'"
+            formControlName="confirmarContrasena"
+            placeholder="Repite la nueva contraseña"
+            class="w-full px-4 py-2.5 bg-slate-50 border rounded-2xl text-xs sm:text-sm text-brand-night outline-none"
+            [class.border-rose-400]="isFieldInvalid('confirmarContrasena') || hasMismatchError()"
+            [class.border-slate-200]="!isFieldInvalid('confirmarContrasena') && !hasMismatchError()"
+          />
           @if (hasMismatchError()) {
             <p class="text-[11px] text-rose-500 mt-1">Las contraseñas no coinciden.</p>
           }
@@ -148,10 +171,10 @@ import { ToastStateService } from '../../../core/state/toast-state.service';
           <button
             type="submit"
             [disabled]="form.invalid || hasMismatchError() || isSubmitting()"
-            class="px-8 py-3 rounded-full bg-[#2456C6] hover:bg-[#1B429B] disabled:bg-slate-300 disabled:cursor-not-allowed text-white text-xs sm:text-sm font-bold transition-colors flex items-center gap-2 shadow-xs"
+            class="px-8 py-3 rounded-xl bg-brand-primary hover:bg-brand-petrol disabled:bg-slate-300 disabled:cursor-not-allowed text-white text-xs sm:text-sm font-bold transition-colors flex items-center gap-2 shadow-xs"
           >
             @if (isSubmitting()) {
-              <svg class="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24">
+              <svg class="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" aria-hidden="true">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
               </svg>
@@ -176,6 +199,7 @@ export class ChangePasswordComponent {
   public readonly isSubmitting = signal<boolean>(false);
   public readonly showCurrent = signal<boolean>(false);
   public readonly showNew = signal<boolean>(false);
+  public readonly errorMessage = signal<string | null>(null);
 
   public readonly form: FormGroup = this.fb.group({
     contrasenaActual: ['', [Validators.required]],
@@ -196,12 +220,16 @@ export class ChangePasswordComponent {
   }
 
   public onSubmit(): void {
+    if (this.isSubmitting()) {
+      return;
+    }
     if (this.form.invalid || this.hasMismatchError()) {
       this.form.markAllAsTouched();
       return;
     }
 
     this.isSubmitting.set(true);
+    this.errorMessage.set(null);
 
     const payload = {
       contrasenaActual: this.form.value.contrasenaActual,
@@ -209,14 +237,16 @@ export class ChangePasswordComponent {
     };
 
     this.authApi.changePassword(payload).subscribe({
-      next: () => {
+      next: (res) => {
         this.isSubmitting.set(false);
         this.form.reset();
-        this.toastState.success('Seguridad Actualizada', 'Tu contraseña ha sido cambiada exitosamente.');
+        this.toastState.success('Seguridad Actualizada', res?.message || 'Tu contraseña ha sido cambiada exitosamente.');
       },
-      error: () => {
+      error: (err) => {
         this.isSubmitting.set(false);
-        this.toastState.error('Error', 'La contraseña actual no es válida.');
+        const msg = err?.error?.mensaje || err?.error?.detail || err?.error?.message || 'La contraseña actual no es válida o no cumple con los requisitos.';
+        this.errorMessage.set(msg);
+        this.toastState.error('Error al actualizar contraseña', msg);
       }
     });
   }

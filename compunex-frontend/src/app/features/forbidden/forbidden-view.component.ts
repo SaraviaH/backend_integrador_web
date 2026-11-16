@@ -23,7 +23,7 @@ import { RouterModule } from '@angular/router';
         <div class="space-y-2">
           <h1 class="text-3xl font-black text-slate-900 tracking-tight">Acceso Corporativo Restringido</h1>
           <p class="text-xs text-slate-500 leading-relaxed max-w-md mx-auto">
-            La sección a la que intentas ingresar requiere privilegios de <strong class="text-slate-800">Proveedor Mayorista (ROLE_PROVEEDOR)</strong> o <strong class="text-slate-800">Administrador</strong> de la plataforma COMPUNEX.
+            La sección a la que intentas ingresar requiere una cuenta con perfil activo de <strong class="text-slate-800">Proveedor Mayorista (ROLE_PROVEEDOR)</strong> en la plataforma COMPUNEX.
           </p>
         </div>
 

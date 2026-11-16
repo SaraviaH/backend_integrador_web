@@ -1,30 +1,6 @@
 import { Routes } from '@angular/router';
 import { PublicLayoutComponent } from './layout/public-layout/public-layout.component';
 import { PanelLayoutComponent } from './layout/panel-layout/panel-layout.component';
-import { HomeViewComponent } from './features/home/home-view.component';
-import { CategoriesComponent } from './features/categories/categories.component';
-import { CatalogComponent } from './features/catalog/catalog.component';
-import { ProductDetailComponent } from './features/product-detail/product-detail.component';
-import { CartComponent } from './features/cart/cart.component';
-import { CheckoutWizardComponent } from './features/checkout/checkout-wizard.component';
-import { InvoiceViewerComponent } from './features/invoices/invoice-viewer.component';
-import { MyOrdersComponent } from './features/orders/my-orders/my-orders.component';
-import { OrderDetailComponent } from './features/orders/order-detail/order-detail.component';
-import { ProfileComponent } from './features/account/profile/profile.component';
-import { ChangePasswordComponent } from './features/account/security/change-password.component';
-import { ActivateProviderComponent } from './features/account/activate-provider/activate-provider.component';
-import { ProviderDashboardComponent } from './features/provider/dashboard/provider-dashboard.component';
-import { ProviderCompanyProfileComponent } from './features/provider/company-profile/provider-company-profile.component';
-import { ProviderProductsListComponent } from './features/provider/products/products-list/provider-products-list.component';
-import { ProviderProductFormComponent } from './features/provider/products/product-form/provider-product-form.component';
-import { ProviderProductDetailComponent } from './features/provider/products/product-detail/provider-product-detail.component';
-import { ProviderSalesListComponent } from './features/provider/sales/sales-list/provider-sales-list.component';
-import { ProviderSaleDetailComponent } from './features/provider/sales/sale-detail/provider-sale-detail.component';
-import { LoginComponent } from './features/auth/login/login.component';
-import { RegisterCompanyComponent } from './features/auth/register-company/register-company.component';
-import { ForbiddenViewComponent } from './features/forbidden/forbidden-view.component';
-import { NotFoundViewComponent } from './features/not-found/not-found-view.component';
-import { LegalViewComponent } from './features/legal/legal-view.component';
 import { roleGuard } from './core/guards/role.guard';
 import { authGuard } from './core/guards/auth.guard';
 
@@ -36,12 +12,12 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        component: HomeViewComponent,
+        loadComponent: () => import('./features/home/home-view.component').then(m => m.HomeViewComponent),
         title: 'COMPUNEX B2B · Mayorista Tecnológico'
       },
       {
         path: 'categories',
-        component: CategoriesComponent,
+        loadComponent: () => import('./features/categories/categories.component').then(m => m.CategoriesComponent),
         title: 'Categorías de Hardware · COMPUNEX B2B'
       },
       {
@@ -51,17 +27,17 @@ export const routes: Routes = [
       },
       {
         path: 'catalog',
-        component: CatalogComponent,
+        loadComponent: () => import('./features/catalog/catalog.component').then(m => m.CatalogComponent),
         title: 'Catálogo de Hardware B2B · COMPUNEX'
       },
       {
         path: 'catalog/:id',
-        component: ProductDetailComponent,
+        loadComponent: () => import('./features/product-detail/product-detail.component').then(m => m.ProductDetailComponent),
         title: 'Detalle de Producto · COMPUNEX B2B'
       },
       {
         path: 'productos/:id',
-        component: ProductDetailComponent,
+        loadComponent: () => import('./features/product-detail/product-detail.component').then(m => m.ProductDetailComponent),
         title: 'Detalle de Producto · COMPUNEX B2B'
       },
       {
@@ -71,7 +47,7 @@ export const routes: Routes = [
       },
       {
         path: 'carrito',
-        component: CartComponent,
+        loadComponent: () => import('./features/cart/cart.component').then(m => m.CartComponent),
         title: 'Carrito de Compras B2B · COMPUNEX'
       },
       {
@@ -86,27 +62,27 @@ export const routes: Routes = [
       },
       {
         path: 'checkout/datos-facturacion',
-        component: CheckoutWizardComponent,
+        loadComponent: () => import('./features/checkout/checkout-wizard.component').then(m => m.CheckoutWizardComponent),
         canActivate: [authGuard],
         title: 'Datos de Facturación · COMPUNEX B2B'
       },
       {
         path: 'checkout/revision',
-        component: CheckoutWizardComponent,
+        loadComponent: () => import('./features/checkout/checkout-wizard.component').then(m => m.CheckoutWizardComponent),
         canActivate: [authGuard],
         title: 'Revisión del Pedido · COMPUNEX B2B'
       },
       {
         path: 'checkout/confirmacion',
-        component: CheckoutWizardComponent,
+        loadComponent: () => import('./features/checkout/checkout-wizard.component').then(m => m.CheckoutWizardComponent),
         canActivate: [authGuard],
         title: 'Confirmación de Compra · COMPUNEX B2B'
       },
       {
         path: 'pedidos/:id/comprobante',
-        component: InvoiceViewerComponent,
+        loadComponent: () => import('./features/invoices/invoice-viewer.component').then(m => m.InvoiceViewerComponent),
         canActivate: [authGuard],
-        title: 'Factura Electrónica SUNAT · COMPUNEX B2B'
+        title: 'Factura Electrónica · COMPUNEX B2B'
       },
       {
         path: 'comprobantes/:id',
@@ -115,13 +91,13 @@ export const routes: Routes = [
       },
       {
         path: 'cuenta/mis-compras',
-        component: MyOrdersComponent,
+        loadComponent: () => import('./features/orders/my-orders/my-orders.component').then(m => m.MyOrdersComponent),
         canActivate: [authGuard],
         title: 'Mis Compras B2B · COMPUNEX'
       },
       {
         path: 'cuenta/mis-compras/:id',
-        component: OrderDetailComponent,
+        loadComponent: () => import('./features/orders/order-detail/order-detail.component').then(m => m.OrderDetailComponent),
         canActivate: [authGuard],
         title: 'Detalle de Orden y Trazabilidad · COMPUNEX B2B'
       },
@@ -132,35 +108,35 @@ export const routes: Routes = [
       },
       {
         path: 'cuenta/perfil',
-        component: ProfileComponent,
+        loadComponent: () => import('./features/account/profile/profile.component').then(m => m.ProfileComponent),
         canActivate: [authGuard],
         title: 'Mi Cuenta y Perfil Corporativo · COMPUNEX B2B'
       },
       {
         path: 'cuenta/seguridad',
-        component: ChangePasswordComponent,
+        loadComponent: () => import('./features/account/security/change-password.component').then(m => m.ChangePasswordComponent),
         canActivate: [authGuard],
         title: 'Seguridad y Contraseña · COMPUNEX B2B'
       },
       {
         path: 'cuenta/activar-proveedor',
-        component: ActivateProviderComponent,
+        loadComponent: () => import('./features/account/activate-provider/activate-provider.component').then(m => m.ActivateProviderComponent),
         canActivate: [authGuard],
         title: 'Activar Perfil Proveedor · COMPUNEX B2B'
       },
       {
         path: 'auth/login',
-        component: LoginComponent,
+        loadComponent: () => import('./features/auth/login/login.component').then(m => m.LoginComponent),
         title: 'Iniciar Sesión · COMPUNEX B2B'
       },
       {
         path: 'auth/registro-empresa',
-        component: RegisterCompanyComponent,
+        loadComponent: () => import('./features/auth/register-company/register-company.component').then(m => m.RegisterCompanyComponent),
         title: 'Registrar Empresa · COMPUNEX B2B'
       },
       {
         path: 'forbidden',
-        component: ForbiddenViewComponent,
+        loadComponent: () => import('./features/forbidden/forbidden-view.component').then(m => m.ForbiddenViewComponent),
         title: 'Acceso Denegado · COMPUNEX B2B'
       },
       {
@@ -170,29 +146,29 @@ export const routes: Routes = [
       },
       {
         path: 'terminos',
-        component: LegalViewComponent,
+        loadComponent: () => import('./features/legal/legal-view.component').then(m => m.LegalViewComponent),
         data: { legal: 'terms' },
         title: 'Términos y Condiciones · COMPUNEX B2B'
       },
       {
         path: 'privacidad',
-        component: LegalViewComponent,
+        loadComponent: () => import('./features/legal/legal-view.component').then(m => m.LegalViewComponent),
         data: { legal: 'privacy' },
         title: 'Política de Privacidad · COMPUNEX B2B'
       },
       {
         path: '404',
-        component: NotFoundViewComponent,
+        loadComponent: () => import('./features/not-found/not-found-view.component').then(m => m.NotFoundViewComponent),
         title: '404 No Encontrado · COMPUNEX B2B'
       }
     ]
   },
 
-  // Zona Privada / Panel Proveedor y Administrador (Protegida por Roles)
+  // Zona Privada / Panel Proveedor (Protegida estrictamente para ROLE_PROVEEDOR)
   {
     path: 'panel',
     component: PanelLayoutComponent,
-    canActivate: [roleGuard(['ROLE_PROVEEDOR', 'ROLE_ADMIN'])],
+    canActivate: [roleGuard(['ROLE_PROVEEDOR'])],
     children: [
       {
         path: '',
@@ -201,12 +177,12 @@ export const routes: Routes = [
       },
       {
         path: 'dashboard',
-        component: ProviderDashboardComponent,
+        loadComponent: () => import('./features/provider/dashboard/provider-dashboard.component').then(m => m.ProviderDashboardComponent),
         title: 'Dashboard Métricas Proveedor · COMPUNEX B2B'
       },
       {
         path: 'profile',
-        component: ProviderCompanyProfileComponent,
+        loadComponent: () => import('./features/provider/company-profile/provider-company-profile.component').then(m => m.ProviderCompanyProfileComponent),
         title: 'Perfil Comercial y Branding · COMPUNEX B2B'
       },
       {
@@ -216,7 +192,7 @@ export const routes: Routes = [
       },
       {
         path: 'products',
-        component: ProviderProductsListComponent,
+        loadComponent: () => import('./features/provider/products/products-list/provider-products-list.component').then(m => m.ProviderProductsListComponent),
         title: 'Mis Productos B2B · COMPUNEX B2B'
       },
       {
@@ -226,7 +202,7 @@ export const routes: Routes = [
       },
       {
         path: 'products/new',
-        component: ProviderProductFormComponent,
+        loadComponent: () => import('./features/provider/products/product-form/provider-product-form.component').then(m => m.ProviderProductFormComponent),
         title: 'Publicar Nuevo Producto · COMPUNEX B2B'
       },
       {
@@ -236,7 +212,7 @@ export const routes: Routes = [
       },
       {
         path: 'products/:id',
-        component: ProviderProductDetailComponent,
+        loadComponent: () => import('./features/provider/products/product-detail/provider-product-detail.component').then(m => m.ProviderProductDetailComponent),
         title: 'Ficha de Producto · COMPUNEX B2B'
       },
       {
@@ -246,7 +222,7 @@ export const routes: Routes = [
       },
       {
         path: 'products/:id/edit',
-        component: ProviderProductFormComponent,
+        loadComponent: () => import('./features/provider/products/product-form/provider-product-form.component').then(m => m.ProviderProductFormComponent),
         title: 'Editar Producto · COMPUNEX B2B'
       },
       {
@@ -256,7 +232,7 @@ export const routes: Routes = [
       },
       {
         path: 'sales',
-        component: ProviderSalesListComponent,
+        loadComponent: () => import('./features/provider/sales/sales-list/provider-sales-list.component').then(m => m.ProviderSalesListComponent),
         title: 'Ventas Recibidas B2B · COMPUNEX B2B'
       },
       {
@@ -266,7 +242,7 @@ export const routes: Routes = [
       },
       {
         path: 'sales/:id',
-        component: ProviderSaleDetailComponent,
+        loadComponent: () => import('./features/provider/sales/sale-detail/provider-sale-detail.component').then(m => m.ProviderSaleDetailComponent),
         title: 'Atención de Despacho · COMPUNEX B2B'
       },
       {
@@ -285,7 +261,7 @@ export const routes: Routes = [
   // Fallback 404
   {
     path: '**',
-    component: NotFoundViewComponent,
+    loadComponent: () => import('./features/not-found/not-found-view.component').then(m => m.NotFoundViewComponent),
     title: '404 No Encontrado · COMPUNEX B2B'
   }
 ];

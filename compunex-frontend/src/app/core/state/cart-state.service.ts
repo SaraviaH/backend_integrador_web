@@ -2,6 +2,12 @@ import { Injectable, signal, computed } from '@angular/core';
 import { CartItem, ProviderCartGroup } from '../models/order.model';
 import { ProductCard, ProductDetail } from '../models/catalog.model';
 
+export interface AddCartItemResult {
+  added: boolean;
+  addedQty: number;
+  reason?: 'OUT_OF_STOCK' | 'MAX_STOCK';
+}
+
 const CART_KEY = 'compunex_b2b_cart';
 const IGV_RATE = 0.18;
 
@@ -67,35 +73,55 @@ export class CartStateService {
     });
   });
 
-  public addItem(product: ProductCard | ProductDetail, cantidad: number = 1): void {
+  public addItem(product: ProductCard | ProductDetail, cantidad: number = 1): AddCartItemResult {
+    const requested = Math.max(1, Math.floor(Number(cantidad) || 1));
+    if (product.stockDisponible === 0) {
+      return { added: false, addedQty: 0, reason: 'OUT_OF_STOCK' };
+    }
+
     const currentList = this._items();
     const existingIndex = currentList.findIndex(it => it.productoId === product.id);
+    const existing = existingIndex > -1 ? currentList[existingIndex] : undefined;
+    const maxStock = product.stockDisponible ?? existing?.stockDisponible;
 
-    if (existingIndex > -1) {
+    if (existing) {
+      const remaining = maxStock != null ? maxStock - existing.cantidad : requested;
+      if (remaining <= 0) {
+        return { added: false, addedQty: 0, reason: 'MAX_STOCK' };
+      }
+
+      const addedQty = Math.min(requested, remaining);
+      const newQty = existing.cantidad + addedQty;
       const updated = [...currentList];
-      const existing = updated[existingIndex];
-      const newQty = existing.cantidad + cantidad;
       updated[existingIndex] = {
         ...existing,
         cantidad: newQty,
+        stockDisponible: maxStock,
         subtotal: Math.round(newQty * existing.precioUnitario * 100) / 100,
       };
       this.updateState(updated);
-    } else {
-      const newItem: CartItem = {
-        productoId: product.id,
-        nombre: product.nombre,
-        sku: product.sku,
-        precioUnitario: product.precioUnitario,
-        cantidad,
-        subtotal: Math.round(cantidad * product.precioUnitario * 100) / 100,
-        proveedorId: product.proveedorId,
-        proveedorRazonSocial: product.proveedorRazonSocial,
-        imagenUrl: product.imagenPrincipalUrl,
-        stockDisponible: product.stockDisponible,
-      };
-      this.updateState([...currentList, newItem]);
+      return { added: true, addedQty };
     }
+
+    const addedQty = maxStock != null ? Math.min(requested, maxStock) : requested;
+    if (addedQty <= 0) {
+      return { added: false, addedQty: 0, reason: 'OUT_OF_STOCK' };
+    }
+
+    const newItem: CartItem = {
+      productoId: product.id,
+      nombre: product.nombre,
+      sku: product.sku,
+      precioUnitario: product.precioUnitario,
+      cantidad: addedQty,
+      subtotal: Math.round(addedQty * product.precioUnitario * 100) / 100,
+      proveedorId: product.proveedorId,
+      proveedorRazonSocial: product.proveedorRazonSocial,
+      imagenUrl: product.imagenPrincipalUrl,
+      stockDisponible: product.stockDisponible,
+    };
+    this.updateState([...currentList, newItem]);
+    return { added: true, addedQty };
   }
 
   public updateQuantity(productoId: number, cantidad: number): void {

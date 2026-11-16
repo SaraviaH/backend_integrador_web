@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ProviderApiService } from '../../../../core/services/provider-api.service';
 import { CatalogApiService } from '../../../../core/services/catalog-api.service';
+import { ToastStateService } from '../../../../core/state/toast-state.service';
 import { Category, CreateProductRequest, UpdateProductRequest } from '../../../../core/models/catalog.model';
 import { ProductImageUploaderComponent } from './components/product-image-uploader/product-image-uploader.component';
 import { ProductPricingCalcComponent } from './components/product-pricing-calc/product-pricing-calc.component';
@@ -29,7 +30,7 @@ import { ProductPricingCalcComponent } from './components/product-pricing-calc/p
             <a routerLink="/panel/products" class="hover:text-brand-primary transition-colors">Catálogo</a>
             <span>/</span>
             <span class="text-slate-800 font-medium">
-              {{ isEditMode() ? 'Editar Producto (P-23)' : 'Nuevo Producto (P-21)' }}
+              {{ isEditMode() ? 'Editar Producto' : 'Nuevo Producto' }}
             </span>
           </nav>
           <h1 class="text-2xl font-black text-slate-900 tracking-tight">
@@ -226,11 +227,11 @@ import { ProductPricingCalcComponent } from './components/product-pricing-calc/p
                         step="0.01"
                         min="1"
                         formControlName="precioTotalCaja"
-                        placeholder="Automǭtico"
+                        placeholder="Automático"
                         class="w-full pl-8 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all"
                       />
                     </div>
-                    <p class="text-[10px] text-slate-400 mt-1">Si queda vac��o: precio unitario × unidades.</p>
+                    <p class="text-[10px] text-slate-400 mt-1">Si queda vacío: precio unitario × unidades.</p>
                   </div>
 
                   <!-- Unidades por paquete -->
@@ -348,6 +349,7 @@ export class ProviderProductFormComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly providerApi = inject(ProviderApiService);
   private readonly catalogApi = inject(CatalogApiService);
+  private readonly toastState = inject(ToastStateService);
 
   public readonly isEditMode = signal<boolean>(false);
   public readonly productId = signal<number | null>(null);
@@ -388,13 +390,10 @@ export class ProviderProductFormComponent implements OnInit {
   private loadCategories(): void {
     this.catalogApi.getCategories().subscribe({
       next: (cats) => this.categories.set(cats || []),
-      error: () => this.categories.set([
-        { id: 'ram', nombre: 'Memoria RAM' },
-        { id: 'ssd', nombre: 'Unidades SSD' },
-        { id: 'gpu', nombre: 'Tarjetas Gráficas' },
-        { id: 'cpu', nombre: 'Procesadores' },
-        { id: 'motherboard', nombre: 'Placas Madre' }
-      ])
+      error: () => {
+        this.categories.set([]);
+        this.submitError.set('No se pudieron cargar las categorías del catálogo.');
+      }
     });
   }
 
@@ -406,14 +405,14 @@ export class ProviderProductFormComponent implements OnInit {
         this.form.patchValue({
           nombre: p.nombre,
           sku: p.sku,
-          categoriaId: p.categoriaId || this.categories()[0]?.id || 'ram',
+          categoriaId: p.categoriaId || this.categories()[0]?.id || null,
           marca: p.marca,
           modelo: p.modelo,
           descripcion: p.descripcion,
           precioUnitario: p.precioUnitario,
           precioTotalCaja: p.precioTotalCaja,
           unidadesPorPaquete: p.unidadesPorPaquete || 1,
-          stockDisponible: p.stockDisponible,
+          stockDisponible: p.stockDisponible ?? 0,
           garantiaMeses: p.garantiaMeses || 12,
           urlImagen: p.imagenPrincipalUrl
         });
@@ -432,6 +431,9 @@ export class ProviderProductFormComponent implements OnInit {
   }
 
   public onSubmit(): void {
+    if (this.isSubmitting()) {
+      return;
+    }
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -447,7 +449,7 @@ export class ProviderProductFormComponent implements OnInit {
         id: this.productId()!,
         nombre: val.nombre,
         sku: val.sku,
-        categoriaId: String(val.categoriaId || 'ram'),
+        categoriaId: String(val.categoriaId || ''),
         precioUnitario: Number(val.precioUnitario),
         precioTotalCaja: val.precioTotalCaja ? Number(val.precioTotalCaja) : undefined,
         unidadesPorPaquete: Number(val.unidadesPorPaquete) || 1,
@@ -462,18 +464,21 @@ export class ProviderProductFormComponent implements OnInit {
       this.providerApi.updateProduct(this.productId()!, updateData).subscribe({
         next: () => {
           this.isSubmitting.set(false);
+          this.toastState.success('Producto actualizado correctamente', `"${val.nombre}" fue guardado en tu catálogo.`, 'product-save');
           this.router.navigate(['/panel/products']);
         },
-        error: () => {
-          this.submitError.set('Ocurrió un error al actualizar el producto.');
+        error: (err) => {
+          const msg = err?.error?.mensaje || err?.error?.detail || 'No se pudieron guardar los cambios del producto.';
+          this.submitError.set(msg);
           this.isSubmitting.set(false);
+          this.toastState.error('No se pudo actualizar el producto', msg, 'product-save-err');
         }
       });
     } else {
       const createData: CreateProductRequest = {
         nombre: val.nombre,
         sku: val.sku,
-        categoriaId: String(val.categoriaId || 'ram'),
+        categoriaId: String(val.categoriaId || ''),
         precioUnitario: Number(val.precioUnitario),
         precioTotalCaja: val.precioTotalCaja ? Number(val.precioTotalCaja) : undefined,
         unidadesPorPaquete: Number(val.unidadesPorPaquete) || 1,
@@ -488,11 +493,14 @@ export class ProviderProductFormComponent implements OnInit {
       this.providerApi.createProduct(createData).subscribe({
         next: () => {
           this.isSubmitting.set(false);
+          this.toastState.success('Producto publicado correctamente', `"${val.nombre}" ya está disponible en el catálogo.`, 'product-save');
           this.router.navigate(['/panel/products']);
         },
-        error: () => {
-          this.submitError.set('Ocurrió un error al registrar el nuevo producto.');
+        error: (err) => {
+          const msg = err?.error?.mensaje || err?.error?.detail || 'No se pudo publicar el nuevo producto.';
+          this.submitError.set(msg);
           this.isSubmitting.set(false);
+          this.toastState.error('No se pudo publicar el producto', msg, 'product-save-err');
         }
       });
     }

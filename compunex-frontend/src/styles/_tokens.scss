@@ -2,21 +2,26 @@
 // COMPUNEX B2B — Design Tokens Centralizados (SCSS)
 // ==============================================================================
 
-// Colores de Marca y UI
-$color-primary: #2456c6;
-$color-primary-hover: #1b429b;
-$color-primary-light: #eef4ff;
+// Colores de Marca y UI — Paleta Oficial COMPUNEX B2B
+$color-night: #04202e;
+$color-deep: #0a3c55;
+$color-petrol: #0f5e83;
+$color-primary: #1786b4;
+$color-primary-hover: #0f5e83;
+$color-sky: #4fb3da;
+$color-ice: #98d5ee;
+$color-primary-light: #e1f2fa;
 
-$color-secondary: #142238;
-$color-secondary-hover: #0e1726;
+$color-secondary: #04202e;
+$color-secondary-hover: #0a3c55;
 
-$color-background: #f5f7fa;
+$color-background: #f4f9fc;
 $color-surface: #ffffff;
-$color-border: #e2e8f0;
+$color-border: #cfe4ee;
 
-$color-text: #1e293b;
-$color-text-muted: #64748b;
-$color-text-light: #94a3b8;
+$color-text: #04202e;
+$color-text-muted: #476577;
+$color-text-light: #7a97a8;
 
 // Estados del Negocio
 $color-success: #10b981;

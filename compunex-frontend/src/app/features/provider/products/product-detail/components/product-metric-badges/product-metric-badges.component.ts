@@ -8,24 +8,32 @@ import { ProductDetail } from '../../../../../../core/models/catalog.model';
   imports: [CommonModule],
   template: `
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <!-- Stock Disponible -->
+      <!-- Stock Referencial -->
       <div class="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-xs">
-        <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Stock en Almacén</p>
-        <p class="text-xl font-black text-slate-900 mt-1">
-          {{ product.stockDisponible }} <span class="text-xs font-semibold text-slate-500">unidades</span>
-        </p>
-        <div class="mt-2 flex items-center gap-1.5 text-[11px]">
-          @if (product.stockDisponible > 5) {
-            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-            <span class="text-emerald-700 font-semibold">Nivel Óptimo</span>
-          } @else if (product.stockDisponible > 0) {
-            <span class="w-2 h-2 rounded-full bg-amber-500"></span>
-            <span class="text-amber-700 font-semibold">Stock Crítico</span>
-          } @else {
-            <span class="w-2 h-2 rounded-full bg-rose-500"></span>
-            <span class="text-rose-700 font-semibold">Agotado</span>
-          }
-        </div>
+        <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Stock Referencial</p>
+        @if (product.stockDisponible == null) {
+          <p class="text-xl font-black text-slate-900 mt-1">No especificado</p>
+          <div class="mt-2 flex items-center gap-1.5 text-[11px]">
+            <span class="w-2 h-2 rounded-full bg-slate-400"></span>
+            <span class="text-slate-600 font-semibold">Sin dato en ficha</span>
+          </div>
+        } @else {
+          <p class="text-xl font-black text-slate-900 mt-1">
+            {{ product.stockDisponible }} <span class="text-xs font-semibold text-slate-500">unidades</span>
+          </p>
+          <div class="mt-2 flex items-center gap-1.5 text-[11px]">
+            @if (product.stockDisponible > 5) {
+              <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+              <span class="text-emerald-700 font-semibold">Nivel Óptimo</span>
+            } @else if (product.stockDisponible > 0) {
+              <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+              <span class="text-amber-700 font-semibold">Stock Crítico</span>
+            } @else {
+              <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+              <span class="text-rose-700 font-semibold">Agotado</span>
+            }
+          </div>
+        }
       </div>
 
       <!-- Precio Base Unitario -->
