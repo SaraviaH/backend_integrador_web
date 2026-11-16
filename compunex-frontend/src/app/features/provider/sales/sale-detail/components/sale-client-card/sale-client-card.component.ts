@@ -27,7 +27,7 @@ import { ProviderSaleItem } from '../../../../../../core/models/provider.model';
 
           <div>
             <span class="text-slate-400 block text-[11px] font-semibold">Factura SUNAT</span>
-            <span class="font-mono font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded text-[11px]">
+            <span class="font-mono font-bold text-brand-primary bg-brand-tint px-2 py-0.5 rounded text-[11px]">
               {{ sale.numeroFacturaSimulada || 'Pendiente' }}
             </span>
           </div>

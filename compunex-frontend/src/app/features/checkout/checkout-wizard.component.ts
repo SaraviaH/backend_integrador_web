@@ -22,11 +22,11 @@ import { ConfirmationStepComponent } from './confirmation-step/confirmation-step
       
       <!-- Migas de Pan (Breadcrumbs) -->
       <nav class="flex items-center gap-2 text-xs text-slate-400">
-        <a routerLink="/" class="hover:text-[#2456C6] transition-colors">Inicio</a>
+        <a routerLink="/" class="hover:text-brand-primary transition-colors">Inicio</a>
         <span>/</span>
-        <a routerLink="/carrito" class="hover:text-[#2456C6] transition-colors">Carrito</a>
+        <a routerLink="/carrito" class="hover:text-brand-primary transition-colors">Carrito</a>
         <span>/</span>
-        <span class="text-[#142238] font-bold">Asistente de Checkout B2B</span>
+        <span class="text-brand-night font-bold">Asistente de Checkout B2B</span>
       </nav>
 
       <!-- Indicador Visual de 3 Pasos (Stepper B2B) -->
@@ -39,11 +39,11 @@ import { ConfirmationStepComponent } from './confirmation-step/confirmation-step
             (click)="goToStep(1)"
             [disabled]="checkoutState.currentStep() === 3"
             class="flex flex-col sm:flex-row items-center justify-center gap-2 p-2 rounded-2xl transition-all"
-            [class.bg-blue-50]="checkoutState.currentStep() === 1"
+            [class.bg-brand-tint]="checkoutState.currentStep() === 1"
           >
             <div
               class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs transition-colors shrink-0"
-              [class.bg-[#2456C6]]="checkoutState.currentStep() >= 1"
+              [class.bg-brand-primary]="checkoutState.currentStep() >= 1"
               [class.text-white]="checkoutState.currentStep() >= 1"
               [class.bg-slate-100]="checkoutState.currentStep() < 1"
               [class.text-slate-400]="checkoutState.currentStep() < 1"
@@ -52,7 +52,7 @@ import { ConfirmationStepComponent } from './confirmation-step/confirmation-step
             </div>
             <div class="text-left hidden sm:block">
               <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Paso 1</span>
-              <span class="text-xs font-bold text-[#142238]">Datos Facturación</span>
+              <span class="text-xs font-bold text-brand-night">Datos Facturación</span>
             </div>
           </button>
 
@@ -62,11 +62,11 @@ import { ConfirmationStepComponent } from './confirmation-step/confirmation-step
             (click)="goToStep(2)"
             [disabled]="checkoutState.currentStep() === 3 || !checkoutState.billingData()"
             class="flex flex-col sm:flex-row items-center justify-center gap-2 p-2 rounded-2xl transition-all"
-            [class.bg-blue-50]="checkoutState.currentStep() === 2"
+            [class.bg-brand-tint]="checkoutState.currentStep() === 2"
           >
             <div
               class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs transition-colors shrink-0"
-              [class.bg-[#2456C6]]="checkoutState.currentStep() >= 2"
+              [class.bg-brand-primary]="checkoutState.currentStep() >= 2"
               [class.text-white]="checkoutState.currentStep() >= 2"
               [class.bg-slate-100]="checkoutState.currentStep() < 2"
               [class.text-slate-400]="checkoutState.currentStep() < 2"
@@ -75,7 +75,7 @@ import { ConfirmationStepComponent } from './confirmation-step/confirmation-step
             </div>
             <div class="text-left hidden sm:block">
               <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Paso 2</span>
-              <span class="text-xs font-bold text-[#142238]">Revisión Pedido</span>
+              <span class="text-xs font-bold text-brand-night">Revisión Pedido</span>
             </div>
           </button>
 
@@ -95,7 +95,7 @@ import { ConfirmationStepComponent } from './confirmation-step/confirmation-step
             </div>
             <div class="text-left hidden sm:block">
               <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Paso 3</span>
-              <span class="text-xs font-bold text-[#142238]">Confirmación</span>
+              <span class="text-xs font-bold text-brand-night">Confirmación</span>
             </div>
           </div>
 
@@ -108,12 +108,12 @@ import { ConfirmationStepComponent } from './confirmation-step/confirmation-step
 
       @switch (checkoutState.currentStep()) {
         
-        <!-- PASO 1 (P-10): Facturación SUNAT -->
+        <!-- PASO 1: Facturación SUNAT -->
         @case (1) {
           <app-billing-step (nextStep)="onStep1Complete()" />
         }
 
-        <!-- PASO 2 (P-11): Revisión y Split Order -->
+        <!-- PASO 2: Revisión y Split Order -->
         @case (2) {
           <app-review-step
             (prevStep)="goToStep(1)"
@@ -121,7 +121,7 @@ import { ConfirmationStepComponent } from './confirmation-step/confirmation-step
           />
         }
 
-        <!-- PASO 3 (P-12): Confirmación y Comprobantes -->
+        <!-- PASO 3: Confirmación y Comprobantes -->
         @case (3) {
           <app-confirmation-step />
         }

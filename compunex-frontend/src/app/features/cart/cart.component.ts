@@ -14,21 +14,21 @@ import { CartGroupItemComponent } from './cart-group-item/cart-group-item.compon
       
       <!-- Migas de Pan (Breadcrumbs) -->
       <nav class="flex items-center gap-2 text-xs text-slate-400">
-        <a routerLink="/" class="hover:text-[#2456C6] transition-colors">Inicio</a>
+        <a routerLink="/" class="hover:text-brand-primary transition-colors">Inicio</a>
         <span>/</span>
-        <a routerLink="/catalog" class="hover:text-[#2456C6] transition-colors">Catálogo</a>
+        <a routerLink="/catalog" class="hover:text-brand-primary transition-colors">Catálogo</a>
         <span>/</span>
-        <span class="text-[#142238] font-bold">Carrito de Compras B2B</span>
+        <span class="text-brand-night font-bold">Carrito de Compras B2B</span>
       </nav>
 
       <!-- Encabezado de Pantalla P-09 -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-6">
         <div>
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-[#2456C6] text-xs font-semibold mb-2">
-            <span class="w-1.5 h-1.5 rounded-full bg-[#2456C6]"></span>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-tint border border-brand-tint text-brand-primary text-xs font-semibold mb-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-brand-primary"></span>
             Split Order Multi-Proveedor
           </div>
-          <h1 class="text-2xl sm:text-3xl font-black text-[#142238] tracking-tight font-display">
+          <h1 class="text-2xl sm:text-3xl font-black text-brand-night tracking-tight font-display">
             Bolsa de Pedidos Mayorista
           </h1>
           <p class="text-xs sm:text-sm text-slate-500 mt-1">
@@ -53,7 +53,7 @@ import { CartGroupItemComponent } from './cart-group-item/cart-group-item.compon
       </div>
 
       <!-- ========================================================================= -->
-      <!-- 4 ESTADOS DE PANTALLA (P-09)                                             -->
+      <!-- 4 ESTADOS DE PANTALLA                                                    -->
       <!-- ========================================================================= -->
 
       <!-- 1. ESTADO VACÍO -->
@@ -65,7 +65,7 @@ import { CartGroupItemComponent } from './cart-group-item/cart-group-item.compon
             </svg>
           </div>
           <div class="space-y-1.5">
-            <h2 class="text-lg font-bold text-[#142238]">Tu carrito mayorista está vacío</h2>
+            <h2 class="text-lg font-bold text-brand-night">Tu carrito mayorista está vacío</h2>
             <p class="text-xs text-slate-500 max-w-sm mx-auto leading-relaxed">
               No tienes artículos seleccionados en tu orden de compra. Puedes explorar nuestro catálogo B2B de componentes y estaciones de trabajo.
             </p>
@@ -73,7 +73,7 @@ import { CartGroupItemComponent } from './cart-group-item/cart-group-item.compon
           <div class="pt-2">
             <a
               routerLink="/catalog"
-              class="px-6 py-3 rounded-full bg-[#2456C6] hover:bg-[#1B429B] text-white text-xs font-bold transition-colors inline-flex items-center gap-2 shadow-xs"
+              class="px-6 py-3 rounded-full bg-brand-primary hover:bg-brand-petrol text-white text-xs font-bold transition-colors inline-flex items-center gap-2 shadow-xs"
             >
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
@@ -93,14 +93,14 @@ import { CartGroupItemComponent } from './cart-group-item/cart-group-item.compon
           <div class="lg:col-span-8 space-y-6">
             
             <!-- Banner Informativo Split Order B2B -->
-            <div class="p-5 rounded-3xl bg-blue-50/70 border border-blue-200/70 text-blue-900 space-y-2">
-              <div class="flex items-center gap-2 text-xs font-bold text-[#2456C6]">
+            <div class="p-5 rounded-3xl bg-brand-tint/70 border border-brand-ice/70 text-brand-night space-y-2">
+              <div class="flex items-center gap-2 text-xs font-bold text-brand-primary">
                 <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 Arquitectura Split Order B2B
               </div>
-              <p class="text-xs text-blue-800/90 leading-relaxed">
+              <p class="text-xs text-brand-deep/90 leading-relaxed">
                 Tu orden agrupa productos de <strong>{{ cartState.itemsByProvider().length }} {{ cartState.itemsByProvider().length === 1 ? 'proveedor' : 'proveedores distintos' }}</strong>. 
                 Al confirmar la compra, la plataforma dividirá automáticamente el pedido en subórdenes independientes para garantizar el despacho directo de cada almacén y la emisión individual de facturas electrónicas.
               </p>
@@ -121,7 +121,7 @@ import { CartGroupItemComponent } from './cart-group-item/cart-group-item.compon
             <div class="pt-4">
               <a
                 routerLink="/catalog"
-                class="inline-flex items-center gap-2 text-xs font-bold text-[#2456C6] hover:text-[#1B429B] hover:underline transition-colors"
+                class="inline-flex items-center gap-2 text-xs font-bold text-brand-primary hover:text-brand-petrol hover:underline transition-colors"
               >
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -137,7 +137,7 @@ import { CartGroupItemComponent } from './cart-group-item/cart-group-item.compon
             
             <div class="bg-white rounded-3xl border border-slate-200/80 p-6 space-y-6 shadow-xs">
               
-              <h2 class="text-sm font-black text-[#142238] uppercase tracking-wider pb-3 border-b border-slate-100 flex items-center justify-between">
+              <h2 class="text-sm font-black text-brand-night uppercase tracking-wider pb-3 border-b border-slate-100 flex items-center justify-between">
                 <span>Resumen del Pedido</span>
                 <span class="text-xs font-normal text-slate-400">
                   {{ cartState.totalItemsCount() }} {{ cartState.totalItemsCount() === 1 ? 'unidad' : 'unidades' }}
@@ -171,9 +171,9 @@ import { CartGroupItemComponent } from './cart-group-item/cart-group-item.compon
                   <span>IGV (18% Ley Peruana):</span>
                   <span class="font-semibold text-slate-800">S/ {{ cartState.igv() | number:'1.2-2' }}</span>
                 </div>
-                <div class="flex justify-between text-base font-black text-[#142238] pt-3 border-t border-slate-100">
+                <div class="flex justify-between text-base font-black text-brand-night pt-3 border-t border-slate-100">
                   <span>Total Liquidación:</span>
-                  <span class="text-[#2456C6]">S/ {{ cartState.total() | number:'1.2-2' }}</span>
+                  <span class="text-brand-primary">S/ {{ cartState.total() | number:'1.2-2' }}</span>
                 </div>
               </div>
 
@@ -193,10 +193,10 @@ import { CartGroupItemComponent } from './cart-group-item/cart-group-item.compon
                 <button
                   type="button"
                   (click)="proceedToCheckout()"
-                  class="w-full py-3.5 px-6 rounded-full bg-[#2456C6] hover:bg-[#1B429B] text-white font-bold text-sm flex items-center justify-center gap-2 transition-colors shadow-xs"
+                  class="w-full py-3.5 px-6 rounded-xl bg-brand-primary hover:bg-brand-petrol text-white font-bold text-sm flex items-center justify-center gap-2 transition-colors shadow-xs"
                 >
-                  <span>Continuar al Checkout (P-10)</span>
-                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <span>Continuar al Checkout</span>
+                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                   </svg>
                 </button>
@@ -222,7 +222,7 @@ import { CartGroupItemComponent } from './cart-group-item/cart-group-item.compon
                 </svg>
               </div>
               <div class="text-center space-y-1">
-                <h3 class="text-base font-bold text-[#142238]">¿Vaciar todo el carrito?</h3>
+                <h3 class="text-base font-bold text-brand-night">¿Vaciar todo el carrito?</h3>
                 <p class="text-xs text-slate-500">Se eliminarán todos los artículos mayoristas agrupados en tu pedido.</p>
               </div>
               <div class="flex items-center justify-center gap-3 pt-2">
@@ -261,14 +261,19 @@ export class CartComponent {
   }
 
   public onRemoveItem(productoId: number): void {
+    const item = this.cartState.items().find(it => it.productoId === productoId);
     this.cartState.removeItem(productoId);
-    this.toastState.info('Producto eliminado', 'El artículo fue retirado de tu pedido.');
+    this.toastState.info(
+      'Producto eliminado del carrito',
+      item ? `"${item.nombre}" fue retirado de tu orden.` : 'El artículo fue retirado de tu orden.',
+      `cart-remove-${productoId}`
+    );
   }
 
   public confirmClear(): void {
     this.cartState.clear();
     this.showClearConfirm.set(false);
-    this.toastState.warning('Carrito vaciado', 'Todos los productos fueron retirados de la orden.');
+    this.toastState.warning('Carrito vaciado', 'Todos los productos fueron retirados de tu orden.', 'cart-clear');
   }
 
   public proceedToCheckout(): void {

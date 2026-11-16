@@ -17,7 +17,7 @@ export interface ProviderProductItem {
   unidadesPorPaquete?: number;
   unidadesPorPaqueteTexto?: string;
   pedidoMinimoTexto?: string;
-  stock: number;
+  stock?: number;
   activo: boolean;
   ultimaActualizacion: string;
   imagenUrl?: string;
@@ -30,8 +30,10 @@ export interface ProviderProfile {
   nombreComercial?: string;
   descripcion?: string;
   telefono: string;
+  correoContacto?: string;
   direccion: string;
   ciudad?: string;
+  politicaComercial?: string;
   urlLogo?: string;
   urlBanner?: string;
   anosMercado?: string;
@@ -43,6 +45,7 @@ export interface UpdateProviderProfileRequest {
   telefono?: string;
   direccion?: string;
   ciudad?: string;
+  politicaComercial?: string;
   urlLogo?: string;   // URL obtenida previamente desde /api/v1/media/upload (folder 'profiles')
   urlBanner?: string; // URL obtenida previamente desde /api/v1/media/upload (folder 'profiles')
 }

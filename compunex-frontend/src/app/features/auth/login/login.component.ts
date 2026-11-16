@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -17,10 +17,12 @@ import { HttpErrorResponse } from '@angular/common/http';
         
         <!-- Encabezado de la Pantalla P-06 -->
         <div class="text-center space-y-2">
-          <div class="inline-flex w-12 h-12 rounded-2xl bg-[#2456C6] text-white items-center justify-center font-black text-2xl shadow-xs mb-2">
-            C
-          </div>
-          <h1 class="text-2xl sm:text-3xl font-black text-[#142238] tracking-tight font-display">
+          <img
+            src="/images/compunex-icon.png"
+            alt="COMPUNEX B2B"
+            class="inline-block w-12 h-12 rounded-2xl object-contain shadow-xs mb-2"
+          />
+          <h1 class="text-2xl sm:text-3xl font-black text-brand-night tracking-tight font-display">
             Iniciar sesión
           </h1>
           <p class="text-xs text-slate-500 max-w-xs mx-auto">
@@ -51,7 +53,7 @@ import { HttpErrorResponse } from '@angular/common/http';
           
           <!-- Campo Correo Electrónico -->
           <div class="space-y-1.5">
-            <label for="correo" class="block text-xs font-bold text-[#142238]">
+            <label for="correo" class="block text-xs font-bold text-brand-night">
               Correo corporativo <span class="text-rose-500">*</span>
             </label>
             <div class="relative">
@@ -67,7 +69,7 @@ import { HttpErrorResponse } from '@angular/common/http';
                 formControlName="correo"
                 autocomplete="off"
                 placeholder="ventas.mayoristas@technova.com"
-                class="w-full pl-10 pr-3.5 py-2.5 bg-slate-50/60 border rounded-xl text-xs text-[#142238] placeholder-slate-400 focus:bg-white focus:border-[#2456C6] focus:ring-2 focus:ring-blue-500/15 outline-none transition-all"
+                class="w-full pl-10 pr-3.5 py-2.5 bg-slate-50/60 border rounded-xl text-xs text-brand-night placeholder-slate-400 focus:bg-white focus:border-brand-primary focus:ring-2 focus:ring-brand-sky/25 outline-none transition-all"
                 [ngClass]="isFieldInvalid('correo') ? 'border-rose-400 bg-rose-50/20' : 'border-slate-250'"
               />
             </div>
@@ -84,13 +86,13 @@ import { HttpErrorResponse } from '@angular/common/http';
           <!-- Campo Contraseña -->
           <div class="space-y-1.5">
             <div class="flex items-center justify-between">
-              <label for="contrasena" class="block text-xs font-bold text-[#142238]">
+              <label for="contrasena" class="block text-xs font-bold text-brand-night">
                 Contraseña <span class="text-rose-500">*</span>
               </label>
               <button
                 type="button"
                 (click)="toggleRecoveryNotice()"
-                class="text-[11px] font-semibold text-[#2456C6] hover:underline"
+                class="text-[11px] font-semibold text-brand-primary hover:underline"
               >
                 ¿Olvidaste tu contraseña?
               </button>
@@ -108,7 +110,7 @@ import { HttpErrorResponse } from '@angular/common/http';
                 formControlName="contrasena"
                 autocomplete="new-password"
                 placeholder="Ingresa tu contraseña"
-                class="w-full pl-10 pr-10 py-2.5 bg-slate-50/60 border rounded-xl text-xs text-[#142238] placeholder-slate-400 focus:bg-white focus:border-[#2456C6] focus:ring-2 focus:ring-blue-500/15 outline-none transition-all"
+                class="w-full pl-10 pr-10 py-2.5 bg-slate-50/60 border rounded-xl text-xs text-brand-night placeholder-slate-400 focus:bg-white focus:border-brand-primary focus:ring-2 focus:ring-brand-sky/25 outline-none transition-all"
                 [ngClass]="isFieldInvalid('contrasena') ? 'border-rose-400 bg-rose-50/20' : 'border-slate-250'"
               />
               <button
@@ -135,7 +137,7 @@ import { HttpErrorResponse } from '@angular/common/http';
               </p>
             }
             @if (recoveryNotice()) {
-              <div class="p-3 rounded-xl bg-blue-50 border border-blue-200 text-[11px] text-blue-800">
+              <div class="p-3 rounded-xl bg-brand-tint border border-brand-ice text-[11px] text-brand-deep">
                 La recuperación automática no está disponible. Contacta al administrador de tu empresa para restablecer tu acceso.
               </div>
             }
@@ -147,7 +149,7 @@ import { HttpErrorResponse } from '@angular/common/http';
               <input
                 type="checkbox"
                 formControlName="recordarSesion"
-                class="w-4 h-4 rounded text-[#2456C6] focus:ring-[#2456C6]/20 border-slate-300"
+                class="w-4 h-4 rounded text-brand-primary focus:ring-brand-primary/20 border-slate-300"
               />
               Recordar mi sesión en este equipo
             </label>
@@ -157,7 +159,7 @@ import { HttpErrorResponse } from '@angular/common/http';
           <button
             type="submit"
             [disabled]="isLoading()"
-            class="w-full py-3 px-4 rounded-full bg-[#2456C6] hover:bg-[#1B429B] text-white text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+            class="w-full py-3 px-4 rounded-full bg-brand-primary hover:bg-brand-petrol text-white text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
           >
             @if (isLoading()) {
               <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
@@ -178,7 +180,7 @@ import { HttpErrorResponse } from '@angular/common/http';
           </p>
           <a
             routerLink="/auth/registro-empresa"
-            class="inline-flex items-center gap-1.5 text-xs font-bold text-[#2456C6] hover:text-[#1B429B] transition-colors"
+            class="inline-flex items-center gap-1.5 text-xs font-bold text-brand-primary hover:text-brand-petrol transition-colors"
           >
             Registrar mi empresa en COMPUNEX
             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -191,7 +193,7 @@ import { HttpErrorResponse } from '@angular/common/http';
     </div>
   `
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly authApi = inject(AuthApiService);
   private readonly authState = inject(AuthStateService);
@@ -203,6 +205,13 @@ export class LoginComponent {
   public isLoading = signal<boolean>(false);
   public errorMessage = signal<string | null>(null);
   public recoveryNotice = signal<boolean>(false);
+
+  ngOnInit(): void {
+    const prefilledEmail = this.route.snapshot.queryParams['email'];
+    if (prefilledEmail) {
+      this.loginForm.patchValue({ correo: String(prefilledEmail) });
+    }
+  }
 
   public toggleShowPassword(): void {
     this.showPassword.update(v => !v);
@@ -224,6 +233,9 @@ export class LoginComponent {
   }
 
   public onSubmit(): void {
+    if (this.isLoading()) {
+      return;
+    }
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
       return;
@@ -232,13 +244,13 @@ export class LoginComponent {
     this.isLoading.set(true);
     this.errorMessage.set(null);
 
-    const { correo, contrasena } = this.loginForm.value;
+    const { correo, contrasena, recordarSesion } = this.loginForm.value;
 
     this.authApi.login({ correo, contrasena }).subscribe({
       next: (response) => {
         this.isLoading.set(false);
-        this.authState.setAuth(response);
-        this.toast.success('Sesión iniciada', 'Bienvenido a COMPUNEX B2B.');
+        this.authState.setAuth(response, !!recordarSesion);
+        this.toast.success('Sesión iniciada', 'Accediste correctamente a COMPUNEX B2B.', 'login-ok');
 
         const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
         this.router.navigateByUrl(returnUrl);
@@ -247,6 +259,7 @@ export class LoginComponent {
         this.isLoading.set(false);
         const msg = error.error?.mensaje || error.error?.detail || 'Credenciales incorrectas. Verifica tu correo y contraseña.';
         this.errorMessage.set(msg);
+        this.toast.error('No se pudo iniciar sesión', msg, 'login-err');
       }
     });
   }

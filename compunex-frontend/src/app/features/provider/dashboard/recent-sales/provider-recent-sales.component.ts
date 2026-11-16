@@ -13,12 +13,12 @@ import { SuborderStatus } from '../../../../core/models/order.model';
       
       <div class="p-6 border-b border-slate-100 flex items-center justify-between">
         <div>
-          <h3 class="text-sm sm:text-base font-bold text-[#142238]">Ventas y Pedidos Recientes</h3>
+          <h3 class="text-sm sm:text-base font-bold text-brand-night">Ventas y Pedidos Recientes</h3>
           <p class="text-xs text-slate-500 mt-0.5">Subórdenes asignadas a tu centro de distribución</p>
         </div>
         <a
           routerLink="/panel/ventas"
-          class="text-xs font-bold text-[#2456C6] hover:underline"
+          class="text-xs font-bold text-brand-primary hover:underline"
         >
           Ver todas las ventas →
         </a>
@@ -44,7 +44,7 @@ import { SuborderStatus } from '../../../../core/models/order.model';
             <tbody class="divide-y divide-slate-100">
               @for (sale of sales; track sale.subordenId) {
                 <tr class="hover:bg-slate-50/60 transition-colors">
-                  <td class="py-3.5 px-6 font-mono font-bold text-[#2456C6]">
+                  <td class="py-3.5 px-6 font-mono font-bold text-brand-primary">
                     {{ sale.codigoOrden }}
                   </td>
                   <td class="py-3.5 px-4 font-medium text-slate-800">
@@ -58,16 +58,16 @@ import { SuborderStatus } from '../../../../core/models/order.model';
                       class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold border"
                       [ngClass]="getStatusClasses(sale.estado)"
                     >
-                      {{ sale.estado }}
+                      {{ formatStatus(sale.estado) }}
                     </span>
                   </td>
-                  <td class="py-3.5 px-6 text-right font-mono font-bold text-[#142238]">
+                  <td class="py-3.5 px-6 text-right font-mono font-bold text-brand-night">
                     S/ {{ sale.total | number:'1.2-2' }}
                   </td>
                   <td class="py-3.5 px-6 text-right">
                     <a
                       [routerLink]="['/panel/ventas', sale.subordenId]"
-                      class="px-3 py-1 rounded-xl border border-slate-200 hover:border-[#2456C6] text-slate-700 hover:text-[#2456C6] font-semibold text-xs transition-colors inline-block"
+                      class="px-3 py-1 rounded-xl border border-slate-200 hover:border-brand-primary text-slate-700 hover:text-brand-primary font-semibold text-xs transition-colors inline-block"
                     >
                       Gestionar
                     </a>
@@ -85,16 +85,20 @@ import { SuborderStatus } from '../../../../core/models/order.model';
 export class ProviderRecentSalesComponent {
   @Input() sales: ProviderSaleItem[] = [];
 
+  public formatStatus(status: SuborderStatus): string {
+    return status.replace(/_/g, ' ');
+  }
+
   public getStatusClasses(status: SuborderStatus): string {
     switch (status) {
       case 'ENTREGADO':
         return 'bg-emerald-50 text-emerald-700 border-emerald-200';
       case 'DESPACHADO':
-        return 'bg-purple-50 text-purple-700 border-purple-200';
+        return 'bg-brand-tint text-brand-primary border-brand-ice';
       case 'EN_PREPARACION':
         return 'bg-amber-50 text-amber-700 border-amber-200';
       case 'PENDIENTE_DESPACHO':
-        return 'bg-blue-50 text-[#2456C6] border-blue-200';
+        return 'bg-slate-100 text-brand-night border-slate-200';
       case 'CANCELADO':
         return 'bg-rose-50 text-rose-700 border-rose-200';
       default:

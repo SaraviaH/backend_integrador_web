@@ -45,6 +45,17 @@ export class CatalogStateService {
     this.searchSubject.next(term);
   }
 
+  public syncFromQueryParams(opts: {
+    search: string;
+    categoryId: string | number | null;
+    page: number;
+  }): void {
+    this.searchTerm.set(opts.search);
+    this.selectedCategory.set(opts.categoryId);
+    this.currentPage.set(Math.max(0, Number.isFinite(opts.page) ? opts.page : 0));
+    this.fetchProducts();
+  }
+
   public setCategory(catId: string | number | null): void {
     this.selectedCategory.set(catId);
     this.currentPage.set(0);

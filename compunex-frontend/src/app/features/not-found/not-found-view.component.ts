@@ -11,7 +11,7 @@ import { Router, RouterModule } from '@angular/router';
     <div class="min-h-[75vh] flex items-center justify-center px-4 py-16">
       <div class="max-w-lg w-full text-center space-y-6">
         <!-- Ícono e Identificador 404 -->
-        <div class="w-24 h-24 mx-auto rounded-3xl bg-blue-50 border border-blue-200 text-brand-primary flex items-center justify-center font-black text-3xl shadow-xs">
+        <div class="w-24 h-24 mx-auto rounded-3xl bg-brand-tint border border-brand-ice text-brand-primary flex items-center justify-center font-black text-3xl shadow-xs">
           404
         </div>
 
@@ -71,7 +71,7 @@ export class NotFoundViewComponent {
 
   public onSearch(): void {
     if (this.searchQuery.trim()) {
-      this.router.navigate(['/catalog'], { queryParams: { q: this.searchQuery.trim() } });
+      this.router.navigate(['/catalog'], { queryParams: { search: this.searchQuery.trim() } });
     } else {
       this.router.navigate(['/catalog']);
     }

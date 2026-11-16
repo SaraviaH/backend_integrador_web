@@ -11,7 +11,7 @@ import { CheckoutStateService } from '../../../core/state/checkout-state.service
     <div class="space-y-6">
       
       @if (checkoutState.confirmedOrder(); as order) {
-        <!-- Tarjeta de Éxito y Felicitaciones (P-12) -->
+        <!-- Tarjeta de Éxito y Felicitaciones -->
         <div class="bg-white rounded-3xl border border-slate-200/80 p-8 sm:p-12 text-center space-y-6 shadow-xs">
           
           <div class="w-20 h-20 mx-auto rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shadow-xs">
@@ -24,7 +24,7 @@ import { CheckoutStateService } from '../../../core/state/checkout-state.service
             <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
               ✓ Compra B2B Registrada con Éxito
             </div>
-            <h1 class="text-2xl sm:text-3xl font-black text-[#142238] tracking-tight font-display">
+            <h1 class="text-2xl sm:text-3xl font-black text-brand-night tracking-tight font-display">
               ¡Orden {{ order.codigoOrden }} Confirmada!
             </h1>
             <p class="text-xs sm:text-sm text-slate-500 max-w-xl mx-auto leading-relaxed">
@@ -36,7 +36,7 @@ import { CheckoutStateService } from '../../../core/state/checkout-state.service
           <div class="bg-slate-50 rounded-2xl p-6 border border-slate-200/70 max-w-2xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs text-left">
             <div>
               <span class="text-slate-400 block text-[11px]">Código de Orden:</span>
-              <strong class="text-[#142238] font-mono text-sm">{{ order.codigoOrden }}</strong>
+              <strong class="text-brand-night font-mono text-sm">{{ order.codigoOrden }}</strong>
             </div>
             <div>
               <span class="text-slate-400 block text-[11px]">Fecha de Emisión:</span>
@@ -44,7 +44,7 @@ import { CheckoutStateService } from '../../../core/state/checkout-state.service
             </div>
             <div>
               <span class="text-slate-400 block text-[11px]">Importe Total (con IGV):</span>
-              <strong class="text-[#2456C6] text-sm">S/ {{ order.totalGeneral | number:'1.2-2' }}</strong>
+              <strong class="text-brand-primary text-sm">S/ {{ order.totalGeneral | number:'1.2-2' }}</strong>
             </div>
           </div>
 
@@ -59,8 +59,8 @@ import { CheckoutStateService } from '../../../core/state/checkout-state.service
                 <div class="bg-white rounded-2xl border border-slate-200 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
                   <div>
                     <div class="flex items-center gap-2">
-                      <span class="w-2 h-2 rounded-full bg-blue-600"></span>
-                      <h4 class="text-xs sm:text-sm font-bold text-[#142238]">{{ sub.proveedorRazonSocial }}</h4>
+                      <span class="w-2 h-2 rounded-full bg-brand-primary"></span>
+                      <h4 class="text-xs sm:text-sm font-bold text-brand-night">{{ sub.proveedorRazonSocial }}</h4>
                     </div>
                     <div class="text-[11px] text-slate-500 mt-1 space-x-2">
                       <span>RUC: {{ sub.proveedorRuc }}</span>
@@ -72,11 +72,11 @@ import { CheckoutStateService } from '../../../core/state/checkout-state.service
                   <div class="flex items-center justify-between sm:justify-end gap-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100">
                     <div class="text-right">
                       <span class="text-[10px] text-slate-400 block">Total Suborden</span>
-                      <span class="text-xs font-bold text-[#2456C6]">S/ {{ sub.total | number:'1.2-2' }}</span>
+                      <span class="text-xs font-bold text-brand-primary">S/ {{ sub.total | number:'1.2-2' }}</span>
                     </div>
                     <a
                       [routerLink]="['/pedidos', order.ordenId, 'comprobante']"
-                      class="px-3 py-1.5 rounded-xl border border-[#2456C6] text-[#2456C6] hover:bg-blue-50 text-xs font-bold transition-colors shrink-0"
+                      class="px-3 py-1.5 rounded-xl border border-brand-primary text-brand-primary hover:bg-brand-tint text-xs font-bold transition-colors shrink-0"
                     >
                       Ver Factura
                     </a>
@@ -108,9 +108,9 @@ import { CheckoutStateService } from '../../../core/state/checkout-state.service
 
             <a
               routerLink="/cuenta/mis-compras"
-              class="px-8 py-3 rounded-full bg-[#2456C6] hover:bg-[#1B429B] text-white text-xs font-bold transition-colors shadow-xs"
+              class="px-8 py-3 rounded-xl bg-brand-primary hover:bg-brand-petrol text-white text-xs font-bold transition-colors shadow-xs"
             >
-              Ver en Mis Compras (P-14)
+              Ver en Mis Compras
             </a>
           </div>
 
@@ -118,10 +118,10 @@ import { CheckoutStateService } from '../../../core/state/checkout-state.service
       } @else {
         <!-- Estado Alternativo si no hay orden activa en memoria -->
         <div class="bg-white rounded-3xl border border-slate-200 p-12 text-center space-y-4 max-w-md mx-auto my-12">
-          <h2 class="text-base font-bold text-[#142238]">No hay confirmación reciente</h2>
+          <h2 class="text-base font-bold text-brand-night">No hay confirmación reciente</h2>
           <p class="text-xs text-slate-500">Puedes consultar tus compras previas o iniciar un nuevo pedido en el catálogo.</p>
           <div class="pt-2">
-            <a routerLink="/catalog" class="px-6 py-2.5 rounded-full bg-[#2456C6] text-white text-xs font-bold">
+            <a routerLink="/catalog" class="px-6 py-2.5 rounded-full bg-brand-primary text-white text-xs font-bold">
               Ir al Catálogo
             </a>
           </div>

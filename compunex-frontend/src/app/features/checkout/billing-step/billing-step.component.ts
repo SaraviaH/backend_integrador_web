@@ -13,15 +13,15 @@ import { AuthStateService } from '../../../core/state/auth-state.service';
       
       <!-- Encabezado del Paso P-10 -->
       <div class="bg-white rounded-3xl border border-slate-200/80 p-6 md:p-8 shadow-xs">
-        <div class="flex items-center gap-2 text-xs font-bold text-[#2456C6] uppercase tracking-wider mb-1">
-          <span class="w-2 h-2 rounded-full bg-[#2456C6]"></span>
+        <div class="flex items-center gap-2 text-xs font-bold text-brand-primary uppercase tracking-wider mb-1">
+          <span class="w-2 h-2 rounded-full bg-brand-primary"></span>
           Paso 1 de 3 · Facturación Electrónica SUNAT
         </div>
-        <h2 class="text-xl sm:text-2xl font-black text-[#142238] tracking-tight font-display">
+        <h2 class="text-xl sm:text-2xl font-black text-brand-night tracking-tight font-display">
           Datos Fiscales de Facturación y Despacho
         </h2>
         <p class="text-xs sm:text-sm text-slate-500 mt-1">
-          Ingresa la información fiscal de tu empresa. Cada proveedor emitirá su factura electrónica individual a este RUC.
+          Ingresa la información fiscal de tu empresa (RUC, razón social, dirección fiscal y modalidad de pago) para la emisión de los comprobantes por cada proveedor.
         </p>
       </div>
 
@@ -30,8 +30,8 @@ import { AuthStateService } from '../../../core/state/auth-state.service';
         
         <!-- Bloque 1: Identificación Fiscal de la Empresa -->
         <div class="bg-white rounded-3xl border border-slate-200/80 p-6 md:p-8 space-y-5 shadow-xs">
-          <h3 class="text-sm font-bold text-[#142238] uppercase tracking-wider pb-3 border-b border-slate-100 flex items-center gap-2">
-            <svg class="w-4 h-4 text-[#2456C6]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <h3 class="text-sm font-bold text-brand-night uppercase tracking-wider pb-3 border-b border-slate-100 flex items-center gap-2">
+            <svg class="w-4 h-4 text-brand-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
             </svg>
             1. Razón Social y Domicilio Fiscal
@@ -48,7 +48,7 @@ import { AuthStateService } from '../../../core/state/auth-state.service';
                 formControlName="ruc"
                 maxlength="11"
                 placeholder="20XXXXXXXXX"
-                class="w-full px-4 py-2.5 bg-slate-50 border rounded-2xl text-xs sm:text-sm text-[#142238] font-mono outline-none transition-colors"
+                class="w-full px-4 py-2.5 bg-slate-50 border rounded-2xl text-xs sm:text-sm text-brand-night font-mono outline-none transition-colors"
                 [class.border-rose-400]="isFieldInvalid('ruc')"
                 [class.border-slate-200]="!isFieldInvalid('ruc')"
               />
@@ -66,7 +66,7 @@ import { AuthStateService } from '../../../core/state/auth-state.service';
                 type="text"
                 formControlName="razonSocial"
                 placeholder="Ej. TECNOLOGIAS DEL SUR SAC"
-                class="w-full px-4 py-2.5 bg-slate-50 border rounded-2xl text-xs sm:text-sm text-[#142238] outline-none transition-colors"
+                class="w-full px-4 py-2.5 bg-slate-50 border rounded-2xl text-xs sm:text-sm text-brand-night outline-none transition-colors"
                 [class.border-rose-400]="isFieldInvalid('razonSocial')"
                 [class.border-slate-200]="!isFieldInvalid('razonSocial')"
               />
@@ -86,7 +86,7 @@ import { AuthStateService } from '../../../core/state/auth-state.service';
                 type="text"
                 formControlName="direccionFiscal"
                 placeholder="Av. Principal 123, Of. 401"
-                class="w-full px-4 py-2.5 bg-slate-50 border rounded-2xl text-xs sm:text-sm text-[#142238] outline-none transition-colors"
+                class="w-full px-4 py-2.5 bg-slate-50 border rounded-2xl text-xs sm:text-sm text-brand-night outline-none transition-colors"
                 [class.border-rose-400]="isFieldInvalid('direccionFiscal')"
                 [class.border-slate-200]="!isFieldInvalid('direccionFiscal')"
               />
@@ -102,7 +102,7 @@ import { AuthStateService } from '../../../core/state/auth-state.service';
               </label>
               <select
                 formControlName="departamento"
-                class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl text-xs sm:text-sm text-[#142238] outline-none"
+                class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl text-xs sm:text-sm text-brand-night outline-none"
               >
                 <option value="Lima">Lima</option>
                 <option value="Arequipa">Arequipa</option>
@@ -122,8 +122,8 @@ import { AuthStateService } from '../../../core/state/auth-state.service';
 
         <!-- Bloque 2: Contacto de Recepción y Despacho -->
         <div class="bg-white rounded-3xl border border-slate-200/80 p-6 md:p-8 space-y-5 shadow-xs">
-          <h3 class="text-sm font-bold text-[#142238] uppercase tracking-wider pb-3 border-b border-slate-100 flex items-center gap-2">
-            <svg class="w-4 h-4 text-[#2456C6]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <h3 class="text-sm font-bold text-brand-night uppercase tracking-wider pb-3 border-b border-slate-100 flex items-center gap-2">
+            <svg class="w-4 h-4 text-brand-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
             2. Contacto de Recepción en Almacén
@@ -139,7 +139,7 @@ import { AuthStateService } from '../../../core/state/auth-state.service';
                 type="text"
                 formControlName="contactoNombre"
                 placeholder="Ej. Ing. Juan Pérez"
-                class="w-full px-4 py-2.5 bg-slate-50 border rounded-2xl text-xs sm:text-sm text-[#142238] outline-none"
+                class="w-full px-4 py-2.5 bg-slate-50 border rounded-2xl text-xs sm:text-sm text-brand-night outline-none"
                 [class.border-rose-400]="isFieldInvalid('contactoNombre')"
                 [class.border-slate-200]="!isFieldInvalid('contactoNombre')"
               />
@@ -154,7 +154,7 @@ import { AuthStateService } from '../../../core/state/auth-state.service';
                 type="tel"
                 formControlName="contactoTelefono"
                 placeholder="999 888 777"
-                class="w-full px-4 py-2.5 bg-slate-50 border rounded-2xl text-xs sm:text-sm text-[#142238] outline-none"
+                class="w-full px-4 py-2.5 bg-slate-50 border rounded-2xl text-xs sm:text-sm text-brand-night outline-none"
                 [class.border-rose-400]="isFieldInvalid('contactoTelefono')"
                 [class.border-slate-200]="!isFieldInvalid('contactoTelefono')"
               />
@@ -169,7 +169,7 @@ import { AuthStateService } from '../../../core/state/auth-state.service';
                 type="email"
                 formControlName="contactoCorreo"
                 placeholder="facturacion@tuempresa.pe"
-                class="w-full px-4 py-2.5 bg-slate-50 border rounded-2xl text-xs sm:text-sm text-[#142238] outline-none"
+                class="w-full px-4 py-2.5 bg-slate-50 border rounded-2xl text-xs sm:text-sm text-brand-night outline-none"
                 [class.border-rose-400]="isFieldInvalid('contactoCorreo')"
                 [class.border-slate-200]="!isFieldInvalid('contactoCorreo')"
               />
@@ -179,8 +179,8 @@ import { AuthStateService } from '../../../core/state/auth-state.service';
 
         <!-- Bloque 3: Método de Pago B2B -->
         <div class="bg-white rounded-3xl border border-slate-200/80 p-6 md:p-8 space-y-5 shadow-xs">
-          <h3 class="text-sm font-bold text-[#142238] uppercase tracking-wider pb-3 border-b border-slate-100 flex items-center gap-2">
-            <svg class="w-4 h-4 text-[#2456C6]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <h3 class="text-sm font-bold text-brand-night uppercase tracking-wider pb-3 border-b border-slate-100 flex items-center gap-2">
+            <svg class="w-4 h-4 text-brand-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
             </svg>
             3. Método de Pago Corporativo B2B
@@ -191,8 +191,8 @@ import { AuthStateService } from '../../../core/state/auth-state.service';
             <!-- Opción 1: Transferencia -->
             <label
               class="relative p-5 rounded-2xl border-2 cursor-pointer transition-all flex flex-col justify-between"
-              [class.border-blue-600]="form.get('metodoPagoSimulado')?.value === 'TRANSFERENCIA_BANCARIA'"
-              [class.bg-blue-50]="form.get('metodoPagoSimulado')?.value === 'TRANSFERENCIA_BANCARIA'"
+              [class.border-brand-primary]="form.get('metodoPagoSimulado')?.value === 'TRANSFERENCIA_BANCARIA'"
+              [class.bg-brand-tint]="form.get('metodoPagoSimulado')?.value === 'TRANSFERENCIA_BANCARIA'"
               [class.border-slate-200]="form.get('metodoPagoSimulado')?.value !== 'TRANSFERENCIA_BANCARIA'"
             >
               <input
@@ -202,22 +202,22 @@ import { AuthStateService } from '../../../core/state/auth-state.service';
                 class="sr-only"
               />
               <div class="space-y-2">
-                <div class="w-9 h-9 rounded-xl bg-blue-100 text-[#2456C6] flex items-center justify-center font-bold">
+                <div class="w-9 h-9 rounded-xl bg-brand-ice/40 text-brand-primary flex items-center justify-center font-bold">
                   🏦
                 </div>
-                <h4 class="text-xs sm:text-sm font-bold text-[#142238]">Transferencia Bancaria</h4>
+                <h4 class="text-xs sm:text-sm font-bold text-brand-night">Transferencia Bancaria</h4>
                 <p class="text-[11px] text-slate-500 leading-relaxed">
                   Pago contra orden mediante cuentas corrientes BCP, BBVA o Interbank en Soles.
                 </p>
               </div>
-              <span class="mt-3 text-[10px] font-bold text-[#2456C6]">Recomendado Mayorista</span>
+              <span class="mt-3 text-[10px] font-bold text-brand-primary">Recomendado Mayorista</span>
             </label>
 
             <!-- Opción 2: Línea de Crédito -->
             <label
               class="relative p-5 rounded-2xl border-2 cursor-pointer transition-all flex flex-col justify-between"
-              [class.border-blue-600]="form.get('metodoPagoSimulado')?.value === 'LINEA_CREDITO_B2B'"
-              [class.bg-blue-50]="form.get('metodoPagoSimulado')?.value === 'LINEA_CREDITO_B2B'"
+              [class.border-brand-primary]="form.get('metodoPagoSimulado')?.value === 'LINEA_CREDITO_B2B'"
+              [class.bg-brand-tint]="form.get('metodoPagoSimulado')?.value === 'LINEA_CREDITO_B2B'"
               [class.border-slate-200]="form.get('metodoPagoSimulado')?.value !== 'LINEA_CREDITO_B2B'"
             >
               <input
@@ -230,7 +230,7 @@ import { AuthStateService } from '../../../core/state/auth-state.service';
                 <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
                   📄
                 </div>
-                <h4 class="text-xs sm:text-sm font-bold text-[#142238]">Línea de Crédito 30 días</h4>
+                <h4 class="text-xs sm:text-sm font-bold text-brand-night">Línea de Crédito 30 días</h4>
                 <p class="text-[11px] text-slate-500 leading-relaxed">
                   Facturación diferida para empresas homologadas con línea aprobada por el proveedor.
                 </p>
@@ -241,8 +241,8 @@ import { AuthStateService } from '../../../core/state/auth-state.service';
             <!-- Opción 3: Tarjeta Corporativa -->
             <label
               class="relative p-5 rounded-2xl border-2 cursor-pointer transition-all flex flex-col justify-between"
-              [class.border-blue-600]="form.get('metodoPagoSimulado')?.value === 'TARJETA_EMPRESARIAL'"
-              [class.bg-blue-50]="form.get('metodoPagoSimulado')?.value === 'TARJETA_EMPRESARIAL'"
+              [class.border-brand-primary]="form.get('metodoPagoSimulado')?.value === 'TARJETA_EMPRESARIAL'"
+              [class.bg-brand-tint]="form.get('metodoPagoSimulado')?.value === 'TARJETA_EMPRESARIAL'"
               [class.border-slate-200]="form.get('metodoPagoSimulado')?.value !== 'TARJETA_EMPRESARIAL'"
             >
               <input
@@ -252,17 +252,24 @@ import { AuthStateService } from '../../../core/state/auth-state.service';
                 class="sr-only"
               />
               <div class="space-y-2">
-                <div class="w-9 h-9 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold">
-                  💳
+                <div class="w-9 h-9 rounded-xl bg-slate-100 text-brand-night flex items-center justify-center font-bold">
+                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                  </svg>
                 </div>
-                <h4 class="text-xs sm:text-sm font-bold text-[#142238]">Tarjeta Empresarial</h4>
+                <h4 class="text-xs sm:text-sm font-bold text-brand-night">Tarjeta Empresarial</h4>
                 <p class="text-[11px] text-slate-500 leading-relaxed">
                   Cargo inmediato con tarjeta Visa o Mastercard Business / Corporate sin recargos.
                 </p>
               </div>
-              <span class="mt-3 text-[10px] font-bold text-purple-700">Procesamiento Seguro</span>
+              <span class="mt-3 text-[10px] font-bold text-brand-primary">Procesamiento Corporativo</span>
             </label>
 
+          </div>
+
+          <!-- Nota de alcance de datos -->
+          <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-[11px] text-slate-600">
+            El <strong class="text-brand-night">RUC, razón social, dirección fiscal y método de pago</strong> se registran en la orden enviada al servidor; el departamento, contacto en almacén e instrucciones quedan como referencia operativa de esta sesión.
           </div>
 
           <!-- Notas del Pedido -->
@@ -274,7 +281,7 @@ import { AuthStateService } from '../../../core/state/auth-state.service';
               formControlName="notasPedido"
               rows="2"
               placeholder="Ej. Dejar en puerta 3 con orden de entrega; horario de almacén hasta las 17:00..."
-              class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl text-xs sm:text-sm text-[#142238] outline-none resize-none"
+              class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl text-xs sm:text-sm text-brand-night outline-none resize-none"
             ></textarea>
           </div>
         </div>
@@ -291,7 +298,7 @@ import { AuthStateService } from '../../../core/state/auth-state.service';
           <button
             type="submit"
             [disabled]="form.invalid"
-            class="px-8 py-3.5 rounded-full bg-[#2456C6] hover:bg-[#1B429B] disabled:bg-slate-300 disabled:cursor-not-allowed text-white text-xs sm:text-sm font-bold transition-colors flex items-center gap-2 shadow-xs"
+            class="px-8 py-3.5 rounded-full bg-brand-primary hover:bg-brand-petrol disabled:bg-slate-300 disabled:cursor-not-allowed text-white text-xs sm:text-sm font-bold transition-colors flex items-center gap-2 shadow-xs"
           >
             <span>Continuar a Revisión del Pedido</span>
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -12,7 +12,7 @@ export type SaleFilterStatus = 'ALL' | SuborderStatus;
   template: `
     <div class="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-xs mb-6 space-y-4">
       <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-        <!-- Pestañas de estado -->
+        <!-- Pestañas de estado (sobre la página actual) -->
         <div class="flex items-center gap-1.5 p-1 bg-slate-100 rounded-xl overflow-x-auto text-xs font-semibold">
           <button
             type="button"
@@ -42,10 +42,10 @@ export type SaleFilterStatus = 'ALL' | SuborderStatus;
             type="button"
             (click)="selectStatus('EN_PREPARACION')"
             [class.bg-white]="activeStatus === 'EN_PREPARACION'"
-            [class.text-indigo-600]="activeStatus === 'EN_PREPARACION'"
+            [class.text-brand-primary]="activeStatus === 'EN_PREPARACION'"
             [class.shadow-xs]="activeStatus === 'EN_PREPARACION'"
             [class.text-slate-600]="activeStatus !== 'EN_PREPARACION'"
-            class="px-3.5 py-1.5 rounded-lg transition-all whitespace-nowrap cursor-pointer hover:text-indigo-600"
+            class="px-3.5 py-1.5 rounded-lg transition-all whitespace-nowrap cursor-pointer hover:text-brand-primary"
           >
             En Preparación ({{ inPrepCount }})
           </button>
@@ -61,18 +61,32 @@ export type SaleFilterStatus = 'ALL' | SuborderStatus;
           >
             Despachadas ({{ dispatchedCount }})
           </button>
+
+          <button
+            type="button"
+            (click)="selectStatus('CANCELADO')"
+            [class.bg-white]="activeStatus === 'CANCELADO'"
+            [class.text-rose-600]="activeStatus === 'CANCELADO'"
+            [class.shadow-xs]="activeStatus === 'CANCELADO'"
+            [class.text-slate-600]="activeStatus !== 'CANCELADO'"
+            class="px-3.5 py-1.5 rounded-lg transition-all whitespace-nowrap cursor-pointer hover:text-rose-600"
+          >
+            Canceladas ({{ cancelledCount }})
+          </button>
         </div>
 
-        <!-- Buscador por Orden o Razón Social Cliente -->
+        <!-- Buscador en página actual -->
         <div class="relative w-full lg:w-72">
+          <label for="sales-search" class="sr-only">Filtrar ventas en la página actual</label>
           <input
+            id="sales-search"
             type="text"
             [(ngModel)]="searchQuery"
             (ngModelChange)="onSearchChange($event)"
-            placeholder="Buscar por orden o cliente..."
+            placeholder="Filtrar página por orden o cliente..."
             class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all"
           />
-          <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
         </div>
@@ -85,6 +99,7 @@ export class SalesFilterTabsComponent {
   @Input() pendingCount = 0;
   @Input() inPrepCount = 0;
   @Input() dispatchedCount = 0;
+  @Input() cancelledCount = 0;
   @Input() activeStatus: SaleFilterStatus = 'ALL';
 
   @Output() statusChange = new EventEmitter<SaleFilterStatus>();

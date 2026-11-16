@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { ProviderApiService } from '../../../../core/services/provider-api.service';
+import { ToastStateService } from '../../../../core/state/toast-state.service';
 import { ProviderSaleItem } from '../../../../core/models/provider.model';
 import { SuborderStatus } from '../../../../core/models/order.model';
 import { DispatchStepperComponent } from './components/dispatch-stepper/dispatch-stepper.component';
@@ -56,6 +57,14 @@ import { SaleClientCardComponent } from './components/sale-client-card/sale-clie
         </div>
       }
 
+      <!-- Banner de Error en transición -->
+      @if (errorMessage()) {
+        <div class="p-3.5 rounded-xl bg-rose-50 border border-rose-200 flex items-center justify-between text-xs text-rose-800" role="alert">
+          <span>{{ errorMessage() }}</span>
+          <button type="button" (click)="errorMessage.set(null)" class="text-rose-700 hover:text-rose-900 font-bold cursor-pointer" aria-label="Cerrar error">✕</button>
+        </div>
+      }
+
       <!-- 4 ESTADOS DE UI -->
 
       <!-- 1. CARGA -->
@@ -104,6 +113,7 @@ import { SaleClientCardComponent } from './components/sale-client-card/sale-clie
           <!-- Stepper Logístico Dumb Component -->
           <app-dispatch-stepper
             [currentStatus]="s.estado"
+            [isUpdating]="isUpdatingStatus()"
             (statusUpdate)="onStatusUpdated($event)"
           ></app-dispatch-stepper>
 
@@ -167,11 +177,14 @@ import { SaleClientCardComponent } from './components/sale-client-card/sale-clie
 export class ProviderSaleDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly providerApi = inject(ProviderApiService);
+  private readonly toastState = inject(ToastStateService);
 
   public readonly isLoading = signal<boolean>(true);
   public readonly hasError = signal<boolean>(false);
   public readonly sale = signal<ProviderSaleItem | null>(null);
   public readonly bannerMessage = signal<string | null>(null);
+  public readonly errorMessage = signal<string | null>(null);
+  public readonly isUpdatingStatus = signal<boolean>(false);
 
   public ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
@@ -203,12 +216,25 @@ export class ProviderSaleDetailComponent implements OnInit {
 
   public onStatusUpdated(newStatus: SuborderStatus): void {
     const current = this.sale();
-    if (!current) return;
+    if (!current || this.isUpdatingStatus()) return;
+
+    this.isUpdatingStatus.set(true);
+    this.errorMessage.set(null);
+    this.bannerMessage.set(null);
 
     this.providerApi.updateSuborderStatus(current.subordenId, newStatus).subscribe({
       next: () => {
+        this.isUpdatingStatus.set(false);
         this.sale.update(s => s ? { ...s, estado: newStatus } : null);
-        this.bannerMessage.set(`Estado de despacho actualizado con éxito a "${newStatus}".`);
+        const msg = `Estado de despacho actualizado con éxito a "${newStatus.replace(/_/g, ' ')}".`;
+        this.bannerMessage.set(msg);
+        this.toastState.success('Despacho actualizado', msg);
+      },
+      error: (err) => {
+        this.isUpdatingStatus.set(false);
+        const msg = err?.error?.mensaje || err?.error?.detail || 'No se pudo actualizar el estado de la suborden.';
+        this.errorMessage.set(msg);
+        this.toastState.error('Error al actualizar despacho', msg);
       }
     });
   }

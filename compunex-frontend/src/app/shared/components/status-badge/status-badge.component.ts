@@ -28,7 +28,7 @@ export class StatusBadgeComponent {
       return 'bg-emerald-50 text-emerald-700 border border-emerald-200';
     }
     if (s.includes('DESPACH') || s.includes('PREPARACION') || s.includes('PROCESO')) {
-      return 'bg-blue-50 text-blue-700 border border-blue-200';
+      return 'bg-brand-tint text-brand-petrol border border-brand-ice';
     }
     if (s.includes('PENDIENTE')) {
       return 'bg-amber-50 text-amber-700 border border-amber-200';
@@ -45,7 +45,7 @@ export class StatusBadgeComponent {
       return 'bg-emerald-500';
     }
     if (s.includes('DESPACH') || s.includes('PREPARACION')) {
-      return 'bg-blue-500';
+      return 'bg-brand-tint0';
     }
     if (s.includes('PENDIENTE')) {
       return 'bg-amber-500';

@@ -72,20 +72,25 @@ export type ProductFilterTab = 'ALL' | 'ACTIVE' | 'PAUSED' | 'LOW_STOCK';
         </a>
       </div>
 
-      <!-- Buscador y filtro de categoría -->
-      <div class="flex flex-col md:flex-row gap-3 pt-2 border-t border-slate-100">
+      <!-- Buscador contra servidor -->
+      <div class="flex flex-col md:flex-row md:items-center gap-3 pt-2 border-t border-slate-100">
         <div class="relative flex-1">
+          <label for="provider-product-search" class="sr-only">Buscar en mi catálogo</label>
           <input
+            id="provider-product-search"
             type="text"
             [(ngModel)]="searchQuery"
             (ngModelChange)="onSearchChange($event)"
-            placeholder="Buscar por SKU, marca o denominación de hardware..."
+            placeholder="Buscar en todo tu catálogo por título o descripción..."
             class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all"
           />
-          <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
         </div>
+        <span class="text-[11px] text-slate-400 shrink-0">
+          Las pestañas filtran la página visible; el buscador consulta el servidor.
+        </span>
       </div>
     </div>
   `

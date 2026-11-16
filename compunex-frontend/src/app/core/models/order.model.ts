@@ -11,7 +11,7 @@ export interface CartItem {
   proveedorId: number;
   proveedorRazonSocial: string;
   imagenUrl: string;
-  stockDisponible: number;
+  stockDisponible?: number;
 }
 
 export interface ProviderCartGroup {

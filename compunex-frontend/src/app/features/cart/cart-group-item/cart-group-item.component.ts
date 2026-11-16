@@ -14,7 +14,7 @@ import { ProviderCartGroup, CartItem } from '../../../core/models/order.model';
       <!-- Encabezado del Grupo por Proveedor (Split Order) -->
       <div class="bg-slate-50/80 px-6 py-4 border-b border-slate-200/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-blue-100 text-[#2456C6] font-bold text-sm flex items-center justify-center shrink-0">
+          <div class="w-10 h-10 rounded-xl bg-brand-ice/40 text-brand-primary font-bold text-sm flex items-center justify-center shrink-0">
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
             </svg>
@@ -22,17 +22,17 @@ import { ProviderCartGroup, CartItem } from '../../../core/models/order.model';
           <div>
             <div class="flex items-center gap-2">
               <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Despacho Proveedor</span>
-              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-[#2456C6] border border-blue-100">
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-brand-tint text-brand-primary border border-brand-tint">
                 Suborden Independiente
               </span>
             </div>
-            <h3 class="text-sm font-bold text-[#142238]">{{ group.proveedorRazonSocial }}</h3>
+            <h3 class="text-sm font-bold text-brand-night">{{ group.proveedorRazonSocial }}</h3>
           </div>
         </div>
 
         <div class="text-left sm:text-right">
           <span class="text-[11px] text-slate-400 block">Subtotal Proveedor (con IGV)</span>
-          <span class="text-sm font-black text-[#2456C6]">S/ {{ group.total | number:'1.2-2' }}</span>
+          <span class="text-sm font-black text-brand-primary">S/ {{ group.total | number:'1.2-2' }}</span>
         </div>
       </div>
 
@@ -56,7 +56,7 @@ import { ProviderCartGroup, CartItem } from '../../../core/models/order.model';
                 <span class="text-[10px] font-mono bg-slate-100 text-slate-600 px-2 py-0.5 rounded inline-block">
                   SKU: {{ item.sku }}
                 </span>
-                <a [routerLink]="['/catalog', item.productoId]" class="block text-xs sm:text-sm font-bold text-[#142238] hover:text-[#2456C6] transition-colors truncate">
+                <a [routerLink]="['/catalog', item.productoId]" class="block text-xs sm:text-sm font-bold text-brand-night hover:text-brand-primary transition-colors truncate">
                   {{ item.nombre }}
                 </a>
                 <div class="text-[11px] text-slate-500">
@@ -85,15 +85,17 @@ import { ProviderCartGroup, CartItem } from '../../../core/models/order.model';
                   [ngModel]="item.cantidad"
                   (ngModelChange)="onQuantityChange(item, $event)"
                   [min]="1"
-                  [max]="item.stockDisponible"
-                  class="w-12 text-center text-xs font-bold text-[#142238] bg-transparent outline-none"
+                  [max]="item.stockDisponible ?? null"
+                  aria-label="Cantidad del producto"
+                  class="w-12 text-center text-xs font-bold text-brand-night bg-transparent outline-none"
                 />
                 <button
                   type="button"
                   (click)="onIncrease(item)"
-                  [disabled]="item.cantidad >= item.stockDisponible"
+                  [disabled]="item.stockDisponible != null && item.cantidad >= item.stockDisponible"
                   class="w-8 h-8 rounded-xl bg-white hover:bg-slate-100 text-slate-700 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center font-bold text-sm shadow-xs transition-colors"
                   title="Aumentar cantidad"
+                  aria-label="Aumentar cantidad"
                 >
                   +
                 </button>
@@ -102,7 +104,7 @@ import { ProviderCartGroup, CartItem } from '../../../core/models/order.model';
               <!-- Subtotal del Ítem -->
               <div class="text-right min-w-24">
                 <span class="text-[10px] text-slate-400 block">Subtotal</span>
-                <span class="text-sm font-black text-[#142238]">S/ {{ item.subtotal | number:'1.2-2' }}</span>
+                <span class="text-sm font-black text-brand-night">S/ {{ item.subtotal | number:'1.2-2' }}</span>
               </div>
 
               <!-- Botón Eliminar Ítem -->
@@ -132,7 +134,7 @@ export class CartGroupItemComponent {
   @Output() removeItem = new EventEmitter<number>();
 
   public onIncrease(item: CartItem): void {
-    if (item.cantidad < item.stockDisponible) {
+    if (item.stockDisponible == null || item.cantidad < item.stockDisponible) {
       this.updateQty.emit({ productoId: item.productoId, cantidad: item.cantidad + 1 });
     }
   }
@@ -144,7 +146,10 @@ export class CartGroupItemComponent {
   }
 
   public onQuantityChange(item: CartItem, val: number): void {
-    const qty = Math.max(1, Math.min(val || 1, item.stockDisponible));
+    const parsed = Math.max(1, Math.floor(Number(val) || 1));
+    const qty = item.stockDisponible != null
+      ? Math.min(parsed, Math.max(1, item.stockDisponible))
+      : parsed;
     this.updateQty.emit({ productoId: item.productoId, cantidad: qty });
   }
 
