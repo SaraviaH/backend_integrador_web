@@ -4,4 +4,14 @@ compunex-backend/package-lock.json
 **/dist/
 **/.angular/
 compunex-backend/target/
+compunex-backend/uploads/
+compunex-backend/.github/
 
+# Carpetas y archivos de IA, agentes, skills y configuracion local
+**/.agents/
+**/.claude/
+**/.codex/
+**/.gemini/
+**/.vscode/
+**/skills-lock.json
+compunex-frontend/AUDITORIA_FUNCIONAL_FRONTEND.md
