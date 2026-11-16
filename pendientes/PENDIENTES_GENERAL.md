@@ -9,13 +9,13 @@
 
 ## 1. Base de Datos y Configuración de Entornos (Rúbrica ATF3)
 
-- [ ] **Configuración y migración de Base de Datos (Ítem 9):**
-  - Actualmente el Back-end opera con **PostgreSQL** (`org.postgresql:postgresql` en `pom.xml` y usuario `postgres`).
-  - Pendiente migrar a **MySQL** con un usuario dedicado distinto de `root` (o confirmar autorización del docente).
-- [ ] **Perfiles Back-end (Ítem 4):**
-  - Activar `spring.profiles.active=${SPRING_PROFILES_ACTIVE:dev}` en `compunex-backend/src/main/resources/application.properties` para enlazar automáticamente `application-dev.yml` / `application-prod.yml`.
-- [ ] **Entornos Front-end (Ítem 3):**
-  - Agregar `fileReplacements` en `compunex-frontend/angular.json` (`configurations.production`) para reemplazar `environment.ts` por `environment.prod.ts` en builds de producción.
+- [x] **Configuración y migración de Base de Datos (Ítem 9):**
+  - Migrado a **MySQL 8.0** (`com.mysql:mysql-connector-j` en `pom.xml`, base de datos `compunex_b2b`).
+  - Configurado usuario dedicado distinto de `root`: `compunex_app` (contraseña `98306001` en `dev` / variables de entorno en `prod`).
+- [x] **Perfiles Back-end (Ítem 4):**
+  - Activado `spring.profiles.active=${SPRING_PROFILES_ACTIVE:dev}` en `compunex-backend/src/main/resources/application.properties` enlazando automáticamente `application-dev.yml` y `application-prod.yml` (sin propiedades duplicadas).
+- [x] **Entornos Front-end (Ítem 3):**
+  - Verificado `fileReplacements` en `compunex-frontend/angular.json` (`configurations.production`) reemplazando `environment.ts` por `environment.prod.ts` en builds de producción.
 
 ---
 
