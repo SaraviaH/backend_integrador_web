@@ -93,15 +93,15 @@ import { CartGroupItemComponent } from './cart-group-item/cart-group-item.compon
           <div class="lg:col-span-8 space-y-6">
             
             <!-- Banner Informativo Split Order B2B -->
-            <div class="p-5 rounded-3xl bg-brand-tint/70 border border-brand-ice/70 text-brand-night space-y-2">
-              <div class="flex items-center gap-2 text-xs font-bold text-brand-primary">
-                <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div class="p-5 rounded-3xl bg-[#E1F2FA]/80 dark:bg-[#0F3043] border border-[#98D5EE] dark:border-[#2C7DA3] text-[#04202E] dark:text-[#F2F9FC] space-y-2 shadow-sm">
+              <div class="flex items-center gap-2 text-xs font-bold text-[#1786B4] dark:text-[#4FB3DA]">
+                <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 Arquitectura Split Order B2B
               </div>
-              <p class="text-xs text-brand-deep/90 leading-relaxed">
-                Tu orden agrupa productos de <strong>{{ cartState.itemsByProvider().length }} {{ cartState.itemsByProvider().length === 1 ? 'proveedor' : 'proveedores distintos' }}</strong>. 
+              <p class="text-xs text-[#0A3C55] dark:text-[#E1F2FA] leading-relaxed">
+                Tu orden agrupa productos de <strong class="font-bold text-[#04202E] dark:text-white">{{ cartState.itemsByProvider().length }} {{ cartState.itemsByProvider().length === 1 ? 'proveedor' : 'proveedores distintos' }}</strong>. 
                 Al confirmar la compra, la plataforma dividirá automáticamente el pedido en subórdenes independientes para garantizar el despacho directo de cada almacén y la emisión individual de facturas electrónicas.
               </p>
             </div>

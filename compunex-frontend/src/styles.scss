@@ -24,6 +24,18 @@
   --border-subtle: #cfe4ee;
   --text-main: #04202e;
   --text-secondary: #476577;
+
+  /* Tokens semánticos para tablas corporativas COMPUNEX B2B (Modo Claro) */
+  --table-head-bg: linear-gradient(180deg, #E1F2FA 0%, #D2EDF9 100%);
+  --table-head-bg-solid: #DCF0FA;
+  --table-head-text: #0A3C55;
+  --table-head-border: #7CC5E6;
+  --table-row-bg: #FFFFFF;
+  --table-row-alt-bg: #F8FCFE;
+  --table-row-hover-bg: #EBF6FC;
+  --table-row-selected-bg: #E1F2FA;
+  --table-border: #D8ECF6;
+  --table-accent: #1786B4;
 }
 
 html.dark {
@@ -34,6 +46,18 @@ html.dark {
   --border-subtle: #1d4960;
   --text-main: #e1f2fa;
   --text-secondary: #98d5ee;
+
+  /* Tokens semánticos para tablas corporativas COMPUNEX B2B (Modo Oscuro) */
+  --table-head-bg: linear-gradient(180deg, #134E6D 0%, #0E3D56 100%);
+  --table-head-bg-solid: #114662;
+  --table-head-text: #BCE6FA;
+  --table-head-border: #2C7DA3;
+  --table-row-bg: #0F3043;
+  --table-row-alt-bg: #0C293A;
+  --table-row-hover-bg: #153F58;
+  --table-row-selected-bg: rgba(23, 134, 180, 0.28);
+  --table-border: #1D4960;
+  --table-accent: #4FB3DA;
 }
 
 html, body {
@@ -233,16 +257,17 @@ html.dark .bg-brand-bg {
   background-color: #061722 !important;
 }
 
-html.dark .bg-slate-50,
-html.dark .bg-slate-50\/50,
-html.dark .bg-slate-50\/60,
-html.dark .bg-slate-50\/70,
-html.dark .bg-slate-50\/80 {
+html.dark .bg-slate-50:not(thead):not(thead tr),
+html.dark .bg-slate-50\/50:not(thead):not(thead tr),
+html.dark .bg-slate-50\/60:not(thead):not(thead tr),
+html.dark .bg-slate-50\/70:not(thead):not(thead tr),
+html.dark .bg-slate-50\/75:not(thead):not(thead tr),
+html.dark .bg-slate-50\/80:not(thead):not(thead tr) {
   background-color: #0A2535 !important;
 }
 
-html.dark .bg-slate-100,
-html.dark .bg-slate-200 {
+html.dark .bg-slate-100:not(thead):not(thead tr),
+html.dark .bg-slate-200:not(thead):not(thead tr) {
   background-color: #133B52 !important;
 }
 
@@ -251,14 +276,14 @@ html.dark .bg-brand-tint\/70 {
   background-color: rgba(23, 134, 180, 0.18) !important;
 }
 
-html.dark .border-slate-100,
-html.dark .border-slate-200,
-html.dark .border-slate-200\/70,
-html.dark .border-slate-200\/80,
-html.dark .border-slate-200\/90,
-html.dark .border-slate-250,
-html.dark .border-brand-ice,
-html.dark .border-brand-tint {
+html.dark .border-slate-100:not(thead):not(thead tr),
+html.dark .border-slate-200:not(thead):not(thead tr),
+html.dark .border-slate-200\/70:not(thead):not(thead tr),
+html.dark .border-slate-200\/80:not(thead):not(thead tr),
+html.dark .border-slate-200\/90:not(thead):not(thead tr),
+html.dark .border-slate-250:not(thead):not(thead tr),
+html.dark .border-brand-ice:not(thead):not(thead tr),
+html.dark .border-brand-tint:not(thead):not(thead tr) {
   border-color: #1D4960 !important;
 }
 
@@ -268,9 +293,15 @@ html.dark .divide-slate-200 > :not([hidden]) ~ :not([hidden]) {
 }
 
 html.dark .text-brand-night,
+html.dark .text-brand-deep:not(.in-print-sheet),
+html.dark .text-brand-deep\/90:not(.in-print-sheet),
 html.dark .text-slate-900,
 html.dark .text-slate-800 {
   color: #E1F2FA !important;
+}
+
+html.dark .print-invoice-sheet .text-brand-deep {
+  color: #0A3C55 !important;
 }
 
 html.dark .text-slate-700,
@@ -278,8 +309,8 @@ html.dark .text-slate-600 {
   color: #B8DFEF !important;
 }
 
-html.dark .text-slate-500,
-html.dark .text-slate-400 {
+html.dark .text-slate-500:not(thead):not(thead tr):not(thead th),
+html.dark .text-slate-400:not(thead):not(thead tr):not(thead th) {
   color: #98D5EE !important;
 }
 
@@ -311,16 +342,50 @@ html.dark textarea::placeholder {
   color: #6EA6C0 !important;
 }
 
-html.dark .bg-emerald-50 {
-  background-color: rgba(16, 185, 129, 0.14) !important;
+html.dark .bg-emerald-50,
+html.dark .bg-emerald-100 {
+  background-color: rgba(16, 185, 129, 0.16) !important;
 }
 
-html.dark .bg-rose-50 {
-  background-color: rgba(244, 63, 94, 0.14) !important;
+html.dark .bg-rose-50,
+html.dark .bg-rose-100 {
+  background-color: rgba(244, 63, 94, 0.16) !important;
 }
 
-html.dark .bg-amber-50 {
-  background-color: rgba(245, 158, 11, 0.14) !important;
+html.dark .bg-amber-50,
+html.dark .bg-amber-50\/80,
+html.dark .bg-amber-100 {
+  background-color: rgba(245, 158, 11, 0.16) !important;
+}
+
+html.dark .border-emerald-100,
+html.dark .border-emerald-200 {
+  border-color: rgba(16, 185, 129, 0.35) !important;
+}
+
+html.dark .border-rose-200 {
+  border-color: rgba(244, 63, 94, 0.35) !important;
+}
+
+html.dark .border-amber-200 {
+  border-color: rgba(245, 158, 11, 0.35) !important;
+}
+
+html.dark .border-slate-300 {
+  border-color: #1D4960 !important;
+}
+
+html.dark .from-slate-50,
+html.dark .from-blue-50 {
+  --tw-gradient-from: #0A2535 var(--tw-gradient-from-position) !important;
+  --tw-gradient-to: rgba(10, 37, 53, 0) var(--tw-gradient-to-position) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+
+html.dark .to-blue-50\/40,
+html.dark .to-slate-50,
+html.dark .via-slate-50 {
+  --tw-gradient-to: #0F3043 var(--tw-gradient-to-position) !important;
 }
 
 html.dark .text-emerald-700,
@@ -329,11 +394,87 @@ html.dark .text-emerald-800 {
 }
 
 html.dark .text-rose-700,
-html.dark .text-rose-800 {
+html.dark .text-rose-800,
+html.dark .text-rose-900 {
   color: #FDA4AF !important;
 }
 
 html.dark .text-amber-700,
-html.dark .text-amber-800 {
+html.dark .text-amber-800,
+html.dark .text-amber-900 {
   color: #FCD34D !important;
+}
+
+html.dark input[type="file"]::file-selector-button {
+  background-color: #0F3043;
+  color: #4FB3DA;
+  border: 1px solid #1D4960;
+}
+
+html.dark input[type="file"]::file-selector-button:hover {
+  background-color: #164159;
+}
+
+/* ============================================================================
+   SISTEMA CENTRALIZADO DE TABLAS CORPORATIVAS COMPUNEX B2B (CLARO Y OSCURO)
+   Previene sobrescrituras globales y preserva el encabezado celeste corporativo
+   ============================================================================ */
+.b2b-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.b2b-table,
+table:not(.print-table) {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.b2b-table thead,
+.b2b-table thead tr,
+table:not(.print-table):not(.in-print-sheet) thead,
+table:not(.print-table):not(.in-print-sheet) thead tr {
+  background: var(--table-head-bg) !important;
+  background-color: var(--table-head-bg-solid) !important;
+}
+
+.b2b-table thead th,
+table:not(.print-table):not(.in-print-sheet) thead th {
+  background: transparent !important;
+  color: var(--table-head-text) !important;
+  border-bottom: 2px solid var(--table-head-border) !important;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.b2b-table tbody tr {
+  background-color: var(--table-row-bg);
+  border-bottom: 1px solid var(--table-border);
+  transition: background-color 150ms ease, box-shadow 150ms ease;
+}
+
+.b2b-table tbody tr:hover,
+table:not(.print-table):not(.in-print-sheet) tbody tr:hover {
+  background-color: var(--table-row-hover-bg) !important;
+}
+
+.b2b-table tbody tr.is-selected,
+.b2b-table tbody tr[aria-selected='true'] {
+  background-color: var(--table-row-selected-bg) !important;
+  box-shadow: inset 3px 0 0 var(--table-accent);
+}
+
+.print-invoice-sheet table thead,
+.print-invoice-sheet table thead tr,
+.print-invoice-sheet table thead th {
+  background: #f1f5f9 !important;
+  color: #334155 !important;
+  border-bottom: 1px solid #cbd5e1 !important;
+}
+
+.print-invoice-sheet table tbody tr:hover {
+  background-color: #f8fafc !important;
 }

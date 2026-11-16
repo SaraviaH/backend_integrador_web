@@ -1,44 +1,43 @@
 import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms';
 import { CatalogApiService } from '../../core/services/catalog-api.service';
 import { CartStateService } from '../../core/state/cart-state.service';
 import { ToastStateService } from '../../core/state/toast-state.service';
 import { ActionTracker } from '../../core/state/action-state.util';
-import { BubbleButtonDirective } from '../../shared/directives/bubble-button.directive';
 import { ProductCard, ProductDetail } from '../../core/models/catalog.model';
 import { ProductContactModalComponent } from './product-contact-modal/product-contact-modal.component';
+import { ProductPurchasePanelComponent } from './product-purchase-panel/product-purchase-panel.component';
 import { ProductCardComponent } from '../../shared/components/product-card/product-card.component';
 
 @Component({
   selector: 'app-product-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, ProductContactModalComponent, ProductCardComponent, BubbleButtonDirective],
+  imports: [CommonModule, RouterModule, ProductContactModalComponent, ProductPurchasePanelComponent, ProductCardComponent],
   template: `
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
 
       <!-- 1. ESTADO DE CARGA -->
       @if (isLoading()) {
         <div class="space-y-6 animate-pulse">
-          <div class="h-4 bg-slate-200 rounded w-1/3"></div>
+          <div class="h-4 bg-slate-200 dark:bg-[#1D4960] rounded w-1/3"></div>
           <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
             <div class="lg:col-span-5 space-y-4">
-              <div class="aspect-square bg-slate-200 rounded-3xl w-full"></div>
+              <div class="aspect-square bg-slate-200 dark:bg-[#0F3043] rounded-3xl w-full"></div>
               <div class="flex gap-3">
-                <div class="w-20 h-20 bg-slate-200 rounded-2xl"></div>
-                <div class="w-20 h-20 bg-slate-200 rounded-2xl"></div>
-                <div class="w-20 h-20 bg-slate-200 rounded-2xl"></div>
+                <div class="w-20 h-20 bg-slate-200 dark:bg-[#0F3043] rounded-2xl"></div>
+                <div class="w-20 h-20 bg-slate-200 dark:bg-[#0F3043] rounded-2xl"></div>
+                <div class="w-20 h-20 bg-slate-200 dark:bg-[#0F3043] rounded-2xl"></div>
               </div>
             </div>
             <div class="lg:col-span-7 space-y-6">
               <div class="space-y-3">
-                <div class="h-6 bg-slate-200 rounded w-1/4"></div>
-                <div class="h-8 bg-slate-200 rounded w-4/5"></div>
-                <div class="h-4 bg-slate-150 rounded w-1/2"></div>
+                <div class="h-6 bg-slate-200 dark:bg-[#1D4960] rounded w-1/4"></div>
+                <div class="h-8 bg-slate-200 dark:bg-[#1D4960] rounded w-4/5"></div>
+                <div class="h-4 bg-slate-200 dark:bg-[#0F3043] rounded w-1/2"></div>
               </div>
-              <div class="h-32 bg-slate-100 rounded-3xl p-6"></div>
-              <div class="h-24 bg-slate-100 rounded-3xl p-6"></div>
+              <div class="h-32 bg-slate-100 dark:bg-[#0F3043] rounded-3xl p-6"></div>
+              <div class="h-24 bg-slate-100 dark:bg-[#0F3043] rounded-3xl p-6"></div>
             </div>
           </div>
         </div>
@@ -46,15 +45,15 @@ import { ProductCardComponent } from '../../shared/components/product-card/produ
 
       <!-- 2. ESTADO DE ERROR / NO ENCONTRADO -->
       @else if (hasError() || !product()) {
-        <div class="bg-white rounded-3xl border border-slate-200 p-12 text-center space-y-5 max-w-lg mx-auto my-12">
-          <div class="w-16 h-16 mx-auto rounded-3xl bg-rose-50 text-rose-500 flex items-center justify-center">
+        <div class="bg-white dark:bg-[#0F3043] rounded-3xl border border-[#CFE4EE] dark:border-[#1D4960] p-12 text-center space-y-5 max-w-lg mx-auto my-12 shadow-sm">
+          <div class="w-16 h-16 mx-auto rounded-3xl bg-rose-50 dark:bg-rose-950/40 text-rose-500 dark:text-rose-300 flex items-center justify-center">
             <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
           <div class="space-y-1">
-            <h2 class="text-lg font-bold text-brand-night">Producto no disponible</h2>
-            <p class="text-xs text-slate-500 leading-relaxed">
+            <h2 class="text-lg font-bold text-[#04202E] dark:text-[#F2F9FC]">Producto no disponible</h2>
+            <p class="text-xs text-[#527588] dark:text-[#B8DFEF] leading-relaxed">
               El producto solicitado no fue encontrado o fue pausado por el proveedor. Puedes explorar otros artículos disponibles en el catálogo.
             </p>
           </div>
@@ -62,13 +61,13 @@ import { ProductCardComponent } from '../../shared/components/product-card/produ
             <button
               type="button"
               (click)="loadProduct()"
-              class="px-5 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+              class="px-5 py-2.5 rounded-xl border border-[#CFE4EE] dark:border-[#1D4960] text-xs font-semibold text-[#0A3C55] dark:text-[#E1F2FA] hover:bg-[#E1F2FA]/50 dark:hover:bg-[#1D4960]/60 transition-colors"
             >
               Reintentar
             </button>
             <a
               routerLink="/catalog"
-              class="px-6 py-2.5 rounded-xl bg-brand-primary text-white text-xs font-semibold hover:bg-brand-petrol transition-colors shadow-xs"
+              class="px-6 py-2.5 rounded-xl bg-[#1786B4] text-white text-xs font-semibold hover:bg-[#0F5E83] transition-colors shadow-sm"
             >
               Ir al Catálogo Mayorista
             </a>
@@ -80,14 +79,14 @@ import { ProductCardComponent } from '../../shared/components/product-card/produ
       @else {
         @if (product(); as p) {
           <!-- Migas de Pan -->
-          <nav class="flex items-center gap-2 text-xs text-slate-400" aria-label="Ruta de navegación">
-            <a routerLink="/" class="hover:text-brand-primary transition-colors">Inicio</a>
+          <nav class="flex items-center gap-2 text-xs text-[#527588] dark:text-[#98D5EE]" aria-label="Ruta de navegación">
+            <a routerLink="/" class="hover:text-[#1786B4] dark:hover:text-[#4FB3DA] transition-colors">Inicio</a>
             <span>/</span>
-            <a routerLink="/catalog" class="hover:text-brand-primary transition-colors">Catálogo B2B</a>
+            <a routerLink="/catalog" class="hover:text-[#1786B4] dark:hover:text-[#4FB3DA] transition-colors">Catálogo B2B</a>
             <span>/</span>
-            <span class="text-slate-500 font-medium">{{ p.categoriaNombre }}</span>
+            <span class="font-medium">{{ p.categoriaNombre }}</span>
             <span>/</span>
-            <span class="text-brand-night font-bold truncate max-w-xs">{{ p.nombre }}</span>
+            <span class="text-[#04202E] dark:text-[#F2F9FC] font-bold truncate max-w-xs">{{ p.nombre }}</span>
           </nav>
 
           <!-- Cabecera y Grilla Principal -->
@@ -95,18 +94,18 @@ import { ProductCardComponent } from '../../shared/components/product-card/produ
 
             <!-- COLUMNA IZQUIERDA: GALERÍA DE IMÁGENES -->
             <div class="lg:col-span-5 space-y-4">
-              <div class="bg-white rounded-3xl border border-slate-200/80 p-6 flex items-center justify-center aspect-square overflow-hidden relative shadow-xs">
+              <div class="bg-white dark:bg-[#0F3043] rounded-3xl border border-[#CFE4EE] dark:border-[#1D4960] p-6 flex items-center justify-center aspect-square overflow-hidden relative shadow-sm">
                 <img
                   [src]="activeImage()"
                   [alt]="p.nombre"
                   class="w-full h-full object-contain motion-safe:hover:scale-105 motion-safe:transition-transform motion-safe:duration-300"
                 />
                 @if (p.destacado) {
-                  <span class="absolute top-4 left-4 px-3 py-1 rounded-full text-[11px] font-bold bg-brand-night text-white shadow-xs">
+                  <span class="absolute top-4 left-4 px-3 py-1 rounded-full text-[11px] font-bold bg-[#04202E] dark:bg-[#1786B4] text-white shadow-sm">
                     Destacado Mayorista
                   </span>
                 }
-                <span class="absolute bottom-4 right-4 px-2.5 py-1 rounded-lg text-[10px] font-mono bg-slate-100 text-slate-600 border border-slate-200/60">
+                <span class="absolute bottom-4 right-4 px-2.5 py-1 rounded-lg text-[10px] font-mono bg-[#F4F9FC] dark:bg-[#0A2535] text-[#0A3C55] dark:text-[#B8DFEF] border border-[#CFE4EE] dark:border-[#1D4960]">
                   SKU: {{ p.sku }}
                 </span>
               </div>
@@ -118,7 +117,7 @@ import { ProductCardComponent } from '../../shared/components/product-card/produ
                   (click)="activeImage.set(p.imagenPrincipalUrl)"
                   [class.ring-2]="activeImage() === p.imagenPrincipalUrl"
                   [class.ring-brand-primary]="activeImage() === p.imagenPrincipalUrl"
-                  class="w-20 h-20 rounded-2xl bg-white border border-slate-200 p-2 shrink-0 overflow-hidden transition-all hover:border-brand-primary"
+                  class="w-20 h-20 rounded-2xl bg-white dark:bg-[#0F3043] border border-[#CFE4EE] dark:border-[#1D4960] p-2 shrink-0 overflow-hidden transition-all hover:border-[#1786B4]"
                   aria-label="Ver imagen principal"
                 >
                   <img [src]="p.imagenPrincipalUrl" alt="Miniatura principal" class="w-full h-full object-contain" />
@@ -130,7 +129,7 @@ import { ProductCardComponent } from '../../shared/components/product-card/produ
                     (click)="activeImage.set(img)"
                     [class.ring-2]="activeImage() === img"
                     [class.ring-brand-primary]="activeImage() === img"
-                    class="w-20 h-20 rounded-2xl bg-white border border-slate-200 p-2 shrink-0 overflow-hidden transition-all hover:border-brand-primary"
+                    class="w-20 h-20 rounded-2xl bg-white dark:bg-[#0F3043] border border-[#CFE4EE] dark:border-[#1D4960] p-2 shrink-0 overflow-hidden transition-all hover:border-[#1786B4]"
                     [attr.aria-label]="'Ver imagen ' + (i + 2)"
                   >
                     <img [src]="img" alt="Miniatura secundaria" class="w-full h-full object-contain" />
@@ -139,15 +138,15 @@ import { ProductCardComponent } from '../../shared/components/product-card/produ
               </div>
 
               <!-- Tarjeta Informativa de Garantía Oficial -->
-              <div class="bg-slate-50/80 rounded-2xl border border-slate-200/70 p-4 flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-brand-tint text-brand-primary flex items-center justify-center shrink-0">
+              <div class="bg-[#F4F9FC] dark:bg-[#0A2535] rounded-2xl border border-[#CFE4EE] dark:border-[#1D4960] p-4 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-[#E1F2FA] dark:bg-[#0F3043] text-[#1786B4] dark:text-[#4FB3DA] flex items-center justify-center shrink-0">
                   <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                   </svg>
                 </div>
                 <div class="text-xs">
-                  <h4 class="font-bold text-brand-night">Garantía Corporativa Oficial: {{ p.garantiaMeses }} meses</h4>
-                  <p class="text-slate-500 text-[11px] mt-0.5">Respaldada directamente por el proveedor según términos comerciales del lote.</p>
+                  <h4 class="font-bold text-[#04202E] dark:text-[#F2F9FC]">Garantía Corporativa Oficial: {{ p.garantiaMeses }} meses</h4>
+                  <p class="text-[#527588] dark:text-[#B8DFEF] text-[11px] mt-0.5">Respaldada directamente por el proveedor según términos comerciales del lote.</p>
                 </div>
               </div>
             </div>
@@ -157,38 +156,38 @@ import { ProductCardComponent } from '../../shared/components/product-card/produ
 
               <div class="space-y-3">
                 <div class="flex flex-wrap items-center gap-2">
-                  <span class="px-3 py-1 rounded-full text-xs font-semibold bg-brand-tint text-brand-primary border border-brand-tint">
+                  <span class="px-3 py-1 rounded-full text-xs font-semibold bg-[#E1F2FA] dark:bg-[#0F3043] text-[#0F5E83] dark:text-[#98D5EE] border border-[#98D5EE]/60 dark:border-[#1D4960]">
                     {{ p.categoriaNombre }}
                   </span>
-                  <span class="px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700">
+                  <span class="px-3 py-1 rounded-full text-xs font-semibold bg-[#F4F9FC] dark:bg-[#0A2535] text-[#0A3C55] dark:text-[#E1F2FA] border border-[#CFE4EE] dark:border-[#1D4960]">
                     Marca: {{ p.marca }}
                   </span>
-                  <span class="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100">
+                  <span class="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60">
                     Condición: {{ p.condicion }}
                   </span>
                 </div>
 
-                <h1 class="text-2xl sm:text-3xl font-black text-brand-night tracking-tight font-display leading-snug">
+                <h1 class="text-2xl sm:text-3xl font-black text-[#04202E] dark:text-[#F2F9FC] tracking-tight font-display leading-snug">
                   {{ p.nombre }}
                 </h1>
 
-                <div class="flex flex-wrap items-center gap-4 text-xs text-slate-500 pt-1">
+                <div class="flex flex-wrap items-center gap-4 text-xs text-[#527588] dark:text-[#B8DFEF] pt-1">
                   <div class="flex items-center gap-1.5">
-                    <span class="font-semibold text-slate-700">Modelo:</span>
+                    <span class="font-semibold text-[#04202E] dark:text-[#F2F9FC]">Modelo:</span>
                     <span>{{ p.modelo }}</span>
                   </div>
                   <span>•</span>
                   <div class="flex items-center gap-1.5">
-                    <span class="font-semibold text-slate-700">Disponibilidad:</span>
+                    <span class="font-semibold text-[#04202E] dark:text-[#F2F9FC]">Disponibilidad:</span>
                     @if (p.stockDisponible === 0) {
-                      <span class="text-rose-600 font-bold">Agotado temporalmente</span>
+                      <span class="text-rose-600 dark:text-rose-400 font-bold">Agotado temporalmente</span>
                     } @else if (p.stockDisponible != null) {
-                      <span class="text-emerald-600 font-bold flex items-center gap-1">
+                      <span class="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
                         <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
                         {{ p.stockDisponible }} unidades referenciales en almacén
                       </span>
                     } @else {
-                      <span class="text-emerald-600 font-bold flex items-center gap-1">
+                      <span class="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
                         <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
                         Disponible para despacho mayorista
                       </span>
@@ -198,20 +197,20 @@ import { ProductCardComponent } from '../../shared/components/product-card/produ
               </div>
 
               <!-- Ficha del Proveedor Mayorista -->
-              <div class="bg-white rounded-3xl border border-slate-200/80 p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+              <div class="bg-white dark:bg-[#0F3043] rounded-2xl border border-[#CFE4EE] dark:border-[#1D4960] p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
                 <div class="flex items-center gap-3">
-                  <div class="w-12 h-12 rounded-2xl bg-slate-100 border border-slate-200 text-brand-primary flex items-center justify-center font-bold text-lg font-display shrink-0">
+                  <div class="w-12 h-12 rounded-2xl bg-[#F4F9FC] dark:bg-[#0A2535] border border-[#CFE4EE] dark:border-[#1D4960] text-[#1786B4] dark:text-[#4FB3DA] flex items-center justify-center font-bold text-lg font-display shrink-0">
                     {{ p.proveedorRazonSocial.substring(0, 2).toUpperCase() }}
                   </div>
                   <div>
                     <div class="flex items-center gap-2 flex-wrap">
-                      <h3 class="text-sm font-bold text-brand-night">{{ p.proveedorRazonSocial }}</h3>
-                      <span class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                      <h3 class="text-sm font-bold text-[#04202E] dark:text-[#F2F9FC]">{{ p.proveedorRazonSocial }}</h3>
+                      <span class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800/60">
                         ✓ Proveedor Activo
                       </span>
                     </div>
-                    <p class="text-xs text-slate-500 mt-0.5">
-                      RUC: <strong class="text-slate-700 font-mono">{{ p.proveedorRuc }}</strong>
+                    <p class="text-xs text-[#527588] dark:text-[#B8DFEF] mt-0.5">
+                      RUC: <strong class="text-[#04202E] dark:text-[#F2F9FC] font-mono">{{ p.proveedorRuc }}</strong>
                       @if (p.proveedorCiudad) {
                         <span> · {{ p.proveedorCiudad }}</span>
                       }
@@ -222,7 +221,7 @@ import { ProductCardComponent } from '../../shared/components/product-card/produ
                 <button
                   type="button"
                   (click)="isContactModalOpen.set(true)"
-                  class="px-4 py-2.5 rounded-xl border border-brand-primary text-brand-primary hover:bg-brand-tint text-xs font-bold transition-colors flex items-center justify-center gap-1.5 shrink-0"
+                  class="px-4 py-2.5 rounded-xl border border-[#1786B4] dark:border-[#4FB3DA] text-[#1786B4] dark:text-[#4FB3DA] hover:bg-[#E1F2FA]/60 dark:hover:bg-[#1786B4]/20 text-xs font-bold transition-colors flex items-center justify-center gap-1.5 shrink-0"
                 >
                   <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
@@ -231,165 +230,28 @@ import { ProductCardComponent } from '../../shared/components/product-card/produ
                 </button>
               </div>
 
-              <!-- CAJA DE LIQUIDACIÓN Y COMPRA MAYORISTA B2B -->
-              <div class="bg-gradient-to-br from-slate-50 to-blue-50/40 rounded-3xl border border-brand-tint p-6 space-y-6 shadow-xs">
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div class="bg-white p-4 rounded-2xl border border-slate-200/80">
-                    <span class="text-[11px] text-slate-500 uppercase tracking-wider font-semibold block">
-                      Precio por Unidad
-                    </span>
-                    <div class="text-2xl font-black text-brand-night font-mono mt-1">
-                      S/ {{ p.precioUnitario | number:'1.2-2' }}
-                      <span class="text-xs font-sans font-normal text-slate-400">sin IGV</span>
-                    </div>
-                    <span class="text-[10px] text-slate-400 mt-0.5 block">
-                      Precio aplicado en el carrito y checkout.
-                    </span>
-                  </div>
-
-                  @if (p.precioTotalCaja) {
-                    <div class="bg-brand-primary text-white p-4 rounded-2xl border border-brand-petrol shadow-xs relative overflow-hidden">
-                      <span class="absolute top-2 right-2 text-[10px] bg-white/20 px-2 py-0.5 rounded-full font-bold">
-                        Caja completa
-                      </span>
-                      <span class="text-[11px] text-brand-tint uppercase tracking-wider font-semibold block">
-                        Total de caja
-                      </span>
-                      <div class="text-2xl font-black text-white font-mono mt-1">
-                        S/ {{ p.precioTotalCaja | number:'1.2-2' }}
-                        <span class="text-xs font-sans font-normal text-brand-ice">sin IGV</span>
-                      </div>
-                      <span class="text-[10px] text-brand-tint mt-0.5 block">
-                        {{ p.unidadesPorPaqueteTexto || 'Paquete completo' }}. Referencial.
-                      </span>
-                    </div>
-                  } @else {
-                    <div class="bg-white p-4 rounded-2xl border border-slate-200/80">
-                      <span class="text-[11px] text-slate-500 uppercase tracking-wider font-semibold block">
-                        Pedido mínimo
-                      </span>
-                      <div class="text-lg font-black text-brand-night mt-1">
-                        {{ p.pedidoMinimoTexto || 'Consultar con el proveedor' }}
-                      </div>
-                      <span class="text-[10px] text-slate-400 mt-0.5 block">
-                        Condición comercial informada por el proveedor.
-                      </span>
-                    </div>
-                  }
-                </div>
-
-                <!-- Selector de Cantidad -->
-                <div class="space-y-3 pt-2">
-                  <div class="flex items-center justify-between gap-3">
-                    <label for="qty-input" class="text-xs font-bold text-slate-700">
-                      Cantidad a Pedir:
-                    </label>
-                    <span class="text-xs text-slate-500 text-right">
-                      Pedido mínimo: <strong class="text-brand-primary">{{ p.pedidoMinimoTexto || 'No especificado' }}</strong>
-                    </span>
-                  </div>
-
-                  <div class="flex items-center gap-4">
-                    <div class="inline-flex items-center bg-white border border-slate-200 rounded-2xl p-1 shadow-2xs">
-                      <button
-                        type="button"
-                        (click)="decreaseQty()"
-                        [disabled]="quantity() <= 1"
-                        class="w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center font-bold text-base transition-colors"
-                        aria-label="Disminuir cantidad"
-                      >
-                        −
-                      </button>
-                      <input
-                        id="qty-input"
-                        type="number"
-                        [ngModel]="quantity()"
-                        (ngModelChange)="setQuantity($event)"
-                        [min]="1"
-                        [max]="p.stockDisponible ?? null"
-                        class="w-16 text-center text-sm font-bold text-brand-night bg-transparent outline-none"
-                      />
-                      <button
-                        type="button"
-                        (click)="increaseQty()"
-                        [disabled]="p.stockDisponible != null && quantity() >= p.stockDisponible"
-                        class="w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center font-bold text-base transition-colors"
-                        aria-label="Aumentar cantidad"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Desglose de Liquidación B2B con IGV -->
-                <div class="bg-white/90 rounded-2xl p-4 border border-slate-200/60 space-y-2 text-xs">
-                  <div class="flex justify-between text-slate-600">
-                    <span>Subtotal ({{ quantity() }} {{ quantity() === 1 ? 'unidad' : 'unidades' }} × S/ {{ currentUnitPrice() | number:'1.2-2' }}):</span>
-                    <span class="font-mono font-semibold text-slate-800">S/ {{ calculatedSubtotal() | number:'1.2-2' }}</span>
-                  </div>
-                  <div class="flex justify-between text-slate-600">
-                    <span>IGV Ley (18%):</span>
-                    <span class="font-mono font-semibold text-slate-800">S/ {{ calculatedIgv() | number:'1.2-2' }}</span>
-                  </div>
-                  <div class="flex justify-between text-sm font-extrabold text-brand-night pt-2 border-t border-slate-100">
-                    <span>Total Liquidación Estimado:</span>
-                    <span class="font-mono text-brand-primary">S/ {{ calculatedTotal() | number:'1.2-2' }}</span>
-                  </div>
-                </div>
-
-                <!-- Botones de Acción Primaria -->
-                <div class="flex flex-col sm:flex-row gap-3 pt-2">
-                  <button
-                    type="button"
-                    (click)="addToCart()"
-                    [disabled]="p.stockDisponible === 0 || cartAction.isLoading('add-main')"
-                    appBubbleButton
-                    class="flex-1 py-3.5 px-6 rounded-xl disabled:cursor-not-allowed text-white font-bold text-sm flex items-center justify-center gap-2 transition-colors shadow-xs"
-                    [ngClass]="cartAction.isSuccess('add-main')
-                      ? 'bg-emerald-600 hover:bg-emerald-700'
-                      : (p.stockDisponible === 0
-                        ? 'bg-slate-300 dark:bg-brand-dark-border text-slate-500'
-                        : 'bg-brand-primary hover:bg-brand-petrol')"
-                  >
-                    @if (cartAction.isLoading('add-main')) {
-                      <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24" aria-hidden="true">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-80" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-                      </svg>
-                      <span>Agregando...</span>
-                    } @else if (cartAction.isSuccess('add-main')) {
-                      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
-                      </svg>
-                      <span>Agregado al carrito</span>
-                    } @else {
-                      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                      </svg>
-                      <span>{{ p.stockDisponible === 0 ? 'Producto Agotado' : 'Agregar ' + quantity() + ' un. a la Orden' }}</span>
-                    }
-                  </button>
-
-                  <a
-                    routerLink="/catalog"
-                    class="py-3.5 px-5 rounded-xl border border-slate-300 text-slate-700 hover:bg-white text-xs font-semibold flex items-center justify-center transition-colors text-center"
-                  >
-                    Seguir Comprando
-                  </a>
-                </div>
-
-              </div>
+              <!-- PROCESO DE COMPRA MAYORISTA B2B EN DOS PANELES -->
+              <app-product-purchase-panel
+                [product]="p"
+                [quantity]="quantity()"
+                [unitPrice]="currentUnitPrice()"
+                [subtotal]="calculatedSubtotal()"
+                [igv]="calculatedIgv()"
+                [totalWithIgv]="calculatedTotal()"
+                [isAdding]="cartAction.isLoading('add-main')"
+                [justAdded]="cartAction.isSuccess('add-main')"
+                (quantityChange)="setQuantity($event)"
+                (addToCart)="addToCart()"
+              />
 
             </div>
 
           </div>
 
           <!-- PESTAÑAS TÉCNICAS -->
-          <div class="bg-white rounded-3xl border border-slate-200/80 p-6 md:p-8 space-y-6 shadow-xs mt-10">
+          <div class="bg-white dark:bg-[#0F3043] rounded-3xl border border-[#CFE4EE] dark:border-[#1D4960] p-6 md:p-8 space-y-6 shadow-sm mt-10">
 
-            <div class="flex border-b border-slate-200 gap-6 overflow-x-auto" role="tablist">
+            <div class="flex border-b border-[#CFE4EE] dark:border-[#1D4960] gap-6 overflow-x-auto" role="tablist">
               <button
                 type="button"
                 role="tab"
@@ -398,7 +260,7 @@ import { ProductCardComponent } from '../../shared/components/product-card/produ
                 [class.border-brand-primary]="activeTab() === 'specs'"
                 [class.text-brand-primary]="activeTab() === 'specs'"
                 [class.font-bold]="activeTab() === 'specs'"
-                class="pb-4 text-sm text-slate-500 hover:text-slate-800 border-b-2 border-transparent transition-all shrink-0"
+                class="pb-4 text-sm text-[#527588] dark:text-[#B8DFEF] hover:text-[#04202E] dark:hover:text-[#F2F9FC] border-b-2 border-transparent transition-all shrink-0"
               >
                 Especificaciones Técnicas
               </button>
@@ -410,7 +272,7 @@ import { ProductCardComponent } from '../../shared/components/product-card/produ
                 [class.border-brand-primary]="activeTab() === 'desc'"
                 [class.text-brand-primary]="activeTab() === 'desc'"
                 [class.font-bold]="activeTab() === 'desc'"
-                class="pb-4 text-sm text-slate-500 hover:text-slate-800 border-b-2 border-transparent transition-all shrink-0"
+                class="pb-4 text-sm text-[#527588] dark:text-[#B8DFEF] hover:text-[#04202E] dark:hover:text-[#F2F9FC] border-b-2 border-transparent transition-all shrink-0"
               >
                 Descripción Corporativa
               </button>
@@ -422,7 +284,7 @@ import { ProductCardComponent } from '../../shared/components/product-card/produ
                 [class.border-brand-primary]="activeTab() === 'warranty'"
                 [class.text-brand-primary]="activeTab() === 'warranty'"
                 [class.font-bold]="activeTab() === 'warranty'"
-                class="pb-4 text-sm text-slate-500 hover:text-slate-800 border-b-2 border-transparent transition-all shrink-0"
+                class="pb-4 text-sm text-[#527588] dark:text-[#B8DFEF] hover:text-[#04202E] dark:hover:text-[#F2F9FC] border-b-2 border-transparent transition-all shrink-0"
               >
                 Garantía y Despacho Mayorista
               </button>
@@ -430,17 +292,17 @@ import { ProductCardComponent } from '../../shared/components/product-card/produ
 
             @if (activeTab() === 'specs') {
               <div class="space-y-4">
-                <h3 class="text-base font-bold text-brand-night">Ficha de Homologación de Hardware</h3>
+                <h3 class="text-base font-bold text-[#04202E] dark:text-[#F2F9FC]">Ficha de Homologación de Hardware</h3>
                 @if (p.especificaciones.length > 0) {
-                  <div class="overflow-hidden rounded-2xl border border-slate-200">
+                  <div class="overflow-hidden rounded-2xl border border-[#CFE4EE] dark:border-[#1D4960]">
                     <table class="w-full text-left text-xs">
-                      <tbody class="divide-y divide-slate-100">
+                      <tbody class="divide-y divide-[#E1F2FA] dark:divide-[#1D4960]">
                         @for (spec of p.especificaciones; track spec.clave; let even = $even) {
-                          <tr [class.bg-slate-50]="even" class="hover:bg-brand-tint/40 transition-colors">
-                            <td class="px-5 py-3.5 font-bold text-slate-700 w-1/3 border-r border-slate-100">
+                          <tr [ngClass]="even ? 'bg-[#F4F9FC] dark:bg-[#0A2535]' : 'bg-white dark:bg-[#0F3043]'" class="hover:bg-[#E1F2FA]/40 dark:hover:bg-[#1D4960]/40 transition-colors">
+                            <td class="px-5 py-3.5 font-bold text-[#04202E] dark:text-[#F2F9FC] w-1/3 border-r border-[#E1F2FA] dark:border-[#1D4960]">
                               {{ spec.clave }}
                             </td>
-                            <td class="px-5 py-3.5 text-slate-600">
+                            <td class="px-5 py-3.5 text-[#527588] dark:text-[#B8DFEF]">
                               {{ spec.valor }}
                             </td>
                           </tr>
@@ -449,32 +311,32 @@ import { ProductCardComponent } from '../../shared/components/product-card/produ
                     </table>
                   </div>
                 } @else {
-                  <p class="text-xs text-slate-500">El proveedor no registró especificaciones técnicas adicionales para este ítem.</p>
+                  <p class="text-xs text-[#527588] dark:text-[#B8DFEF]">El proveedor no registró especificaciones técnicas adicionales para este ítem.</p>
                 }
               </div>
             }
 
             @if (activeTab() === 'desc') {
-              <div class="prose prose-slate max-w-none text-xs sm:text-sm text-slate-600 leading-relaxed space-y-4">
+              <div class="prose prose-slate dark:prose-invert max-w-none text-xs sm:text-sm text-[#527588] dark:text-[#B8DFEF] leading-relaxed space-y-4">
                 <p>{{ p.descripcion }}</p>
               </div>
             }
 
             @if (activeTab() === 'warranty') {
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs text-slate-600">
-                <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
-                  <h4 class="font-bold text-brand-night flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-brand-primary"></span>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs text-[#527588] dark:text-[#B8DFEF]">
+                <div class="p-5 rounded-2xl bg-[#F4F9FC] dark:bg-[#0A2535] border border-[#CFE4EE] dark:border-[#1D4960] space-y-2">
+                  <h4 class="font-bold text-[#04202E] dark:text-[#F2F9FC] flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-[#1786B4] dark:bg-[#4FB3DA]"></span>
                     Garantía del Proveedor
                   </h4>
                   <p>
-                    Este producto cuenta con <strong>{{ p.garantiaMeses }} meses</strong> de garantía respaldada por {{ p.proveedorRazonSocial }}.
+                    Este producto cuenta con <strong class="text-[#04202E] dark:text-[#F2F9FC]">{{ p.garantiaMeses }} meses</strong> de garantía respaldada por {{ p.proveedorRazonSocial }}.
                   </p>
                 </div>
 
-                <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
-                  <h4 class="font-bold text-brand-night flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+                <div class="p-5 rounded-2xl bg-[#F4F9FC] dark:bg-[#0A2535] border border-[#CFE4EE] dark:border-[#1D4960] space-y-2">
+                  <h4 class="font-bold text-[#04202E] dark:text-[#F2F9FC] flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-600 dark:bg-emerald-400"></span>
                     Despacho y Trazabilidad (Split Order)
                   </h4>
                   <p>
@@ -492,10 +354,10 @@ import { ProductCardComponent } from '../../shared/components/product-card/produ
               <section class="pt-4 space-y-5">
                 <div class="flex items-center justify-between">
                   <div>
-                    <span class="text-[11px] font-extrabold uppercase tracking-wider text-brand-primary">Más opciones B2B</span>
-                    <h2 class="text-xl font-black text-brand-night font-display">Otros productos del catálogo</h2>
+                    <span class="text-[11px] font-extrabold uppercase tracking-wider text-[#1786B4] dark:text-[#4FB3DA]">Más opciones B2B</span>
+                    <h2 class="text-xl font-black text-[#04202E] dark:text-[#F2F9FC] font-display">Otros productos del catálogo</h2>
                   </div>
-                  <a routerLink="/catalog" class="text-xs font-bold text-brand-primary hover:underline">
+                  <a routerLink="/catalog" class="text-xs font-bold text-[#1786B4] dark:text-[#4FB3DA] hover:underline">
                     Ver catálogo completo →
                   </a>
                 </div>

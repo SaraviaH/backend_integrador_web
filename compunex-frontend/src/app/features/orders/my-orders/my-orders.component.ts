@@ -154,10 +154,10 @@ import { PaginationBarComponent } from '../../../shared/components/pagination-ba
 
       <!-- 4. ESTADO CON DATOS -->
       @else {
-        <div class="bg-white rounded-3xl border border-slate-200/80 overflow-hidden shadow-xs">
-          <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs">
-              <thead class="bg-slate-50 border-b border-slate-200/80 text-slate-500 font-bold uppercase text-[10px] tracking-wider">
+        <div class="bg-white dark:bg-[#0F3043] rounded-2xl border border-[#CFE4EE] dark:border-[#1D4960] overflow-hidden shadow-sm">
+          <div class="b2b-table-wrapper overflow-x-auto">
+            <table class="b2b-table w-full min-w-[680px] text-left text-xs">
+              <thead class="bg-[#E1F2FA] dark:bg-[#114662] border-b-2 border-[#7CC5E6] dark:border-[#2C7DA3] text-[#0A3C55] dark:text-[#BCE6FA] font-extrabold uppercase text-[11px] tracking-wider">
                 <tr>
                   <th class="py-3.5 px-6">Código de Orden</th>
                   <th class="py-3.5 px-4">Fecha de Emisión</th>
@@ -166,33 +166,33 @@ import { PaginationBarComponent } from '../../../shared/components/pagination-ba
                   <th class="py-3.5 px-6 text-right">Acciones</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-slate-100">
+              <tbody class="divide-y divide-[#D8ECF6] dark:divide-[#1D4960]">
                 @for (order of filteredOrders(); track order.id) {
-                  <tr class="hover:bg-slate-50/60 transition-colors">
-                    <td class="py-4 px-6">
-                      <a [routerLink]="['/cuenta/mis-compras', order.id]" class="font-mono font-bold text-brand-primary hover:underline text-xs sm:text-sm">
+                  <tr class="hover:bg-[#EBF6FC] dark:hover:bg-[#153F58] transition-colors">
+                    <td class="py-4 px-6 whitespace-nowrap">
+                      <a [routerLink]="['/cuenta/mis-compras', order.id]" class="font-mono font-bold text-[#1786B4] dark:text-[#4FB3DA] hover:underline text-xs sm:text-sm">
                         {{ order.codigoOrden }}
                       </a>
                     </td>
 
-                    <td class="py-4 px-4 text-slate-600">
+                    <td class="py-4 px-4 text-[#527588] dark:text-[#B8DFEF] whitespace-nowrap">
                       {{ order.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}
                     </td>
 
-                    <td class="py-4 px-4 text-center">
-                      <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-brand-tint text-brand-primary border border-brand-tint">
+                    <td class="py-4 px-4 text-center whitespace-nowrap">
+                      <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#E1F2FA] dark:bg-[#0A2535] text-[#0F5E83] dark:text-[#98D5EE] border border-[#98D5EE]/60 dark:border-[#1D4960]">
                         {{ order.cantidadSubordenes }} {{ order.cantidadSubordenes === 1 ? 'proveedor' : 'proveedores' }}
                       </span>
                     </td>
 
-                    <td class="py-4 px-6 text-right font-mono font-bold text-brand-night text-xs sm:text-sm">
+                    <td class="py-4 px-6 text-right font-mono font-bold text-[#04202E] dark:text-[#F2F9FC] text-xs sm:text-sm whitespace-nowrap">
                       S/ {{ order.totalGeneral | number:'1.2-2' }}
                     </td>
 
-                    <td class="py-4 px-6 text-right space-x-2 shrink-0">
+                    <td class="py-4 px-6 text-right space-x-2 shrink-0 whitespace-nowrap">
                       <a
                         [routerLink]="['/pedidos', order.id, 'comprobante']"
-                        class="p-2 rounded-xl text-slate-400 hover:text-brand-primary hover:bg-brand-tint transition-colors inline-flex items-center"
+                        class="p-2 rounded-xl text-[#527588] dark:text-[#B8DFEF] hover:text-[#1786B4] dark:hover:text-[#4FB3DA] hover:bg-[#E1F2FA]/70 dark:hover:bg-[#1786B4]/20 transition-colors inline-flex items-center"
                         title="Ver Comprobante Electrónico"
                         aria-label="Ver Comprobante Electrónico"
                       >
@@ -203,7 +203,7 @@ import { PaginationBarComponent } from '../../../shared/components/pagination-ba
 
                       <a
                         [routerLink]="['/cuenta/mis-compras', order.id]"
-                        class="px-3 py-1.5 rounded-xl border border-slate-200 text-slate-700 hover:border-brand-primary hover:text-brand-primary font-semibold text-xs transition-colors inline-block"
+                        class="px-3 py-1.5 rounded-xl border border-[#CFE4EE] dark:border-[#1D4960] bg-white dark:bg-[#0A2535] text-[#0A3C55] dark:text-[#E1F2FA] hover:border-[#1786B4] dark:hover:border-[#4FB3DA] hover:text-[#1786B4] dark:hover:text-[#4FB3DA] font-semibold text-xs transition-colors inline-block"
                       >
                         Trazabilidad
                       </a>

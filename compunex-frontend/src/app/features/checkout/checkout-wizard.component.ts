@@ -18,19 +18,19 @@ import { ConfirmationStepComponent } from './confirmation-step/confirmation-step
     ConfirmationStepComponent
   ],
   template: `
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
       
       <!-- Migas de Pan (Breadcrumbs) -->
-      <nav class="flex items-center gap-2 text-xs text-slate-400">
-        <a routerLink="/" class="hover:text-brand-primary transition-colors">Inicio</a>
+      <nav class="flex items-center gap-2 text-xs text-[#527588] dark:text-[#98D5EE]">
+        <a routerLink="/" class="hover:text-[#1786B4] dark:hover:text-[#4FB3DA] transition-colors">Inicio</a>
         <span>/</span>
-        <a routerLink="/carrito" class="hover:text-brand-primary transition-colors">Carrito</a>
+        <a routerLink="/carrito" class="hover:text-[#1786B4] dark:hover:text-[#4FB3DA] transition-colors">Carrito</a>
         <span>/</span>
-        <span class="text-brand-night font-bold">Asistente de Checkout B2B</span>
+        <span class="text-[#04202E] dark:text-[#F2F9FC] font-bold">Asistente de Checkout B2B</span>
       </nav>
 
       <!-- Indicador Visual de 3 Pasos (Stepper B2B) -->
-      <div class="bg-white rounded-3xl border border-slate-200/80 p-5 md:p-6 shadow-xs">
+      <div class="bg-white dark:bg-[#0F3043] rounded-2xl border border-[#CFE4EE] dark:border-[#1D4960] p-4 sm:p-5 shadow-sm">
         <div class="grid grid-cols-3 gap-2 sm:gap-4 text-center">
           
           <!-- Paso 1: Facturación -->
