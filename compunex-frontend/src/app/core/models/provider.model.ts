@@ -14,6 +14,7 @@ export interface ProviderProductItem {
   categoriaNombre: string;
   precioUnitario: number;
   precioTotalCaja?: number;
+  moneda?: string;
   unidadesPorPaquete?: number;
   unidadesPorPaqueteTexto?: string;
   pedidoMinimoTexto?: string;
@@ -61,6 +62,7 @@ export interface ProviderSaleItem {
   subtotal: number;
   igv: number;
   total: number;
+  moneda?: string;
   numeroFacturaSimulada?: string;
   items: {
     productoId: number;

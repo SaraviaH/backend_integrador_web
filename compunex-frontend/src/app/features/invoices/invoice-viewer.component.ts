@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { OrderApiService } from '../../core/services/order-api.service';
 import { OrderDetail, SuborderInvoice } from '../../core/models/order.model';
+import { SunatFacturaData, SunatFacturaSheetComponent } from '../../shared/components/sunat-factura-sheet/sunat-factura-sheet.component';
 
 @Component({
   selector: 'app-invoice-viewer',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, SunatFacturaSheetComponent],
   template: `
     <div class="invoice-page-container max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
       
@@ -129,177 +130,10 @@ import { OrderDetail, SuborderInvoice } from '../../core/models/order.model';
 
       <!-- 3. ESTADO CON DATOS: FACTURA ELECTRÓNICA FORMAL SUNAT (HOJA A4) -->
       @else {
-        @if (currentSuborder(); as sub) {
-        
-        <div class="invoice-a4-sheet bg-white rounded-2xl border border-slate-300 p-8 sm:p-12 shadow-md max-w-4xl mx-auto space-y-6 text-brand-night">
-          
-          <!-- Encabezado SUNAT: Datos Emisor + Recuadro Fiscal -->
-          <div class="flex flex-col sm:flex-row justify-between items-start gap-6 border-b border-slate-200 pb-6">
-            
-            <!-- Datos del Emisor (Proveedor Mayorista) -->
-            <div class="space-y-1.5 flex-1 min-w-0">
-              <div class="flex items-center gap-2 mb-2">
-                <img
-                  src="/images/compunex-icon.png"
-                  alt="COMPUNEX B2B"
-                  class="w-8 h-8 rounded-lg object-contain"
-                />
-                <span class="font-extrabold text-sm tracking-tight font-display text-brand-deep">COMPUNEX B2B · RED MAYORISTA</span>
-              </div>
-              <h2 class="text-base sm:text-lg font-black uppercase text-brand-night tracking-tight">
-                {{ sub.proveedorRazonSocial }}
-              </h2>
-              <p class="text-xs text-slate-600">Proveedor Mayorista Registrado · Emisión Electrónica B2B</p>
-              <p class="text-xs text-slate-500">Suborden #{{ sub.subordenId }} · Orden {{ order()!.codigoOrden }}</p>
-            </div>
-
-            <!-- Recuadro Oficial SUNAT (RUC / FACTURA ELECTRÓNICA / NÚMERO) -->
-            <div class="border-2 border-slate-800 rounded-xl p-4 sm:p-5 text-center w-full sm:w-64 shrink-0 bg-slate-50/50">
-              <div class="text-xs sm:text-sm font-extrabold tracking-wider font-mono">
-                R.U.C. N° {{ sub.proveedorRuc }}
-              </div>
-              <div class="text-sm sm:text-base font-black bg-brand-night text-white py-1.5 my-2 uppercase tracking-wide rounded-sm font-display">
-                Factura Electrónica
-              </div>
-              <div class="text-base sm:text-lg font-black font-mono text-brand-primary">
-                {{ sub.numeroFacturaSimulada }}
-              </div>
-            </div>
-
+        @if (currentSunatFactura(); as factura) {
+          <div class="invoice-a4-sheet">
+            <app-sunat-factura-sheet [data]="factura" />
           </div>
-
-          <!-- Datos del Cliente / Adquiriente -->
-          <div class="bg-slate-50 rounded-xl border border-slate-200 p-4 text-xs grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <span class="text-slate-400 block text-[11px]">Señor(es) / Razón Social:</span>
-              <strong class="text-slate-900 text-xs sm:text-sm">{{ order()!.razonSocialFacturacion }}</strong>
-            </div>
-            <div>
-              <span class="text-slate-400 block text-[11px]">R.U.C. del Adquiriente:</span>
-              <strong class="text-slate-900 font-mono text-xs sm:text-sm">{{ order()!.rucFacturacion }}</strong>
-            </div>
-            <div>
-              <span class="text-slate-400 block text-[11px]">Dirección Fiscal:</span>
-              <span class="text-slate-700">{{ order()!.direccionFiscal }}</span>
-            </div>
-            <div class="grid grid-cols-2 gap-2">
-              <div>
-                <span class="text-slate-400 block text-[11px]">Fecha de Emisión:</span>
-                <span class="text-slate-700 font-semibold">{{ order()!.fechaEmision | date:'dd/MM/yyyy' }}</span>
-              </div>
-              <div>
-                <span class="text-slate-400 block text-[11px]">Moneda:</span>
-                <span class="text-slate-700 font-bold">SOLES (PEN)</span>
-              </div>
-            </div>
-            <div>
-              <span class="text-slate-400 block text-[11px]">Forma de Pago:</span>
-              <span class="text-slate-700 font-semibold">{{ order()!.metodoPago }}</span>
-            </div>
-            <div>
-              <span class="text-slate-400 block text-[11px]">Orden Relacionada:</span>
-              <span class="font-mono text-slate-700">{{ order()!.codigoOrden }}</span>
-            </div>
-          </div>
-
-          <!-- Tabla de Bienes / Ítems Facturados -->
-          <div class="overflow-x-auto border border-slate-200 rounded-xl">
-            <table class="w-full text-left text-xs">
-              <thead class="bg-slate-100 border-b border-slate-200 text-slate-700 font-bold uppercase text-[10px] tracking-wider">
-                <tr>
-                  <th class="py-2.5 px-3 text-center w-12">Ítem</th>
-                  <th class="py-2.5 px-3">Código / SKU</th>
-                  <th class="py-2.5 px-3">Descripción Detallada</th>
-                  <th class="py-2.5 px-3 text-center">Unidad</th>
-                  <th class="py-2.5 px-3 text-center">Cant.</th>
-                  <th class="py-2.5 px-3 text-right">Valor Unit.</th>
-                  <th class="py-2.5 px-3 text-right">Importe Total</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-slate-100">
-                @for (item of sub.items; track item.productoId; let i = $index) {
-                  <tr class="hover:bg-slate-50/60">
-                    <td class="py-3 px-3 text-center text-slate-400 font-mono">{{ i + 1 }}</td>
-                    <td class="py-3 px-3 font-mono font-semibold text-slate-700 text-[11px]">
-                      PROD-{{ item.productoId }}
-                    </td>
-                    <td class="py-3 px-3 font-medium text-slate-800">
-                      {{ item.nombre }}
-                    </td>
-                    <td class="py-3 px-3 text-center text-slate-500">NIU</td>
-                    <td class="py-3 px-3 text-center font-bold text-slate-900">{{ item.cantidad }}</td>
-                    <td class="py-3 px-3 text-right font-mono text-slate-700">
-                      S/ {{ item.precioUnitario | number:'1.2-2' }}
-                    </td>
-                    <td class="py-3 px-3 text-right font-mono font-bold text-slate-900">
-                      S/ {{ item.subtotal | number:'1.2-2' }}
-                    </td>
-                  </tr>
-                }
-              </tbody>
-            </table>
-          </div>
-
-          <!-- Cuadro de Totales y Liquidación Tributaria SUNAT -->
-          <div class="grid grid-cols-1 sm:grid-cols-12 gap-6 pt-2">
-            
-            <!-- Bloque Izquierdo: Leyenda en Letras + Hash + QR -->
-            <div class="sm:col-span-7 space-y-3 text-xs">
-              
-              <!-- Monto en Letras -->
-              <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
-                <span class="text-[10px] uppercase font-bold text-slate-400 block">Importe en Letras:</span>
-                <span class="font-bold text-slate-800 uppercase text-[11px]">
-                  SON: {{ getMontoEnLetras(sub.total) }}
-                </span>
-              </div>
-
-              <!-- Código QR y Firma Digital SUNAT -->
-              <div class="flex items-center gap-4 p-3 bg-slate-50/50 rounded-xl border border-slate-200 text-[10px] text-slate-500">
-                <!-- Representación QR Simulado -->
-                <div class="w-16 h-16 bg-white p-1 rounded-lg border border-slate-300 flex items-center justify-center shrink-0">
-                  <svg class="w-14 h-14 text-slate-800" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M2 2h8v8H2V2zm2 2v4h4V4H4zm10-2h8v8h-8V2zm2 2v4h4V4h-4zM2 14h8v8H2v-8zm2 2v4h4v-4H4zm14-2h4v4h-4v-4zm-4 4h4v4h-4v-4zm4 0h4v4h-4v-4z" />
-                  </svg>
-                </div>
-
-                <div class="space-y-1 leading-tight">
-                  <div class="font-bold text-slate-700">Representación Impresa del Comprobante Electrónico B2B</div>
-                  <div>Emitido para la orden {{ order()!.codigoOrden }} · Comprobante {{ sub.numeroFacturaSimulada }}</div>
-                  <div class="text-[10px] text-slate-400">
-                    Documento generado conforme al detalle de suborden registrado en el servidor.
-                  </div>
-                </div>
-              </div>
-
-            </div>
-
-            <!-- Bloque Derecho: Desglose Tributario Formal -->
-            <div class="sm:col-span-5 space-y-2 text-xs">
-              <div class="border border-slate-200 rounded-xl divide-y divide-slate-100 overflow-hidden">
-                <div class="flex justify-between py-2 px-3 bg-slate-50 text-slate-600">
-                  <span>Op. Gravadas (Base Imponible):</span>
-                  <span class="font-mono font-bold text-slate-800">S/ {{ sub.subtotal | number:'1.2-2' }}</span>
-                </div>
-                <div class="flex justify-between py-2 px-3 bg-slate-50 text-slate-600">
-                  <span>Op. Inafectas / Exoneradas:</span>
-                  <span class="font-mono text-slate-600">S/ 0.00</span>
-                </div>
-                <div class="flex justify-between py-2 px-3 bg-slate-50 text-slate-600">
-                  <span>I.G.V. (18.00%):</span>
-                  <span class="font-mono font-bold text-slate-800">S/ {{ sub.igv | number:'1.2-2' }}</span>
-                </div>
-                <div class="flex justify-between py-3 px-3 bg-slate-100 text-sm font-black text-brand-night">
-                  <span>IMPORTE TOTAL:</span>
-                  <span class="font-mono text-brand-primary text-base">S/ {{ sub.total | number:'1.2-2' }}</span>
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-        </div>
-
         }
       }
 
@@ -343,6 +177,36 @@ export class InvoiceViewerComponent implements OnInit {
     if (!o || o.subordenes.length === 0) return null;
     const idx = Math.min(this.selectedSuborderIndex(), o.subordenes.length - 1);
     return o.subordenes[idx];
+  });
+
+  public readonly currentSunatFactura = computed<SunatFacturaData | null>(() => {
+    const o = this.order();
+    const sub = this.currentSuborder();
+    if (!o || !sub) return null;
+    return {
+      numeroFactura: sub.numeroFacturaSimulada,
+      fechaEmision: o.fechaEmision,
+      formaPago: o.metodoPago === 'LINEA_CREDITO_B2B' ? 'Crédito 30 días' : 'Contado',
+      moneda: 'SOLES',
+      observacion: `Orden ${o.codigoOrden} · Suborden #${sub.subordenId}`,
+      emisorRazonSocial: sub.proveedorRazonSocial,
+      emisorRuc: sub.proveedorRuc,
+      emisorDireccion: 'LIMA - PERÚ (DISTRIBUIDOR MAYORISTA B2B)',
+      receptorRazonSocial: o.razonSocialFacturacion,
+      receptorRuc: o.rucFacturacion,
+      receptorDireccion: o.direccionFiscal,
+      subtotal: sub.subtotal,
+      igv: sub.igv,
+      total: sub.total,
+      items: sub.items.map(it => ({
+        codigo: `PROD-${it.productoId}`,
+        descripcion: it.nombre,
+        unidad: 'UNIDAD',
+        cantidad: it.cantidad,
+        valorUnitario: it.precioUnitario,
+        subtotal: it.subtotal,
+      })),
+    };
   });
 
   ngOnInit(): void {

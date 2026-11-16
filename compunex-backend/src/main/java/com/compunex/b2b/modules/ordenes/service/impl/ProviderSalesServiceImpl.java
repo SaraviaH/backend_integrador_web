@@ -86,6 +86,13 @@ public class ProviderSalesServiceImpl implements ProviderSalesService {
         SubordenFactura suborden = buscarSubordenPropia(proveedor.getId(), subordenId);
 
         validarTransicion(suborden.getEstado(), nuevoEstado);
+        if (nuevoEstado == EstadoSuborden.CANCELADO) {
+            for (var item : suborden.getItems()) {
+                var producto = item.getProducto();
+                int stockActual = producto.getStockDisponible() != null ? producto.getStockDisponible() : 0;
+                producto.setStockDisponible(stockActual + item.getCantidad());
+            }
+        }
         suborden.setEstado(nuevoEstado);
         suborden.setFechaActualizacion(Instant.now());
         suborden = subordenFacturaRepository.save(suborden);

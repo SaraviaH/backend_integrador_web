@@ -56,7 +56,7 @@ public class Producto {
     private BigDecimal precioTotalRef;
 
     @Column(nullable = false, length = 10)
-    private String moneda = "USD";
+    private String moneda = "PEN";
 
     @Column(name = "stock_disponible", nullable = false, columnDefinition = "integer default 100")
     private Integer stockDisponible = 100;

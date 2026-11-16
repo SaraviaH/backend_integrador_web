@@ -1,5 +1,6 @@
 package com.compunex.b2b.modules.ordenes.service.support;
 
+import com.compunex.b2b.exception.BusinessException;
 import com.compunex.b2b.exception.ResourceNotFoundException;
 import com.compunex.b2b.modules.auth.entity.Usuario;
 import com.compunex.b2b.modules.catalogo.entity.EstadoProducto;
@@ -157,12 +158,20 @@ public class SplitOrderCalculator {
     }
 
     private String resolverMonedaPrincipal(Map<Long, List<ItemResuelto>> grupos) {
-        return grupos.values().stream()
+        List<String> monedas = grupos.values().stream()
                 .flatMap(List::stream)
                 .map(ir -> ir.producto().getMoneda())
                 .filter(m -> m != null && !m.isBlank())
-                .findFirst()
-                .orElse("PEN");
+                .map(m -> m.trim().toUpperCase())
+                .distinct()
+                .toList();
+
+        if (monedas.size() > 1) {
+            throw new BusinessException(
+                    "No se pueden combinar productos en distintas monedas (" + String.join(" y ", monedas) + ") en una misma orden."
+            );
+        }
+        return monedas.isEmpty() ? "PEN" : monedas.get(0);
     }
 
     private String valorPorDefecto(String valor, String fallback) {

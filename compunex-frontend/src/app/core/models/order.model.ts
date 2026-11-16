@@ -6,6 +6,7 @@ export interface CartItem {
   nombre: string;
   sku: string;
   precioUnitario: number;
+  moneda?: string;
   cantidad: number;
   subtotal: number;
   proveedorId: number;
@@ -17,6 +18,7 @@ export interface CartItem {
 export interface ProviderCartGroup {
   proveedorId: number;
   proveedorRazonSocial: string;
+  moneda?: string;
   items: CartItem[];
   subtotal: number;
   igv: number;
@@ -63,6 +65,7 @@ export interface CheckoutResponse {
   totalGeneral: number;
   subtotalGeneral: number;
   igvGeneral: number;
+  moneda?: string;
   metodoPagoSimulado?: string;
   codigoAutorizacionPago?: string;
   estadoPagoSimulado?: string;
@@ -74,6 +77,7 @@ export interface OrderSummary {
   codigoOrden: string;
   fechaCreacion: string;
   totalGeneral: number;
+  moneda?: string;
   estadoGeneral?: OrderStatus;
   cantidadSubordenes: number;
 }

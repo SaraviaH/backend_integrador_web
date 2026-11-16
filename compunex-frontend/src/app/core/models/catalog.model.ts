@@ -28,6 +28,7 @@ export interface ProductCard {
   categoriaNombre: string;
   precioUnitario: number;
   precioTotalCaja?: number;
+  moneda?: string;
   unidadesPorPaqueteTexto?: string;
   pedidoMinimoTexto?: string;
   stockDisponible?: number;
@@ -72,6 +73,7 @@ export interface CreateProductRequest {
   categoriaId: string | number;
   precioUnitario: number;
   precioTotalCaja?: number;
+  moneda?: string;
   unidadesPorPaquete: number;
   stockDisponible: number;
   descripcion: string;

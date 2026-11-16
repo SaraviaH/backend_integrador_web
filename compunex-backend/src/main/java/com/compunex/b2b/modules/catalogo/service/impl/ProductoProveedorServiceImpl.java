@@ -77,7 +77,7 @@ public class ProductoProveedorServiceImpl implements ProductoProveedorService {
         producto.setPedidoMinimo(request.pedidoMinimo());
         producto.setPrecioUnitarioRef(request.precioUnitarioRef());
         producto.setPrecioTotalRef(request.precioTotalRef() != null ? request.precioTotalRef() : request.precioUnitarioRef());
-        producto.setMoneda(request.moneda() != null && !request.moneda().isBlank() ? request.moneda() : "USD");
+        producto.setMoneda(normalizarMoneda(request.moneda()));
         producto.setTerminosComerciales(request.terminosComerciales());
         producto.setEstado(EstadoProducto.ACTIVO);
         producto.setEsRecomendado(false);
@@ -159,8 +159,19 @@ public class ProductoProveedorServiceImpl implements ProductoProveedorService {
         if (request.pedidoMinimo() != null) producto.setPedidoMinimo(request.pedidoMinimo());
         if (request.precioUnitarioRef() != null) producto.setPrecioUnitarioRef(request.precioUnitarioRef());
         if (request.precioTotalRef() != null) producto.setPrecioTotalRef(request.precioTotalRef());
-        if (request.moneda() != null && !request.moneda().isBlank()) producto.setMoneda(request.moneda());
+        if (request.moneda() != null && !request.moneda().isBlank()) producto.setMoneda(normalizarMoneda(request.moneda()));
         if (request.terminosComerciales() != null) producto.setTerminosComerciales(request.terminosComerciales());
+    }
+
+    private String normalizarMoneda(String moneda) {
+        if (moneda == null || moneda.isBlank()) {
+            return "PEN";
+        }
+        String norm = moneda.trim().toUpperCase();
+        if (!"PEN".equals(norm) && !"USD".equals(norm)) {
+            throw new IllegalArgumentException("Moneda no soportada: " + moneda + ". Usa PEN o USD.");
+        }
+        return norm;
     }
 
     private void reemplazarEspecificaciones(Producto producto, List<CrearProductoRequestDTO.EspecificacionItemDTO> items) {
