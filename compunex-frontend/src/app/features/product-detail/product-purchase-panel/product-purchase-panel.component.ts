@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { ProductDetail } from '../../../core/models/catalog.model';
 import { BubbleButtonDirective } from '../../../shared/directives/bubble-button.directive';
+import { CurrencySymbolPipe } from '../../../shared/pipes/currency-symbol.pipe';
 
 @Component({
   selector: 'app-product-purchase-panel',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, BubbleButtonDirective],
+  imports: [CommonModule, FormsModule, RouterModule, BubbleButtonDirective, CurrencySymbolPipe],
   template: `
     <div class="grid grid-cols-1 xl:grid-cols-12 gap-5 items-stretch" data-testid="purchase-two-panels">
       <!-- PANEL 1: INFORMACIÓN Y CONFIGURACIÓN DEL PEDIDO -->
@@ -52,7 +53,7 @@ import { BubbleButtonDirective } from '../../../shared/directives/bubble-button.
                 </span>
                 <div class="mt-1.5 flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
                   <span class="text-xl sm:text-2xl font-black text-[#04202E] dark:text-[#F2F9FC] font-mono leading-tight">
-                    S/ {{ product.precioUnitario | number:'1.2-2' }}
+                    {{ product.moneda | currencySymbol }} {{ product.precioUnitario | number:'1.2-2' }}
                   </span>
                   <span class="text-xs font-medium text-[#527588] dark:text-[#B8DFEF]">
                     sin IGV
@@ -78,7 +79,7 @@ import { BubbleButtonDirective } from '../../../shared/directives/bubble-button.
                   </div>
                   <div class="mt-1.5 flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
                     <span class="text-xl sm:text-2xl font-black text-white font-mono leading-tight">
-                      S/ {{ product.precioTotalCaja | number:'1.2-2' }}
+                      {{ product.moneda | currencySymbol }} {{ product.precioTotalCaja | number:'1.2-2' }}
                     </span>
                     <span class="text-xs font-medium text-[#E1F2FA]/90">
                       sin IGV

@@ -90,6 +90,7 @@ function mapBackendCheckoutToFrontend(res: BackendCheckoutResponseDTO): Checkout
     totalGeneral: Number(res.totalGeneral),
     subtotalGeneral,
     igvGeneral,
+    moneda: res.moneda || 'PEN',
     metodoPagoSimulado: res.metodoPagoSimulado,
     codigoAutorizacionPago: res.codigoAutorizacionPago,
     estadoPagoSimulado: res.estadoPagoSimulado,
@@ -212,6 +213,7 @@ export class OrderApiService {
             codigoOrden: o.codigoOrden,
             fechaCreacion: o.fechaEmision,
             totalGeneral: Number(o.totalGeneral),
+            moneda: o.moneda || 'PEN',
             cantidadSubordenes: o.cantidadProveedores ?? 1
           })),
           page: res.pagina ?? 0,

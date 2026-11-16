@@ -7,11 +7,12 @@ import { OrderApiService } from '../../../core/services/order-api.service';
 import { ToastStateService } from '../../../core/state/toast-state.service';
 import { CheckoutRequest, CheckoutItemRequest } from '../../../core/models/order.model';
 import { PaymentGatewayModalComponent, PaymentGatewayMethod } from '../payment-gateway-modal/payment-gateway-modal.component';
+import { CurrencySymbolPipe } from '../../../shared/pipes/currency-symbol.pipe';
 
 @Component({
   selector: 'app-review-step',
   standalone: true,
-  imports: [CommonModule, RouterModule, PaymentGatewayModalComponent],
+  imports: [CommonModule, RouterModule, PaymentGatewayModalComponent, CurrencySymbolPipe],
   template: `
     <div class="space-y-6">
       
@@ -125,7 +126,7 @@ import { PaymentGatewayModalComponent, PaymentGatewayMethod } from '../payment-g
                   <span class="text-xs font-bold text-slate-800">{{ group.proveedorRazonSocial }}</span>
                 </div>
                 <span class="text-xs font-black text-brand-primary">
-                  S/ {{ group.total | number:'1.2-2' }} (inc. IGV)
+                  {{ group.moneda | currencySymbol }} {{ group.total | number:'1.2-2' }} (inc. IGV)
                 </span>
               </div>
 
@@ -140,7 +141,7 @@ import { PaymentGatewayModalComponent, PaymentGatewayMethod } from '../payment-g
                       <span class="text-slate-400 shrink-0 font-semibold">× {{ item.cantidad }}</span>
                     </div>
                     <span class="font-bold text-slate-800 shrink-0">
-                      S/ {{ item.subtotal | number:'1.2-2' }}
+                      {{ item.moneda | currencySymbol }} {{ item.subtotal | number:'1.2-2' }}
                     </span>
                   </div>
                 }
@@ -153,15 +154,15 @@ import { PaymentGatewayModalComponent, PaymentGatewayMethod } from '../payment-g
         <div class="bg-slate-50 rounded-2xl p-6 border border-slate-200/70 space-y-3">
           <div class="flex justify-between text-xs text-slate-600">
             <span>Base Imponible Consolidada:</span>
-            <span class="font-bold text-slate-800">S/ {{ cartState.subtotal() | number:'1.2-2' }}</span>
+            <span class="font-bold text-slate-800">{{ cartState.cartCurrency() | currencySymbol }} {{ cartState.subtotal() | number:'1.2-2' }}</span>
           </div>
           <div class="flex justify-between text-xs text-slate-600">
             <span>IGV Total (18% Ley SUNAT):</span>
-            <span class="font-bold text-slate-800">S/ {{ cartState.igv() | number:'1.2-2' }}</span>
+            <span class="font-bold text-slate-800">{{ cartState.cartCurrency() | currencySymbol }} {{ cartState.igv() | number:'1.2-2' }}</span>
           </div>
           <div class="flex justify-between text-base font-black text-brand-night pt-3 border-t border-slate-200">
             <span>Importe Total a Pagar:</span>
-            <span class="text-brand-primary text-lg">S/ {{ cartState.total() | number:'1.2-2' }}</span>
+            <span class="text-brand-primary text-lg">{{ cartState.cartCurrency() | currencySymbol }} {{ cartState.total() | number:'1.2-2' }}</span>
           </div>
         </div>
 
@@ -223,7 +224,9 @@ import { PaymentGatewayModalComponent, PaymentGatewayMethod } from '../payment-g
       @if (showGatewayModal() && checkoutState.billingData(); as billing) {
         <app-payment-gateway-modal
           [totalAmount]="cartState.total()"
+          [moneda]="cartState.cartCurrency()"
           [suborderCount]="cartState.itemsByProvider().length"
+          [providerGroups]="cartState.itemsByProvider()"
           [ruc]="billing.ruc"
           [razonSocial]="billing.razonSocial"
           [initialMethod]="billing.metodoPagoSimulado"

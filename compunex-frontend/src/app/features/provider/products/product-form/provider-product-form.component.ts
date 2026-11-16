@@ -7,6 +7,7 @@ import { CatalogApiService } from '../../../../core/services/catalog-api.service
 import { ToastStateService } from '../../../../core/state/toast-state.service';
 import { Category, CreateProductRequest, UpdateProductRequest } from '../../../../core/models/catalog.model';
 import { ProductImageUploaderComponent } from './components/product-image-uploader/product-image-uploader.component';
+import { CurrencySymbolPipe } from '../../../../shared/pipes/currency-symbol.pipe';
 import { ProductPricingCalcComponent } from './components/product-pricing-calc/product-pricing-calc.component';
 
 @Component({
@@ -17,7 +18,8 @@ import { ProductPricingCalcComponent } from './components/product-pricing-calc/p
     ReactiveFormsModule,
     RouterModule,
     ProductImageUploaderComponent,
-    ProductPricingCalcComponent
+    ProductPricingCalcComponent,
+    CurrencySymbolPipe
   ],
   template: `
     <div class="space-y-6">
@@ -196,21 +198,35 @@ import { ProductPricingCalcComponent } from './components/product-pricing-calc/p
                   Estructura de Precios B2B
                 </h2>
 
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                  <!-- Moneda -->
+                  <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">
+                      Moneda <span class="text-rose-500">*</span>
+                    </label>
+                    <select
+                      formControlName="moneda"
+                      class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all"
+                    >
+                      <option value="PEN">PEN (S/ Soles)</option>
+                      <option value="USD">USD (US$ Dólares)</option>
+                    </select>
+                  </div>
+
                   <!-- Precio Unitario -->
                   <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">
-                      Precio Lista (S/ con IGV) <span class="text-rose-500">*</span>
+                      Precio Unitario ({{ form.get('moneda')?.value | currencySymbol }} sin IGV) <span class="text-rose-500">*</span>
                     </label>
                     <div class="relative">
-                      <span class="absolute left-3 top-2.5 text-xs font-bold text-slate-400">S/</span>
+                      <span class="absolute left-3 top-2.5 text-xs font-bold text-slate-400">{{ form.get('moneda')?.value | currencySymbol }}</span>
                       <input
                         type="number"
                         step="0.01"
                         min="1"
                         formControlName="precioUnitario"
-                        placeholder="2399.00"
-                        class="w-full pl-8 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all"
+                        placeholder="500.00"
+                        class="w-full pl-11 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all"
                       />
                     </div>
                   </div>
@@ -218,17 +234,17 @@ import { ProductPricingCalcComponent } from './components/product-pricing-calc/p
                   <!-- Total de caja -->
                   <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">
-                      Total de caja (S/)
+                      Total de caja ({{ form.get('moneda')?.value | currencySymbol }})
                     </label>
                     <div class="relative">
-                      <span class="absolute left-3 top-2.5 text-xs font-bold text-slate-400">S/</span>
+                      <span class="absolute left-3 top-2.5 text-xs font-bold text-slate-400">{{ form.get('moneda')?.value | currencySymbol }}</span>
                       <input
                         type="number"
                         step="0.01"
                         min="1"
                         formControlName="precioTotalCaja"
                         placeholder="Automático"
-                        class="w-full pl-8 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all"
+                        class="w-full pl-11 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all"
                       />
                     </div>
                     <p class="text-[10px] text-slate-400 mt-1">Si queda vacío: precio unitario × unidades.</p>
@@ -254,6 +270,7 @@ import { ProductPricingCalcComponent } from './components/product-pricing-calc/p
                   [precioUnitario]="form.get('precioUnitario')?.value || 0"
                   [precioTotalCaja]="form.get('precioTotalCaja')?.value"
                   [unidadesPorPaquete]="form.get('unidadesPorPaquete')?.value || 1"
+                  [moneda]="form.get('moneda')?.value || 'PEN'"
                 ></app-product-pricing-calc>
               </div>
             </div>
@@ -368,6 +385,7 @@ export class ProviderProductFormComponent implements OnInit {
     descripcion: ['', [Validators.required, Validators.minLength(10)]],
     precioUnitario: [null, [Validators.required, Validators.min(1)]],
     precioTotalCaja: [null],
+    moneda: ['PEN', [Validators.required]],
     unidadesPorPaquete: [1, [Validators.required, Validators.min(1)]],
     stockDisponible: [0, [Validators.required, Validators.min(0)]],
     garantiaMeses: [12, [Validators.required, Validators.min(1)]],
@@ -411,6 +429,7 @@ export class ProviderProductFormComponent implements OnInit {
           descripcion: p.descripcion,
           precioUnitario: p.precioUnitario,
           precioTotalCaja: p.precioTotalCaja,
+          moneda: p.moneda || 'PEN',
           unidadesPorPaquete: p.unidadesPorPaquete || 1,
           stockDisponible: p.stockDisponible ?? 0,
           garantiaMeses: p.garantiaMeses || 12,
@@ -452,6 +471,7 @@ export class ProviderProductFormComponent implements OnInit {
         categoriaId: String(val.categoriaId || ''),
         precioUnitario: Number(val.precioUnitario),
         precioTotalCaja: val.precioTotalCaja ? Number(val.precioTotalCaja) : undefined,
+        moneda: val.moneda || 'PEN',
         unidadesPorPaquete: Number(val.unidadesPorPaquete) || 1,
         stockDisponible: Number(val.stockDisponible),
         descripcion: val.descripcion,
@@ -481,6 +501,7 @@ export class ProviderProductFormComponent implements OnInit {
         categoriaId: String(val.categoriaId || ''),
         precioUnitario: Number(val.precioUnitario),
         precioTotalCaja: val.precioTotalCaja ? Number(val.precioTotalCaja) : undefined,
+        moneda: val.moneda || 'PEN',
         unidadesPorPaquete: Number(val.unidadesPorPaquete) || 1,
         stockDisponible: Number(val.stockDisponible),
         descripcion: val.descripcion,

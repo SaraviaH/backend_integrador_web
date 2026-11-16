@@ -2,11 +2,12 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ProviderProductItem } from '../../../../../../core/models/provider.model';
+import { CurrencySymbolPipe } from '../../../../../../shared/pipes/currency-symbol.pipe';
 
 @Component({
   selector: 'app-product-table',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, CurrencySymbolPipe],
   template: `
     <div class="b2b-table-wrapper overflow-x-auto">
       <table class="b2b-table w-full min-w-[780px] text-left border-collapse">
@@ -62,11 +63,11 @@ import { ProviderProductItem } from '../../../../../../core/models/provider.mode
               <!-- Precios -->
               <td class="py-3.5 px-4 text-right whitespace-nowrap">
                 <p class="font-bold text-[#04202E] dark:text-[#F2F9FC] font-mono text-sm">
-                  S/ {{ prod.precioUnitario | number:'1.2-2' }}
+                  {{ prod.moneda | currencySymbol }} {{ prod.precioUnitario | number:'1.2-2' }}
                 </p>
                 @if (prod.precioTotalCaja) {
                   <p class="text-[10px] text-emerald-700 dark:text-emerald-300 font-semibold">
-                    Caja: S/ {{ prod.precioTotalCaja | number:'1.2-2' }}
+                    Caja: {{ prod.moneda | currencySymbol }} {{ prod.precioTotalCaja | number:'1.2-2' }}
                   </p>
                   <p class="text-[10px] text-[#527588] dark:text-[#98D5EE]/85">
                     {{ prod.unidadesPorPaqueteTexto || '1 unidad' }} por paquete

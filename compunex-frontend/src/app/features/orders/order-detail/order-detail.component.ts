@@ -4,11 +4,12 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { OrderApiService } from '../../../core/services/order-api.service';
 import { OrderDetail } from '../../../core/models/order.model';
 import { StatusBadgeComponent } from '../../../shared/components/status-badge/status-badge.component';
+import { CurrencySymbolPipe, getCurrencyLabel } from '../../../shared/pipes/currency-symbol.pipe';
 
 @Component({
   selector: 'app-order-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule, StatusBadgeComponent],
+  imports: [CommonModule, RouterModule, StatusBadgeComponent, CurrencySymbolPipe],
   template: `
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
 
@@ -100,19 +101,19 @@ import { StatusBadgeComponent } from '../../../shared/components/status-badge/st
             <div class="bg-white rounded-3xl border border-slate-200/80 p-6 space-y-2.5 text-xs text-slate-600 shadow-xs">
               <h3 class="text-xs font-bold uppercase tracking-wider text-brand-night pb-2 border-b border-slate-100 flex items-center justify-between">
                 <span>Resumen Financiero</span>
-                <span class="text-slate-400 font-normal">Soles (PEN)</span>
+                <span class="text-slate-400 font-normal">{{ currencyLabel(ord.moneda) }}</span>
               </h3>
               <div class="flex justify-between">
                 <span>Base Imponible Consolidada:</span>
-                <span class="font-mono font-bold text-slate-800">S/ {{ ord.subtotalGeneral | number:'1.2-2' }}</span>
+                <span class="font-mono font-bold text-slate-800">{{ ord.moneda | currencySymbol }} {{ ord.subtotalGeneral | number:'1.2-2' }}</span>
               </div>
               <div class="flex justify-between">
                 <span>IGV Total (18% Ley):</span>
-                <span class="font-mono font-bold text-slate-800">S/ {{ ord.igvGeneral | number:'1.2-2' }}</span>
+                <span class="font-mono font-bold text-slate-800">{{ ord.moneda | currencySymbol }} {{ ord.igvGeneral | number:'1.2-2' }}</span>
               </div>
               <div class="flex justify-between text-sm font-extrabold text-brand-night pt-2 border-t border-slate-100">
                 <span>Total Orden:</span>
-                <span class="font-mono text-brand-primary text-base">S/ {{ ord.totalGeneral | number:'1.2-2' }}</span>
+                <span class="font-mono text-brand-primary text-base">{{ ord.moneda | currencySymbol }} {{ ord.totalGeneral | number:'1.2-2' }}</span>
               </div>
             </div>
           </div>
@@ -246,8 +247,8 @@ import { StatusBadgeComponent } from '../../../shared/components/status-badge/st
                             <span class="font-bold text-brand-night truncate">{{ item.nombre }}</span>
                           </div>
                           <div class="flex items-center gap-4 shrink-0 font-mono">
-                            <span class="text-slate-500 font-semibold">{{ item.cantidad }} un. × S/ {{ item.precioUnitario | number:'1.2-2' }}</span>
-                            <span class="font-bold text-brand-night">S/ {{ item.subtotal | number:'1.2-2' }}</span>
+                            <span class="text-slate-500 font-semibold">{{ item.cantidad }} un. × {{ ord.moneda | currencySymbol }} {{ item.precioUnitario | number:'1.2-2' }}</span>
+                            <span class="font-bold text-brand-night">{{ ord.moneda | currencySymbol }} {{ item.subtotal | number:'1.2-2' }}</span>
                           </div>
                         </div>
                       }
@@ -266,6 +267,7 @@ import { StatusBadgeComponent } from '../../../shared/components/status-badge/st
   `
 })
 export class OrderDetailComponent implements OnInit {
+  public readonly currencyLabel = getCurrencyLabel;
   private readonly route = inject(ActivatedRoute);
   private readonly orderApi = inject(OrderApiService);
 

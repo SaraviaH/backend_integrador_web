@@ -1,14 +1,15 @@
 import { Component, EventEmitter, Input, OnInit, Output, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CheckoutRequest } from '../../../core/models/order.model';
+import { CheckoutRequest, ProviderCartGroup } from '../../../core/models/order.model';
+import { CurrencySymbolPipe } from '../../../shared/pipes/currency-symbol.pipe';
 
 export type PaymentGatewayMethod = CheckoutRequest['metodoPagoSimulado'];
 
 @Component({
   selector: 'app-payment-gateway-modal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, CurrencySymbolPipe],
   template: `
     <div
       class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/65 backdrop-blur-xs"
@@ -32,7 +33,7 @@ export type PaymentGatewayMethod = CheckoutRequest['metodoPagoSimulado'];
 
           <div class="text-right shrink-0">
             <span class="block text-[10px] uppercase tracking-wider text-sky-200">Importe Total (Inc. IGV)</span>
-            <span class="text-xl sm:text-2xl font-black font-mono">S/ {{ totalAmount | number:'1.2-2' }}</span>
+            <span class="text-xl sm:text-2xl font-black font-mono">{{ moneda | currencySymbol }} {{ totalAmount | number:'1.2-2' }}</span>
           </div>
         </div>
 
@@ -49,6 +50,31 @@ export type PaymentGatewayMethod = CheckoutRequest['metodoPagoSimulado'];
               {{ suborderCount }} suborden(es) Split Order
             </span>
           </div>
+
+          <!-- Dispersión Automática (Split Payout por Proveedor) -->
+          @if (providerGroups.length > 0) {
+            <div class="rounded-2xl border border-[#CFE4EE] dark:border-[#1D4960] bg-slate-50/70 dark:bg-[#0A2535]/70 p-3.5 space-y-2 text-xs">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-[#04202E] dark:text-[#F2F9FC] text-[11px] uppercase tracking-wider">
+                  Dispersión automática por proveedor (Split Payout)
+                </span>
+                <span class="text-[10px] text-[#527588] dark:text-[#9FCBE0]">1 cobro consolidado → abono independiente</span>
+              </div>
+              <div class="divide-y divide-[#E1F2FA] dark:divide-[#1D4960]">
+                @for (g of providerGroups; track g.proveedorId) {
+                  <div class="py-1.5 flex items-center justify-between gap-2">
+                    <div class="min-w-0">
+                      <span class="font-semibold text-[#04202E] dark:text-[#F2F9FC] truncate block">{{ g.proveedorRazonSocial }}</span>
+                      <span class="text-[10px] font-mono text-[#527588] dark:text-[#9FCBE0]">{{ getProviderCci(g.proveedorId) }}</span>
+                    </div>
+                    <span class="font-mono font-bold text-[#1786B4] dark:text-[#4FB3DA] shrink-0">
+                      S/ {{ g.total | number:'1.2-2' }}
+                    </span>
+                  </div>
+                }
+              </div>
+            </div>
+          }
 
           <!-- Selector de Medio de Pago -->
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
@@ -243,7 +269,9 @@ export class PaymentGatewayModalComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
 
   @Input({ required: true }) totalAmount = 0;
+  @Input() moneda = 'PEN';
   @Input({ required: true }) suborderCount = 1;
+  @Input() providerGroups: ProviderCartGroup[] = [];
   @Input({ required: true }) ruc = '';
   @Input({ required: true }) razonSocial = '';
   @Input() initialMethod: PaymentGatewayMethod = 'TARJETA_EMPRESARIAL';
@@ -292,6 +320,10 @@ export class PaymentGatewayModalComponent implements OnInit {
       cardCvv: '842',
     });
     this.gatewayError.set(null);
+  }
+
+  public getProviderCci(proveedorId: number): string {
+    return `CCI 002-191-${String(proveedorId).padStart(4, '0')}485920-88`;
   }
 
   public submitPayment(): void {

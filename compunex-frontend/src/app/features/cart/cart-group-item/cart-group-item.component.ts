@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ProviderCartGroup, CartItem } from '../../../core/models/order.model';
+import { CurrencySymbolPipe } from '../../../shared/pipes/currency-symbol.pipe';
 
 @Component({
   selector: 'app-cart-group-item',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, CurrencySymbolPipe],
   template: `
     <div class="bg-white rounded-3xl border border-slate-200/80 overflow-hidden shadow-xs">
       
@@ -32,7 +33,7 @@ import { ProviderCartGroup, CartItem } from '../../../core/models/order.model';
 
         <div class="text-left sm:text-right">
           <span class="text-[11px] text-slate-400 block">Subtotal Proveedor (con IGV)</span>
-          <span class="text-sm font-black text-brand-primary">S/ {{ group.total | number:'1.2-2' }}</span>
+          <span class="text-sm font-black text-brand-primary">{{ group.moneda | currencySymbol }} {{ group.total | number:'1.2-2' }}</span>
         </div>
       </div>
 
@@ -60,7 +61,7 @@ import { ProviderCartGroup, CartItem } from '../../../core/models/order.model';
                   {{ item.nombre }}
                 </a>
                 <div class="text-[11px] text-slate-500">
-                  Precio mayorista unitario: <strong class="text-slate-700">S/ {{ item.precioUnitario | number:'1.2-2' }}</strong>
+                  Precio mayorista unitario: <strong class="text-slate-700">{{ item.moneda | currencySymbol }} {{ item.precioUnitario | number:'1.2-2' }}</strong>
                   <span class="text-slate-400 font-normal"> (sin IGV)</span>
                 </div>
               </div>
@@ -104,7 +105,7 @@ import { ProviderCartGroup, CartItem } from '../../../core/models/order.model';
               <!-- Subtotal del Ítem -->
               <div class="text-right min-w-24">
                 <span class="text-[10px] text-slate-400 block">Subtotal</span>
-                <span class="text-sm font-black text-brand-night">S/ {{ item.subtotal | number:'1.2-2' }}</span>
+                <span class="text-sm font-black text-brand-night">{{ item.moneda | currencySymbol }} {{ item.subtotal | number:'1.2-2' }}</span>
               </div>
 
               <!-- Botón Eliminar Ítem -->

@@ -187,7 +187,7 @@ export class InvoiceViewerComponent implements OnInit {
       numeroFactura: sub.numeroFacturaSimulada,
       fechaEmision: o.fechaEmision,
       formaPago: o.metodoPago === 'LINEA_CREDITO_B2B' ? 'Crédito 30 días' : 'Contado',
-      moneda: 'SOLES',
+      moneda: (o.moneda || 'PEN').toUpperCase() === 'USD' ? 'DÓLARES AMERICANOS' : 'SOLES',
       observacion: `Orden ${o.codigoOrden} · Suborden #${sub.subordenId}`,
       emisorRazonSocial: sub.proveedorRazonSocial,
       emisorRuc: sub.proveedorRuc,
@@ -248,6 +248,7 @@ export class InvoiceViewerComponent implements OnInit {
     const enteros = Math.floor(total);
     const centavos = Math.round((total - enteros) * 100);
     const centavosStr = centavos.toString().padStart(2, '0');
-    return `${enteros.toLocaleString('es-PE')} Y ${centavosStr}/100 SOLES`;
+    const monedaTexto = (this.order()?.moneda || 'PEN').toUpperCase() === 'USD' ? 'DÓLARES AMERICANOS' : 'SOLES';
+    return `${enteros.toLocaleString('es-PE')} Y ${centavosStr}/100 ${monedaTexto}`;
   }
 }

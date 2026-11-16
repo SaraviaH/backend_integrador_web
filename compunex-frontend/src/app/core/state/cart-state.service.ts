@@ -24,21 +24,6 @@ export class CartStateService {
     this._items().reduce((acc, item) => acc + item.cantidad, 0)
   );
 
-  // Subtotal base (antes de IGV): suma de líneas (precioUnitario * cantidad)
-  public readonly subtotal = computed(() =>
-    Math.round(this._items().reduce((acc, item) => acc + item.subtotal, 0) * 100) / 100
-  );
-
-  // IGV 18% calculado sobre el subtotal (alineado con SplitOrderCalculator en backend)
-  public readonly igv = computed(() =>
-    Math.round(this.subtotal() * IGV_RATE * 100) / 100
-  );
-
-  // Total general con IGV
-  public readonly total = computed(() =>
-    Math.round((this.subtotal() + this.igv()) * 100) / 100
-  );
-
   // Agrupación de ítems por Proveedor (Fundamento del Split Order B2B)
   public readonly itemsByProvider = computed<ProviderCartGroup[]>(() => {
     const groupsMap = new Map<number, ProviderCartGroup>();
@@ -49,6 +34,7 @@ export class CartStateService {
         group = {
           proveedorId: item.proveedorId,
           proveedorRazonSocial: item.proveedorRazonSocial,
+          moneda: item.moneda || 'PEN',
           items: [],
           subtotal: 0,
           igv: 0,
@@ -71,6 +57,33 @@ export class CartStateService {
         igv: groupIgv,
       };
     });
+  });
+
+  // Subtotal base (antes de IGV): suma de subtotales por proveedor (alineado con SplitOrderCalculator en backend)
+  public readonly subtotal = computed(() =>
+    Math.round(this.itemsByProvider().reduce((acc, g) => acc + g.subtotal, 0) * 100) / 100
+  );
+
+  // IGV 18% total (suma de IGV por suborden/proveedor, alineado con SplitOrderCalculator en backend)
+  public readonly igv = computed(() =>
+    Math.round(this.itemsByProvider().reduce((acc, g) => acc + g.igv, 0) * 100) / 100
+  );
+
+  // Total general con IGV (suma de totales por suborden/proveedor)
+  public readonly total = computed(() =>
+    Math.round(this.itemsByProvider().reduce((acc, g) => acc + g.total, 0) * 100) / 100
+  );
+
+  public readonly cartCurrency = computed(() => {
+    const first = this._items().find(it => !!it.moneda);
+    return (first?.moneda || 'PEN').toUpperCase();
+  });
+
+  public readonly hasMixedCurrencies = computed(() => {
+    const currencies = new Set(
+      this._items().map(it => (it.moneda || 'PEN').trim().toUpperCase())
+    );
+    return currencies.size > 1;
   });
 
   public addItem(product: ProductCard | ProductDetail, cantidad: number = 1): AddCartItemResult {
@@ -113,6 +126,7 @@ export class CartStateService {
       nombre: product.nombre,
       sku: product.sku,
       precioUnitario: product.precioUnitario,
+      moneda: product.moneda || 'PEN',
       cantidad: addedQty,
       subtotal: Math.round(addedQty * product.precioUnitario * 100) / 100,
       proveedorId: product.proveedorId,
@@ -125,16 +139,18 @@ export class CartStateService {
   }
 
   public updateQuantity(productoId: number, cantidad: number): void {
-    if (cantidad <= 0) {
+    const parsed = Math.floor(Number(cantidad) || 0);
+    if (parsed <= 0) {
       this.removeItem(productoId);
       return;
     }
     const updated = this._items().map(item => {
       if (item.productoId === productoId) {
+        const clamped = item.stockDisponible != null ? Math.min(parsed, item.stockDisponible) : parsed;
         return {
           ...item,
-          cantidad,
-          subtotal: Math.round(cantidad * item.precioUnitario * 100) / 100,
+          cantidad: clamped,
+          subtotal: Math.round(clamped * item.precioUnitario * 100) / 100,
         };
       }
       return item;

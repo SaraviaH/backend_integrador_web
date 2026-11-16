@@ -236,6 +236,7 @@ export class ProviderApiService {
             categoriaNombre: p.categoriaNombre || p.categoriaId || 'Hardware B2B',
             precioUnitario: Number(p.precioUnitarioRef),
             precioTotalCaja: p.precioTotalRef != null ? Number(p.precioTotalRef) : undefined,
+            moneda: p.moneda || 'PEN',
             unidadesPorPaquete: parseLeadingInt(p.unidadesPorPaquete || p.pedidoMinimo, 1),
             unidadesPorPaqueteTexto: p.unidadesPorPaquete,
             pedidoMinimoTexto: p.pedidoMinimo,
@@ -276,6 +277,7 @@ export class ProviderApiService {
             categoriaNombre: d.categoriaId || 'Hardware B2B',
             precioUnitario: unitPrice,
             precioTotalCaja: totalRef,
+            moneda: d.moneda || 'PEN',
             unidadesPorPaquete: parseLeadingInt(d.unidadesPorPaquete || d.pedidoMinimo, 1),
             unidadesPorPaqueteTexto: d.unidadesPorPaquete,
             pedidoMinimoTexto: d.pedidoMinimo,
@@ -505,6 +507,7 @@ export class ProviderApiService {
               subtotal,
               igv,
               total,
+              moneda: v.moneda || 'PEN',
               numeroFacturaSimulada: v.numeroComprobante,
               items: []
             };
@@ -540,6 +543,7 @@ export class ProviderApiService {
             subtotal: Number(d.subtotal),
             igv: Number(d.igv),
             total: Number(d.total),
+            moneda: d.moneda || 'PEN',
             numeroFacturaSimulada: d.numeroComprobante,
             items: (d.items || []).map(i => ({
               productoId: i.productoId,
@@ -742,7 +746,7 @@ export class ProviderApiService {
       pedidoMinimo: paqueteTexto,
       precioUnitarioRef: data.precioUnitario,
       precioTotalRef: totalCaja,
-      moneda: 'PEN',
+      moneda: data.moneda || 'PEN',
       terminosComerciales: `Garantía oficial de ${data.garantiaMeses || 12} meses. Emisión de factura electrónica B2B.`,
       especificaciones: specs,
       imagenes: [

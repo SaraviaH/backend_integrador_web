@@ -10,6 +10,7 @@ import { DispatchStepperComponent } from './components/dispatch-stepper/dispatch
 import { SaleClientCardComponent } from './components/sale-client-card/sale-client-card.component';
 import { SunatFacturaData, SunatFacturaSheetComponent } from '../../../../shared/components/sunat-factura-sheet/sunat-factura-sheet.component';
 import { SunatGuiaRemisionModalComponent } from '../../../../shared/components/sunat-guia-remision-modal/sunat-guia-remision-modal.component';
+import { CurrencySymbolPipe } from '../../../../shared/pipes/currency-symbol.pipe';
 
 @Component({
   selector: 'app-provider-sale-detail',
@@ -21,6 +22,7 @@ import { SunatGuiaRemisionModalComponent } from '../../../../shared/components/s
     SaleClientCardComponent,
     SunatFacturaSheetComponent,
     SunatGuiaRemisionModalComponent,
+    CurrencySymbolPipe,
   ],
   template: `
     <div class="space-y-6">
@@ -183,10 +185,10 @@ import { SunatGuiaRemisionModalComponent } from '../../../../shared/components/s
                             {{ item.cantidad }}
                           </td>
                           <td class="py-3.5 px-4 text-right font-mono text-[#527588] dark:text-[#B8DFEF] whitespace-nowrap">
-                            S/ {{ item.precioUnitario | number:'1.2-2' }}
+                            {{ s.moneda | currencySymbol }} {{ item.precioUnitario | number:'1.2-2' }}
                           </td>
                           <td class="py-3.5 px-5 text-right font-mono font-black text-[#04202E] dark:text-[#F2F9FC] whitespace-nowrap">
-                            S/ {{ item.subtotal | number:'1.2-2' }}
+                            {{ s.moneda | currencySymbol }} {{ item.subtotal | number:'1.2-2' }}
                           </td>
                         </tr>
                       }

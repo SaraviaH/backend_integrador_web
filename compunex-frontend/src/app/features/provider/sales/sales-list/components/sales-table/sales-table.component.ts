@@ -2,11 +2,12 @@ import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ProviderSaleItem } from '../../../../../../core/models/provider.model';
+import { CurrencySymbolPipe } from '../../../../../../shared/pipes/currency-symbol.pipe';
 
 @Component({
   selector: 'app-sales-table',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, CurrencySymbolPipe],
   template: `
     <div class="b2b-table-wrapper overflow-x-auto">
       <table class="b2b-table w-full min-w-[760px] text-left border-collapse">
@@ -49,9 +50,9 @@ import { ProviderSaleItem } from '../../../../../../core/models/provider.model';
 
               <td class="py-3.5 px-4 text-right whitespace-nowrap">
                 <p class="font-black text-[#04202E] dark:text-[#F2F9FC] font-mono text-sm">
-                  S/ {{ sale.total | number:'1.2-2' }}
+                  {{ sale.moneda | currencySymbol }} {{ sale.total | number:'1.2-2' }}
                 </p>
-                <p class="text-[10px] text-[#527588] dark:text-[#98D5EE]">IGV: S/ {{ sale.igv | number:'1.2-2' }}</p>
+                <p class="text-[10px] text-[#527588] dark:text-[#98D5EE]">IGV: {{ sale.moneda | currencySymbol }} {{ sale.igv | number:'1.2-2' }}</p>
               </td>
 
               <td class="py-3.5 px-4 text-center whitespace-nowrap">

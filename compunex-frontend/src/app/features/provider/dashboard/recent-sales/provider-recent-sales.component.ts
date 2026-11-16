@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ProviderSaleItem } from '../../../../core/models/provider.model';
 import { SuborderStatus } from '../../../../core/models/order.model';
+import { CurrencySymbolPipe } from '../../../../shared/pipes/currency-symbol.pipe';
 
 @Component({
   selector: 'app-provider-recent-sales',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, CurrencySymbolPipe],
   template: `
     <section class="bg-white dark:bg-[#0F3043] rounded-2xl border border-[#CFE4EE] dark:border-[#1D4960] overflow-hidden shadow-sm">
       
@@ -62,7 +63,7 @@ import { SuborderStatus } from '../../../../core/models/order.model';
                     </span>
                   </td>
                   <td class="py-3.5 px-6 text-right font-mono font-bold text-[#04202E] dark:text-[#F2F9FC] whitespace-nowrap">
-                    S/ {{ sale.total | number:'1.2-2' }}
+                    {{ sale.moneda | currencySymbol }} {{ sale.total | number:'1.2-2' }}
                   </td>
                   <td class="py-3.5 px-6 text-right whitespace-nowrap">
                     <a

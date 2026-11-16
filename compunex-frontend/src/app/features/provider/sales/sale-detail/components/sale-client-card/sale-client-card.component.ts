@@ -1,11 +1,12 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProviderSaleItem } from '../../../../../../core/models/provider.model';
+import { CurrencySymbolPipe } from '../../../../../../shared/pipes/currency-symbol.pipe';
 
 @Component({
   selector: 'app-sale-client-card',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, CurrencySymbolPipe],
   template: `
     <div class="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs space-y-4">
       <h2 class="text-sm font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center justify-between">
@@ -36,15 +37,15 @@ import { ProviderSaleItem } from '../../../../../../core/models/provider.model';
         <div class="border-t border-slate-100 pt-3 space-y-1.5 text-xs">
           <div class="flex items-center justify-between text-slate-500">
             <span>Base Imponible (Sin IGV):</span>
-            <span class="font-semibold text-slate-800">S/ {{ sale.subtotal | number:'1.2-2' }}</span>
+            <span class="font-semibold text-slate-800">{{ sale.moneda | currencySymbol }} {{ sale.subtotal | number:'1.2-2' }}</span>
           </div>
           <div class="flex items-center justify-between text-slate-500">
             <span>IGV Liquidado (18%):</span>
-            <span class="font-semibold text-slate-800">S/ {{ sale.igv | number:'1.2-2' }}</span>
+            <span class="font-semibold text-slate-800">{{ sale.moneda | currencySymbol }} {{ sale.igv | number:'1.2-2' }}</span>
           </div>
           <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-sm font-black text-slate-900">
             <span>Total Suborden:</span>
-            <span class="text-brand-primary">S/ {{ sale.total | number:'1.2-2' }}</span>
+            <span class="text-brand-primary">{{ sale.moneda | currencySymbol }} {{ sale.total | number:'1.2-2' }}</span>
           </div>
         </div>
       </div>

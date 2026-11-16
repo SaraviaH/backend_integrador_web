@@ -4,11 +4,12 @@ import { RouterModule, Router } from '@angular/router';
 import { CartStateService } from '../../core/state/cart-state.service';
 import { ToastStateService } from '../../core/state/toast-state.service';
 import { CartGroupItemComponent } from './cart-group-item/cart-group-item.component';
+import { CurrencySymbolPipe } from '../../shared/pipes/currency-symbol.pipe';
 
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [CommonModule, RouterModule, CartGroupItemComponent],
+  imports: [CommonModule, RouterModule, CartGroupItemComponent, CurrencySymbolPipe],
   template: `
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       
@@ -155,25 +156,31 @@ import { CartGroupItemComponent } from './cart-group-item/cart-group-item.compon
                       {{ group.proveedorRazonSocial }}
                     </span>
                     <span class="font-semibold text-slate-800 shrink-0">
-                      S/ {{ group.total | number:'1.2-2' }}
+                      {{ group.moneda | currencySymbol }} {{ group.total | number:'1.2-2' }}
                     </span>
                   </div>
                 }
               </div>
 
+              @if (cartState.hasMixedCurrencies()) {
+                <div class="p-3 rounded-2xl bg-amber-50 border border-amber-200 text-amber-800 text-[11px] font-medium">
+                  Tu carrito combina productos en <strong>PEN (S/)</strong> y <strong>USD (US$)</strong>. El checkout requiere que todos los productos de una orden tengan la misma moneda.
+                </div>
+              }
+
               <!-- Desglose Tributario Ley B2B (IGV 18%) -->
               <div class="space-y-3 pt-3 border-t border-slate-100 text-xs">
                 <div class="flex justify-between text-slate-600">
                   <span>Base Imponible (Subtotal sin IGV):</span>
-                  <span class="font-semibold text-slate-800">S/ {{ cartState.subtotal() | number:'1.2-2' }}</span>
+                  <span class="font-semibold text-slate-800">{{ cartState.cartCurrency() | currencySymbol }} {{ cartState.subtotal() | number:'1.2-2' }}</span>
                 </div>
                 <div class="flex justify-between text-slate-600">
                   <span>IGV (18% Ley Peruana):</span>
-                  <span class="font-semibold text-slate-800">S/ {{ cartState.igv() | number:'1.2-2' }}</span>
+                  <span class="font-semibold text-slate-800">{{ cartState.cartCurrency() | currencySymbol }} {{ cartState.igv() | number:'1.2-2' }}</span>
                 </div>
                 <div class="flex justify-between text-base font-black text-brand-night pt-3 border-t border-slate-100">
                   <span>Total Liquidación:</span>
-                  <span class="text-brand-primary">S/ {{ cartState.total() | number:'1.2-2' }}</span>
+                  <span class="text-brand-primary">{{ cartState.cartCurrency() | currencySymbol }} {{ cartState.total() | number:'1.2-2' }}</span>
                 </div>
               </div>
 

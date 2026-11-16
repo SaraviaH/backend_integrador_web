@@ -5,11 +5,12 @@ import { ProductCard } from '../../../core/models/catalog.model';
 import { BubbleButtonDirective } from '../../directives/bubble-button.directive';
 import { ActionTracker } from '../../../core/state/action-state.util';
 import { CartStateService } from '../../../core/state/cart-state.service';
+import { CurrencySymbolPipe } from '../../pipes/currency-symbol.pipe';
 
 @Component({
   selector: 'app-product-card',
   standalone: true,
-  imports: [CommonModule, RouterModule, BubbleButtonDirective],
+  imports: [CommonModule, RouterModule, BubbleButtonDirective, CurrencySymbolPipe],
   template: `
     <article class="bg-white dark:bg-[#0F3043] rounded-2xl border border-[#CFE4EE] dark:border-[#1D4960] p-5 flex flex-col justify-between hover:border-[#1786B4] dark:hover:border-[#4FB3DA] hover:shadow-md motion-safe:transition-all motion-safe:duration-200 group h-full">
 
@@ -61,7 +62,7 @@ import { CartStateService } from '../../../core/state/cart-state.service';
         <div class="mt-3.5 pt-3 border-t border-slate-100">
           <div class="flex items-baseline justify-between gap-2">
             <div class="text-lg font-extrabold text-brand-primary font-mono tracking-tight">
-              S/ {{ product.precioUnitario | number:'1.2-2' }}
+              {{ product.moneda | currencySymbol }} {{ product.precioUnitario | number:'1.2-2' }}
               <span class="text-[11px] font-sans font-medium text-slate-400">c/u</span>
             </div>
 

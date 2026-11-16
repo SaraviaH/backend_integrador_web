@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { CurrencySymbolPipe } from '../../pipes/currency-symbol.pipe';
 
 export interface SunatFacturaItem {
   codigo: string;
@@ -78,7 +79,7 @@ function numeroALetrasEs(num: number): string {
 @Component({
   selector: 'app-sunat-factura-sheet',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, CurrencySymbolPipe],
   template: `
     <div class="sunat-sheet bg-white text-black border border-slate-400 p-6 sm:p-8 max-w-4xl mx-auto text-[11px] leading-snug font-sans shadow-sm">
       <!-- Cabecera Formato SUNAT -->
@@ -164,7 +165,7 @@ function numeroALetrasEs(num: number): string {
         <div class="sm:col-span-7 space-y-4">
           <div class="flex items-center gap-2 text-[11px]">
             <span>Valor de Venta de Operaciones Gratuitas :</span>
-            <span class="border border-black px-2 py-0.5 font-mono min-w-[110px]">S/ 0.00</span>
+            <span class="border border-black px-2 py-0.5 font-mono min-w-[110px]">{{ data.moneda | currencySymbol }} 0.00</span>
           </div>
 
           <div class="font-bold text-[11px] uppercase">
@@ -175,47 +176,47 @@ function numeroALetrasEs(num: number): string {
         <div class="sm:col-span-5 border border-black text-[11px]">
           <div class="grid grid-cols-[1fr_100px] border-b border-slate-300 px-2 py-0.5">
             <span class="text-right pr-2">Sub Total Ventas :</span>
-            <span class="text-right font-mono">S/ {{ data.subtotal | number:'1.2-2' }}</span>
+            <span class="text-right font-mono">{{ data.moneda | currencySymbol }} {{ data.subtotal | number:'1.2-2' }}</span>
           </div>
           <div class="grid grid-cols-[1fr_100px] border-b border-slate-300 px-2 py-0.5">
             <span class="text-right pr-2">Anticipos :</span>
-            <span class="text-right font-mono">S/ 0.00</span>
+            <span class="text-right font-mono">{{ data.moneda | currencySymbol }} 0.00</span>
           </div>
           <div class="grid grid-cols-[1fr_100px] border-b border-slate-300 px-2 py-0.5">
             <span class="text-right pr-2">Descuentos :</span>
-            <span class="text-right font-mono">S/ 0.00</span>
+            <span class="text-right font-mono">{{ data.moneda | currencySymbol }} 0.00</span>
           </div>
           <div class="grid grid-cols-[1fr_100px] border-b border-slate-300 px-2 py-0.5">
             <span class="text-right pr-2">Valor Venta :</span>
-            <span class="text-right font-mono">S/ {{ data.subtotal | number:'1.2-2' }}</span>
+            <span class="text-right font-mono">{{ data.moneda | currencySymbol }} {{ data.subtotal | number:'1.2-2' }}</span>
           </div>
           <div class="grid grid-cols-[1fr_100px] border-b border-slate-300 px-2 py-0.5">
             <span class="text-right pr-2">ISC :</span>
-            <span class="text-right font-mono">S/ 0.00</span>
+            <span class="text-right font-mono">{{ data.moneda | currencySymbol }} 0.00</span>
           </div>
           <div class="grid grid-cols-[1fr_100px] border-b border-slate-300 px-2 py-0.5">
             <span class="text-right pr-2">IGV :</span>
-            <span class="text-right font-mono">S/ {{ data.igv | number:'1.2-2' }}</span>
+            <span class="text-right font-mono">{{ data.moneda | currencySymbol }} {{ data.igv | number:'1.2-2' }}</span>
           </div>
           <div class="grid grid-cols-[1fr_100px] border-b border-slate-300 px-2 py-0.5">
             <span class="text-right pr-2">ICBPER :</span>
-            <span class="text-right font-mono">S/ 0.00</span>
+            <span class="text-right font-mono">{{ data.moneda | currencySymbol }} 0.00</span>
           </div>
           <div class="grid grid-cols-[1fr_100px] border-b border-slate-300 px-2 py-0.5">
             <span class="text-right pr-2">Otros Cargos :</span>
-            <span class="text-right font-mono">S/ 0.00</span>
+            <span class="text-right font-mono">{{ data.moneda | currencySymbol }} 0.00</span>
           </div>
           <div class="grid grid-cols-[1fr_100px] border-b border-slate-300 px-2 py-0.5">
             <span class="text-right pr-2">Otros Tributos :</span>
-            <span class="text-right font-mono">S/ 0.00</span>
+            <span class="text-right font-mono">{{ data.moneda | currencySymbol }} 0.00</span>
           </div>
           <div class="grid grid-cols-[1fr_100px] border-b border-black px-2 py-0.5">
             <span class="text-right pr-2">Monto de redondeo :</span>
-            <span class="text-right font-mono">S/ 0.00</span>
+            <span class="text-right font-mono">{{ data.moneda | currencySymbol }} 0.00</span>
           </div>
           <div class="grid grid-cols-[1fr_100px] px-2 py-1 font-extrabold bg-slate-100">
             <span class="text-right pr-2">Importe Total :</span>
-            <span class="text-right font-mono">S/ {{ data.total | number:'1.2-2' }}</span>
+            <span class="text-right font-mono">{{ data.moneda | currencySymbol }} {{ data.total | number:'1.2-2' }}</span>
           </div>
         </div>
       </div>

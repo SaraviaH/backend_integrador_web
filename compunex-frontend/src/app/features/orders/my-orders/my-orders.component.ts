@@ -5,11 +5,12 @@ import { FormsModule } from '@angular/forms';
 import { OrderApiService } from '../../../core/services/order-api.service';
 import { OrderSummary } from '../../../core/models/order.model';
 import { PaginationBarComponent } from '../../../shared/components/pagination-bar/pagination-bar.component';
+import { CurrencySymbolPipe } from '../../../shared/pipes/currency-symbol.pipe';
 
 @Component({
   selector: 'app-my-orders',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, PaginationBarComponent],
+  imports: [CommonModule, RouterModule, FormsModule, PaginationBarComponent, CurrencySymbolPipe],
   template: `
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
 
@@ -186,7 +187,7 @@ import { PaginationBarComponent } from '../../../shared/components/pagination-ba
                     </td>
 
                     <td class="py-4 px-6 text-right font-mono font-bold text-[#04202E] dark:text-[#F2F9FC] text-xs sm:text-sm whitespace-nowrap">
-                      S/ {{ order.totalGeneral | number:'1.2-2' }}
+                      {{ order.moneda | currencySymbol }} {{ order.totalGeneral | number:'1.2-2' }}
                     </td>
 
                     <td class="py-4 px-6 text-right space-x-2 shrink-0 whitespace-nowrap">

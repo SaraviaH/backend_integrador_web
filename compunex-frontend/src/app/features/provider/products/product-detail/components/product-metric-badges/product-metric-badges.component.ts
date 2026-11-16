@@ -1,11 +1,12 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProductDetail } from '../../../../../../core/models/catalog.model';
+import { CurrencySymbolPipe } from '../../../../../../shared/pipes/currency-symbol.pipe';
 
 @Component({
   selector: 'app-product-metric-badges',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, CurrencySymbolPipe],
   template: `
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
       <!-- Stock Referencial -->
@@ -38,12 +39,12 @@ import { ProductDetail } from '../../../../../../core/models/catalog.model';
 
       <!-- Precio Base Unitario -->
       <div class="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-xs">
-        <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Precio Lista B2B</p>
+        <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Precio Unitario Base</p>
         <p class="text-xl font-black text-brand-primary mt-1">
-          S/ {{ product.precioUnitario | number:'1.2-2' }}
+          {{ product.moneda | currencySymbol }} {{ product.precioUnitario | number:'1.2-2' }}
         </p>
         <p class="mt-2 text-[11px] text-slate-500">
-          Sin IGV: S/ {{ (product.precioUnitario / 1.18) | number:'1.2-2' }}
+          Con IGV (18%): {{ product.moneda | currencySymbol }} {{ (product.precioUnitario * 1.18) | number:'1.2-2' }}
         </p>
       </div>
 
@@ -51,7 +52,7 @@ import { ProductDetail } from '../../../../../../core/models/catalog.model';
       <div class="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-xs">
         <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total de Caja</p>
         <p class="text-xl font-black text-emerald-600 mt-1">
-          S/ {{ (product.precioTotalCaja || product.precioUnitario) | number:'1.2-2' }}
+          {{ product.moneda | currencySymbol }} {{ (product.precioTotalCaja || product.precioUnitario) | number:'1.2-2' }}
         </p>
         <p class="mt-2 text-[11px] text-emerald-700 font-medium">
           {{ product.unidadesPorPaqueteTexto || '1 unidad' }} por paquete

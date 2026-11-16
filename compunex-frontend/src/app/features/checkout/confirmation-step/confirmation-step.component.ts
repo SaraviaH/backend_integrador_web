@@ -2,11 +2,12 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { CheckoutStateService } from '../../../core/state/checkout-state.service';
+import { CurrencySymbolPipe } from '../../../shared/pipes/currency-symbol.pipe';
 
 @Component({
   selector: 'app-confirmation-step',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, CurrencySymbolPipe],
   template: `
     <div class="space-y-6">
       
@@ -49,7 +50,7 @@ import { CheckoutStateService } from '../../../core/state/checkout-state.service
             </div>
             <div>
               <span class="text-slate-400 block text-[11px]">Importe Total (con IGV):</span>
-              <strong class="text-brand-primary text-sm">S/ {{ order.totalGeneral | number:'1.2-2' }}</strong>
+              <strong class="text-brand-primary text-sm">{{ order.moneda | currencySymbol }} {{ order.totalGeneral | number:'1.2-2' }}</strong>
             </div>
           </div>
 
@@ -60,24 +61,28 @@ import { CheckoutStateService } from '../../../core/state/checkout-state.service
             </h3>
 
             <div class="space-y-3">
-              @for (sub of order.subordenes; track sub.subordenId) {
+              @for (sub of order.subordenes; track sub.subordenId; let idx = $index) {
                 <div class="bg-white rounded-2xl border border-slate-200 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
                   <div>
                     <div class="flex items-center gap-2">
                       <span class="w-2 h-2 rounded-full bg-brand-primary"></span>
                       <h4 class="text-xs sm:text-sm font-bold text-brand-night">{{ sub.proveedorRazonSocial }}</h4>
                     </div>
-                    <div class="text-[11px] text-slate-500 mt-1 space-x-2">
+                    <div class="text-[11px] text-slate-500 mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5">
                       <span>RUC: {{ sub.proveedorRuc }}</span>
                       <span>•</span>
                       <span>Factura: <strong class="font-mono text-slate-700">{{ sub.numeroFacturaSimulada }}</strong></span>
+                      <span>•</span>
+                      <span class="text-emerald-700 font-semibold font-mono">
+                        Abono {{ order.codigoAutorizacionPago || 'PAY' }}-S{{ idx + 1 }}
+                      </span>
                     </div>
                   </div>
 
                   <div class="flex items-center justify-between sm:justify-end gap-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100">
                     <div class="text-right">
                       <span class="text-[10px] text-slate-400 block">Total Suborden</span>
-                      <span class="text-xs font-bold text-brand-primary">S/ {{ sub.total | number:'1.2-2' }}</span>
+                      <span class="text-xs font-bold text-brand-primary">{{ order.moneda | currencySymbol }} {{ sub.total | number:'1.2-2' }}</span>
                     </div>
                     <a
                       [routerLink]="['/pedidos', order.ordenId, 'comprobante']"
