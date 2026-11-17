@@ -262,8 +262,40 @@ export const routes: Routes = [
   {
     path: 'admin',
     canActivate: [roleGuard(['ROLE_ADMIN'])],
-    loadComponent: () => import('./features/admin/admin-panel.component').then(m => m.AdminPanelComponent),
-    title: 'Consola Admin y KPIs · COMPUNEX B2B'
+    loadComponent: () => import('./features/admin/layout/admin-layout.component').then(m => m.AdminLayoutComponent),
+    children: [
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      {
+        path: 'dashboard',
+        loadComponent: () => import('./features/admin/dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent),
+        title: 'Dashboard y KPIs · Consola Admin COMPUNEX'
+      },
+      {
+        path: 'subscriptions',
+        loadComponent: () => import('./features/admin/subscriptions/admin-subscriptions.component').then(m => m.AdminSubscriptionsComponent),
+        title: 'Suscripciones SaaS · Consola Admin COMPUNEX'
+      },
+      {
+        path: 'products',
+        loadComponent: () => import('./features/admin/products/admin-products.component').then(m => m.AdminProductsComponent),
+        title: 'Moderar Productos · Consola Admin COMPUNEX'
+      },
+      {
+        path: 'providers',
+        loadComponent: () => import('./features/admin/providers/admin-providers.component').then(m => m.AdminProvidersComponent),
+        title: 'Proveedores · Consola Admin COMPUNEX'
+      },
+      {
+        path: 'users',
+        loadComponent: () => import('./features/admin/users/admin-users.component').then(m => m.AdminUsersComponent),
+        title: 'Usuarios · Consola Admin COMPUNEX'
+      },
+      {
+        path: 'orders',
+        loadComponent: () => import('./features/admin/orders/admin-orders.component').then(m => m.AdminOrdersComponent),
+        title: 'Órdenes Globales · Consola Admin COMPUNEX'
+      }
+    ]
   },
 
   // Fallback 404
