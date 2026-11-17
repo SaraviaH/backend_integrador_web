@@ -258,6 +258,14 @@ export const routes: Routes = [
     pathMatch: 'prefix'
   },
 
+  // Panel Administrativo (Exclusivo ROLE_ADMIN)
+  {
+    path: 'admin',
+    canActivate: [roleGuard(['ROLE_ADMIN'])],
+    loadComponent: () => import('./features/admin/admin-panel.component').then(m => m.AdminPanelComponent),
+    title: 'Consola Admin y KPIs · COMPUNEX B2B'
+  },
+
   // Fallback 404
   {
     path: '**',

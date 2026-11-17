@@ -252,7 +252,8 @@ export class LoginComponent implements OnInit {
         this.authState.setAuth(response, !!recordarSesion);
         this.toast.success('Sesión iniciada', 'Accediste correctamente a COMPUNEX B2B.', 'login-ok');
 
-        const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+        const defaultRoute = this.authState.isAdmin() ? '/admin' : '/';
+        const returnUrl = this.route.snapshot.queryParams['returnUrl'] || defaultRoute;
         this.router.navigateByUrl(returnUrl);
       },
       error: (error: HttpErrorResponse) => {

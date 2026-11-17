@@ -83,7 +83,7 @@ import { BubbleButtonDirective } from '../../shared/directives/bubble-button.dir
           @if (authState.isAuthenticated()) {
             @if (authState.canAccessPanel()) {
               <a
-                routerLink="/panel"
+                [routerLink]="authState.isAdmin() ? '/admin' : '/panel'"
                 appBubbleButton
                 (click)="closeAllMenus()"
                 class="hidden sm:inline-flex items-center gap-1.5 h-10 sm:h-11 px-4 rounded-xl bg-brand-primary hover:bg-brand-petrol text-white text-xs font-bold whitespace-nowrap transition-colors shadow-xs shrink-0"
@@ -91,7 +91,7 @@ import { BubbleButtonDirective } from '../../shared/directives/bubble-button.dir
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                 </svg>
-                Mi Panel
+                {{ authState.isAdmin() ? 'Panel Admin' : 'Mi Panel' }}
               </a>
             } @else {
               <a
@@ -148,7 +148,7 @@ import { BubbleButtonDirective } from '../../shared/directives/bubble-button.dir
                   <div class="py-1">
                     @if (authState.canAccessPanel()) {
                       <a
-                        routerLink="/panel"
+                        [routerLink]="authState.isAdmin() ? '/admin' : '/panel'"
                         (click)="closeAllMenus()"
                         role="menuitem"
                         class="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-brand-primary dark:text-brand-sky hover:bg-brand-tint/70 transition-colors sm:hidden"
@@ -156,7 +156,7 @@ import { BubbleButtonDirective } from '../../shared/directives/bubble-button.dir
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                         </svg>
-                        Ir a Mi Panel
+                        {{ authState.isAdmin() ? 'Panel Admin' : 'Ir a Mi Panel' }}
                       </a>
                     } @else {
                       <a
@@ -325,12 +325,12 @@ import { BubbleButtonDirective } from '../../shared/directives/bubble-button.dir
               </a>
               @if (authState.canAccessPanel()) {
                 <a
-                  routerLink="/panel"
+                  [routerLink]="authState.isAdmin() ? '/admin' : '/panel'"
                   routerLinkActive="bg-brand-tint dark:bg-brand-petrol/40 text-brand-primary dark:text-brand-sky"
                   (click)="closeAllMenus()"
                   class="px-3.5 py-1.5 rounded-lg text-[13px] font-bold text-brand-deep dark:text-brand-tint hover:bg-brand-tint/70 dark:hover:bg-brand-petrol/30 hover:text-brand-primary dark:hover:text-brand-sky transition-colors whitespace-nowrap"
                 >
-                  Panel de Gestión
+                  {{ authState.isAdmin() ? 'Panel Admin' : 'Panel de Gestión' }}
                 </a>
               }
             }
@@ -386,7 +386,7 @@ import { BubbleButtonDirective } from '../../shared/directives/bubble-button.dir
             <div class="pt-2 mt-2 border-t border-slate-100 dark:border-brand-dark-border space-y-1.5">
               <a routerLink="/cuenta/mis-compras" (click)="closeAllMenus()" class="block px-3 py-2 rounded-lg text-xs font-bold text-brand-night dark:text-brand-tint">Mis compras</a>
               @if (authState.canAccessPanel()) {
-                <a routerLink="/panel" (click)="closeAllMenus()" class="block px-3 py-2 rounded-lg text-xs font-bold text-brand-primary dark:text-brand-sky">Mi Panel</a>
+                <a [routerLink]="authState.isAdmin() ? '/admin' : '/panel'" (click)="closeAllMenus()" class="block px-3 py-2 rounded-lg text-xs font-bold text-brand-primary dark:text-brand-sky">{{ authState.isAdmin() ? 'Panel Admin' : 'Mi Panel' }}</a>
               } @else {
                 <a routerLink="/cuenta/activar-proveedor" (click)="closeAllMenus()" class="block px-3 py-2 rounded-lg text-xs font-bold text-brand-primary dark:text-brand-sky">Activar Panel Proveedor</a>
               }
