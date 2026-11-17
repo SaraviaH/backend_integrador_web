@@ -268,7 +268,12 @@ export const routes: Routes = [
       {
         path: 'dashboard',
         loadComponent: () => import('./features/admin/dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent),
-        title: 'Dashboard y KPIs · Consola Admin COMPUNEX'
+        title: 'Dashboard y Gráficas · Consola Admin COMPUNEX'
+      },
+      {
+        path: 'reports',
+        loadComponent: () => import('./features/admin/reports/admin-reports.component').then(m => m.AdminReportsComponent),
+        title: 'Centro de Reportes · Consola Admin COMPUNEX'
       },
       {
         path: 'subscriptions',

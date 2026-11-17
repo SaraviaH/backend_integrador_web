@@ -8,22 +8,25 @@ import { AdminDashboardMetrics } from '../../../../core/services/admin-api.servi
   imports: [CommonModule],
   template: `
     <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-5">
-      <!-- KPI 1: GMV Total e IGV -->
-      <article class="bg-white dark:bg-[#0F3043] rounded-2xl border border-[#CFE4EE] dark:border-[#1D4960] p-5 sm:p-6 min-h-[148px] shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between gap-4">
-        <div class="flex items-start justify-between gap-3">
-          <div>
+      <!-- KPI 1: GMV Total e IGV + Crecimiento MoM -->
+      <article class="bg-white dark:bg-[#0F3043] rounded-2xl border border-[#CFE4EE] dark:border-[#1D4960] p-5 sm:p-6 min-h-[148px] shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between gap-3">
+        <div>
+          <div class="flex items-center justify-between gap-2">
             <p class="text-[11px] font-bold uppercase tracking-wider text-[#527588] dark:text-[#B8DFEF]">
               GMV Plataforma (S/)
             </p>
-            <p class="mt-1.5 text-2xl sm:text-[26px] leading-tight font-extrabold font-mono text-[#04202E] dark:text-white tracking-tight whitespace-nowrap">
-              S/ {{ metrics.gmvTotal | number:'1.2-2' }}
-            </p>
+            <span
+              [class]="metrics.crecimientoMensualPorcentaje >= 0
+                ? 'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-200 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300'
+                : 'bg-rose-50 dark:bg-rose-950/60 border-rose-200 dark:border-rose-800/60 text-rose-700 dark:text-rose-300'"
+              class="px-2 py-0.5 rounded-full border text-[10px] font-bold font-mono shrink-0 whitespace-nowrap"
+            >
+              {{ metrics.crecimientoMensualPorcentaje >= 0 ? '+' : '' }}{{ metrics.crecimientoMensualPorcentaje | number:'1.1-1' }}% MoM
+            </span>
           </div>
-          <span class="w-10 h-10 rounded-xl bg-[#E1F2FA] dark:bg-[#0A2535] text-[#1786B4] dark:text-[#4FB3DA] flex items-center justify-center shrink-0">
-            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
-            </svg>
-          </span>
+          <p class="mt-2 text-2xl xl:text-[24px] leading-tight font-extrabold font-mono text-[#04202E] dark:text-white tracking-tight whitespace-nowrap">
+            S/ {{ metrics.gmvTotal | number:'1.2-2' }}
+          </p>
         </div>
         <p class="text-xs text-[#527588] dark:text-[#B8DFEF]">
           IGV recaudado SUNAT:
@@ -42,7 +45,7 @@ import { AdminDashboardMetrics } from '../../../../core/services/admin-api.servi
               {{ metrics.totalOrdenes }}
             </p>
           </div>
-          <span class="px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/60 text-[11px] font-bold text-emerald-700 dark:text-emerald-300 shrink-0">
+          <span class="px-2.5 py-1 rounded-full bg-[#E1F2FA] dark:bg-[#0A2535] border border-[#98D5EE] dark:border-[#1D4960] text-[11px] font-bold text-[#1786B4] dark:text-[#4FB3DA] shrink-0">
             {{ metrics.ordenesPagadas }} pagadas
           </span>
         </div>
@@ -76,15 +79,15 @@ import { AdminDashboardMetrics } from '../../../../core/services/admin-api.servi
         </p>
       </article>
 
-      <!-- KPI 4: MRR Suscripciones SaaS -->
+      <!-- KPI 4: Ingresos Plataforma (MRR + Comisión Marketplace) -->
       <article class="bg-white dark:bg-[#0F3043] rounded-2xl border border-[#CFE4EE] dark:border-[#1D4960] p-5 sm:p-6 min-h-[148px] shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between gap-4">
         <div class="flex items-start justify-between gap-3">
           <div>
             <p class="text-[11px] font-bold uppercase tracking-wider text-[#527588] dark:text-[#B8DFEF]">
-              MRR SaaS Proveedores
+              Ingresos Plataforma
             </p>
-            <p class="mt-1.5 text-2xl sm:text-[26px] leading-tight font-extrabold font-mono text-[#1786B4] dark:text-[#4FB3DA]">
-              S/ {{ metrics.mrrSuscripciones | number:'1.2-2' }}
+            <p class="mt-1.5 text-2xl sm:text-[26px] leading-tight font-extrabold font-mono text-[#1786B4] dark:text-[#4FB3DA] whitespace-nowrap">
+              S/ {{ metrics.ingresosTotalesPlataforma | number:'1.2-2' }}
             </p>
           </div>
           <span class="w-10 h-10 rounded-xl bg-[#E1F2FA] dark:bg-[#0A2535] text-[#1786B4] dark:text-[#4FB3DA] flex items-center justify-center shrink-0">
@@ -94,8 +97,8 @@ import { AdminDashboardMetrics } from '../../../../core/services/admin-api.servi
           </span>
         </div>
         <p class="text-xs text-[#527588] dark:text-[#B8DFEF]">
-          <strong class="font-mono text-[#04202E] dark:text-white">{{ metrics.suscripcionesActivas }}</strong> activas ·
-          {{ metrics.proveedoresConFacturacion }} con SUNAT
+          MRR <strong class="font-mono text-[#04202E] dark:text-white">S/ {{ metrics.mrrSuscripciones | number:'1.0-0' }}</strong>
+          · Com. 3.5% <strong class="font-mono text-[#04202E] dark:text-white">S/ {{ metrics.comisionPlataformaEstimada | number:'1.0-0' }}</strong>
         </p>
       </article>
     </div>

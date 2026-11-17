@@ -11,6 +11,24 @@ export interface TopProveedorMetric {
   montoTotal: number;
 }
 
+export interface SerieMensualMetric {
+  periodo: string;
+  etiqueta: string;
+  gmv: number;
+  igv: number;
+  ordenesCount: number;
+  ticketPromedio: number;
+  horasDespachoPromedio: number;
+}
+
+export interface CategoriaMetric {
+  categoria: string;
+  unidadesVendidas: number;
+  ordenesCount: number;
+  montoTotal: number;
+  porcentajeParticipacion: number;
+}
+
 export interface AdminDashboardMetrics {
   gmvTotal: number;
   igvTotalRecaudado: number;
@@ -22,9 +40,14 @@ export interface AdminDashboardMetrics {
   totalSubordenes: number;
   tasaEntregaPorcentaje: number;
   tiempoPromedioDespachoHoras: number;
+  crecimientoMensualPorcentaje: number;
+  comisionPlataformaEstimada: number;
+  ingresosTotalesPlataforma: number;
   subordenesPorEstado: Record<string, number>;
   ordenesPorMetodoPago: Record<string, number>;
   topProveedores: TopProveedorMetric[];
+  ventasMensuales: SerieMensualMetric[];
+  ventasPorCategoria: CategoriaMetric[];
   totalUsuarios: number;
   totalClientes: number;
   totalProveedores: number;
@@ -163,5 +186,9 @@ export class AdminApiService {
 
   public updateProductStatus(id: number, nuevoEstado: string, motivo = ''): Observable<unknown> {
     return this.http.patch(`${this.baseUrl}/products/${id}/status`, { nuevoEstado, motivo });
+  }
+
+  public downloadReport(type: 'executive' | 'orders' | 'subscriptions'): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/reports/${type}.csv`, { responseType: 'blob' });
   }
 }

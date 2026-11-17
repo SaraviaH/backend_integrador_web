@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -17,14 +19,14 @@ import java.util.Map;
 @RequestMapping("/api/v1/admin")
 @PreAuthorize("hasRole('ADMIN')")
 @RequiredArgsConstructor
-@Tag(name = "12. Panel Administrativo y Suscripciones", description = "KPIs de negocio, proveedores, usuarios, órdenes y suscripciones de facturación")
+@Tag(name = "12. Panel Administrativo y Suscripciones", description = "KPIs de negocio, gráficas, reportes CSV, proveedores, usuarios, órdenes y suscripciones")
 @SecurityRequirement(name = "bearerAuth")
 public class AdminPanelController {
 
     private final AdminPanelService adminPanelService;
 
     @GetMapping("/dashboard")
-    @Operation(summary = "Indicadores globales de negocio, ventas, tiempos y MRR")
+    @Operation(summary = "Indicadores globales de negocio, series mensuales, categorías, tiempos y MRR")
     public ResponseEntity<AdminDashboardDTO> dashboard() {
         return ResponseEntity.ok(adminPanelService.obtenerDashboard());
     }
@@ -81,5 +83,30 @@ public class AdminPanelController {
         String plan = String.valueOf(body.getOrDefault("plan", "PRO_FACTURACION"));
         String estado = String.valueOf(body.getOrDefault("estado", "ACTIVA"));
         return ResponseEntity.ok(adminPanelService.guardarSuscripcion(proveedorId, plan, estado));
+    }
+
+    @GetMapping(value = "/reports/executive.csv", produces = "text/csv; charset=UTF-8")
+    @Operation(summary = "Descargar reporte ejecutivo consolidado en CSV para Excel")
+    public ResponseEntity<byte[]> downloadExecutiveReport() {
+        return csvResponse("compunex-reporte-ejecutivo.csv", adminPanelService.generarCsvEjecutivo());
+    }
+
+    @GetMapping(value = "/reports/orders.csv", produces = "text/csv; charset=UTF-8")
+    @Operation(summary = "Descargar libro de órdenes B2B en CSV para Excel")
+    public ResponseEntity<byte[]> downloadOrdersReport() {
+        return csvResponse("compunex-ordenes-b2b.csv", adminPanelService.generarCsvOrdenes());
+    }
+
+    @GetMapping(value = "/reports/subscriptions.csv", produces = "text/csv; charset=UTF-8")
+    @Operation(summary = "Descargar estado de suscripciones SaaS SUNAT en CSV")
+    public ResponseEntity<byte[]> downloadSubscriptionsReport() {
+        return csvResponse("compunex-suscripciones-saas.csv", adminPanelService.generarCsvSuscripciones());
+    }
+
+    private ResponseEntity<byte[]> csvResponse(String filename, byte[] bytes) {
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                .contentType(MediaType.parseMediaType("text/csv; charset=UTF-8"))
+                .body(bytes);
     }
 }

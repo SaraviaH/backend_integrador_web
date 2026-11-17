@@ -2,23 +2,26 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { AdminApiService, AdminDashboardMetrics } from '../../../core/services/admin-api.service';
+import { ToastStateService } from '../../../core/state/toast-state.service';
 import { AdminKpiCardsComponent } from './components/admin-kpi-cards.component';
+import { AdminSalesChartComponent } from './components/admin-sales-chart.component';
+import { AdminCategoryChartComponent } from './components/admin-category-chart.component';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, AdminKpiCardsComponent],
+  imports: [CommonModule, RouterLink, AdminKpiCardsComponent, AdminSalesChartComponent, AdminCategoryChartComponent],
   template: `
     <section class="space-y-6">
       <!-- Breadcrumb -->
       <nav aria-label="Ruta de navegación" class="flex items-center gap-2 text-xs text-[#527588] dark:text-[#B8DFEF]">
         <span>Administración</span>
         <span aria-hidden="true">/</span>
-        <span class="font-semibold text-[#04202E] dark:text-white">Dashboard y KPIs</span>
+        <span class="font-semibold text-[#04202E] dark:text-white">Dashboard y Gráficas</span>
       </nav>
 
       <!-- Header Hero Card -->
-      <div class="bg-white dark:bg-[#0F3043] rounded-2xl border border-[#CFE4EE] dark:border-[#1D4960] p-6 sm:p-7 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div class="bg-white dark:bg-[#0F3043] rounded-2xl border border-[#CFE4EE] dark:border-[#1D4960] p-6 sm:p-7 shadow-sm flex flex-col xl:flex-row xl:items-center justify-between gap-4">
         <div class="space-y-1.5">
           <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-[#E1F2FA] dark:bg-[#0A2535] border border-[#98D5EE] dark:border-[#1D4960] text-[11px] font-bold text-[#1786B4] dark:text-[#4FB3DA]">
             Consola Ejecutiva COMPUNEX
@@ -27,11 +30,30 @@ import { AdminKpiCardsComponent } from './components/admin-kpi-cards.component';
             Rendimiento del Marketplace B2B
           </h1>
           <p class="text-xs sm:text-sm text-[#527588] dark:text-[#B8DFEF]">
-            Supervisión en tiempo real de ventas GMV, cumplimiento logístico, suscripciones SUNAT y salud del catálogo.
+            Analítica de ventas mensuales, categorías de hardware, cumplimiento SLA de despacho, monetización SaaS y exportación de reportes.
           </p>
         </div>
 
         <div class="flex flex-wrap items-center gap-2.5 shrink-0">
+          <button
+            type="button"
+            (click)="exportQuickCsv()"
+            [disabled]="exporting()"
+            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[#CFE4EE] dark:border-[#1D4960] bg-[#F4F9FC] dark:bg-[#0A2535] hover:bg-[#E1F2FA] dark:hover:bg-[#153F58] text-xs sm:text-sm font-semibold text-[#0A3C55] dark:text-[#E1F2FA] transition-colors"
+          >
+            <svg class="w-4 h-4 text-[#1786B4] dark:text-[#4FB3DA]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+            </svg>
+            <span>{{ exporting() ? 'Exportando...' : 'Exportar CSV' }}</span>
+          </button>
+
+          <a
+            routerLink="/admin/reports"
+            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[#CFE4EE] dark:border-[#1D4960] bg-[#F4F9FC] dark:bg-[#0A2535] hover:bg-[#E1F2FA] dark:hover:bg-[#153F58] text-xs sm:text-sm font-semibold text-[#0A3C55] dark:text-[#E1F2FA] transition-colors"
+          >
+            <span>Centro de Reportes</span>
+          </a>
+
           <button
             type="button"
             (click)="loadMetrics()"
@@ -43,13 +65,6 @@ import { AdminKpiCardsComponent } from './components/admin-kpi-cards.component';
             </svg>
             <span>{{ loading() ? 'Actualizando...' : 'Actualizar KPIs' }}</span>
           </button>
-
-          <a
-            routerLink="/admin/subscriptions"
-            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[#CFE4EE] dark:border-[#1D4960] bg-[#F4F9FC] dark:bg-[#0A2535] hover:bg-[#E1F2FA] dark:hover:bg-[#153F58] text-xs sm:text-sm font-semibold text-[#0A3C55] dark:text-[#E1F2FA] transition-colors"
-          >
-            <span>Planes SaaS SUNAT</span>
-          </a>
         </div>
       </div>
 
@@ -82,9 +97,15 @@ import { AdminKpiCardsComponent } from './components/admin-kpi-cards.component';
         </div>
       }
 
-      <!-- Contenido Métricas -->
+      <!-- Contenido Métricas + Gráficas -->
       @if (metrics(); as m) {
         <app-admin-kpi-cards [metrics]="m" />
+
+        <!-- Gráficas Analíticas -->
+        <div class="grid grid-cols-1 xl:grid-cols-5 gap-6">
+          <app-admin-sales-chart class="xl:col-span-3" [series]="m.ventasMensuales || []" />
+          <app-admin-category-chart class="xl:col-span-2" [categories]="m.ventasPorCategoria || []" />
+        </div>
 
         <!-- Tablas y Desglose -->
         <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
@@ -144,7 +165,6 @@ import { AdminKpiCardsComponent } from './components/admin-kpi-cards.component';
 
           <!-- Salud Operativa y Comunidad -->
           <div class="space-y-4">
-            <!-- Estado Subórdenes y Pagos -->
             <div class="bg-white dark:bg-[#0F3043] rounded-2xl border border-[#CFE4EE] dark:border-[#1D4960] p-5 shadow-sm space-y-4">
               <h2 class="text-sm font-bold text-[#04202E] dark:text-white">
                 Estado Logístico &amp; Pagos
@@ -181,7 +201,6 @@ import { AdminKpiCardsComponent } from './components/admin-kpi-cards.component';
               </div>
             </div>
 
-            <!-- Comunidad y Catálogo -->
             <div class="bg-white dark:bg-[#0F3043] rounded-2xl border border-[#CFE4EE] dark:border-[#1D4960] p-5 shadow-sm space-y-3">
               <h2 class="text-sm font-bold text-[#04202E] dark:text-white">
                 Catálogo &amp; Comunidad B2B
@@ -211,54 +230,17 @@ import { AdminKpiCardsComponent } from './components/admin-kpi-cards.component';
             </div>
           </div>
         </div>
-
-        <!-- Accesos rápidos -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
-          <a
-            routerLink="/admin/subscriptions"
-            class="group bg-white dark:bg-[#0F3043] rounded-2xl border border-[#CFE4EE] dark:border-[#1D4960] p-5 hover:border-[#1786B4] dark:hover:border-[#4FB3DA] hover:shadow-md transition-all"
-          >
-            <h3 class="text-sm font-bold text-[#04202E] dark:text-white group-hover:text-[#1786B4] dark:group-hover:text-[#4FB3DA]">
-              Gestionar Suscripciones SaaS &rarr;
-            </h3>
-            <p class="mt-1 text-xs text-[#527588] dark:text-[#B8DFEF]">
-              Activa planes Pro o Enterprise SUNAT con emisión CPE y GRE Transportista por proveedor.
-            </p>
-          </a>
-
-          <a
-            routerLink="/admin/products"
-            class="group bg-white dark:bg-[#0F3043] rounded-2xl border border-[#CFE4EE] dark:border-[#1D4960] p-5 hover:border-[#1786B4] dark:hover:border-[#4FB3DA] hover:shadow-md transition-all"
-          >
-            <h3 class="text-sm font-bold text-[#04202E] dark:text-white group-hover:text-[#1786B4] dark:group-hover:text-[#4FB3DA]">
-              Moderar Catálogo Global &rarr;
-            </h3>
-            <p class="mt-1 text-xs text-[#527588] dark:text-[#B8DFEF]">
-              Revisa precios, stock y aprueba u oculta publicaciones que incumplan políticas B2B.
-            </p>
-          </a>
-
-          <a
-            routerLink="/admin/orders"
-            class="group bg-white dark:bg-[#0F3043] rounded-2xl border border-[#CFE4EE] dark:border-[#1D4960] p-5 hover:border-[#1786B4] dark:hover:border-[#4FB3DA] hover:shadow-md transition-all"
-          >
-            <h3 class="text-sm font-bold text-[#04202E] dark:text-white group-hover:text-[#1786B4] dark:group-hover:text-[#4FB3DA]">
-              Auditar Órdenes Globales &rarr;
-            </h3>
-            <p class="mt-1 text-xs text-[#527588] dark:text-[#B8DFEF]">
-              Inspecciona códigos de autorización, compradores RUC y estados consolidados de despacho.
-            </p>
-          </a>
-        </div>
       }
     </section>
   `
 })
 export class AdminDashboardComponent implements OnInit {
   private readonly adminApi = inject(AdminApiService);
+  private readonly toast = inject(ToastStateService);
 
   public readonly metrics = signal<AdminDashboardMetrics | null>(null);
   public readonly loading = signal(false);
+  public readonly exporting = signal(false);
   public readonly errorMessage = signal<string | null>(null);
 
   public readonly subordenEntries = computed(() => {
@@ -286,6 +268,26 @@ export class AdminDashboardComponent implements OnInit {
       error: (err) => {
         this.errorMessage.set(err?.error?.message || 'No se pudieron cargar los KPIs administrativos.');
         this.loading.set(false);
+      }
+    });
+  }
+
+  public exportQuickCsv(): void {
+    this.exporting.set(true);
+    this.adminApi.downloadReport('executive').subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'compunex-reporte-ejecutivo.csv';
+        a.click();
+        window.URL.revokeObjectURL(url);
+        this.exporting.set(false);
+        this.toast.success('Reporte exportado', 'Se descargó compunex-reporte-ejecutivo.csv.');
+      },
+      error: () => {
+        this.exporting.set(false);
+        this.toast.error('Error', 'No se pudo descargar el reporte ejecutivo.');
       }
     });
   }

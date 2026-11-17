@@ -22,13 +22,18 @@ public class AdminDashboardDTO {
     private long totalSubordenes;
     private double tasaEntregaPorcentaje;
 
-    // Indicadores de tiempo logístico
+    // Indicadores de tiempo logístico y crecimiento
     private double tiempoPromedioDespachoHoras;
+    private double crecimientoMensualPorcentaje;
+    private BigDecimal comisionPlataformaEstimada;
+    private BigDecimal ingresosTotalesPlataforma;
 
-    // Desglose y rankings
+    // Desglose, series temporales y rankings
     private Map<String, Long> subordenesPorEstado;
     private Map<String, Long> ordenesPorMetodoPago;
     private List<TopProveedorDTO> topProveedores;
+    private List<SerieMensualDTO> ventasMensuales;
+    private List<CategoriaMetricDTO> ventasPorCategoria;
 
     // Comunidad y catálogo
     private long totalUsuarios;
@@ -44,6 +49,28 @@ public class AdminDashboardDTO {
     private BigDecimal mrrSuscripciones;
     private long suscripcionesActivas;
     private long proveedoresConFacturacion;
+
+    @Data
+    @Builder
+    public static class SerieMensualDTO {
+        private String periodo;
+        private String etiqueta;
+        private BigDecimal gmv;
+        private BigDecimal igv;
+        private long ordenesCount;
+        private BigDecimal ticketPromedio;
+        private double horasDespachoPromedio;
+    }
+
+    @Data
+    @Builder
+    public static class CategoriaMetricDTO {
+        private String categoria;
+        private long unidadesVendidas;
+        private long ordenesCount;
+        private BigDecimal montoTotal;
+        private double porcentajeParticipacion;
+    }
 
     @Data
     @Builder
